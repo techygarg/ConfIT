@@ -1,0 +1,184 @@
+{
+  "ShouldCreateAUser": {
+    "api": {
+      "request": {
+        "method": "POST",
+        "path": "/api/user",
+        "body": {
+          "name": "test",
+          "email": "test@test.com",
+          "age": 10
+        }
+      },
+      "response": {
+        "statusCode": 201,
+        "body": {
+        },
+        "matcher": {
+          "pattern": {
+            "id": "^(0|[1-9][0-9]?|100)$"
+          }
+        }
+      }
+    }
+  },
+  "ShouldCreateAUser_V1": {
+    "api": {
+      "request": {
+        "method": "POST",
+        "path": "/api/user",
+        "bodyFromFile": "should_create_a_user_v1.json"
+      },
+      "response": {
+        "statusCode": 201,
+        "body": {
+        },
+        "matcher": {
+          "pattern": {
+            "id": "^(0|[1-9][0-9]?|100)$"
+          }
+        }
+      }
+    }
+  },
+  "ShouldCreateAUser_V2": {
+    "api": {
+      "request": {
+        "method": "POST",
+        "path": "/api/user",
+        "bodyFromFile": "should_create_a_user_v1.json",
+        "override": {
+          "email": "testv2@test.com",
+          "age": 30
+        }
+      },
+      "response": {
+        "statusCode": 201,
+        "body": {
+        },
+        "matcher": {
+          "pattern": {
+            "id": "^(0|[1-9][0-9]?|100)$"
+          }
+        }
+      }
+    }
+  },
+  "ShouldReturnUserForGivenId": {
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/1"
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {},
+        "bodyFromFile": "return_user_for_given_id.json"
+      }
+    }
+  },
+  "ShouldReturnUserForGivenId_V1": {
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/unknown"
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {},
+        "body": {
+          "name": "test",
+          "email": "test@test.com",
+          "age": 10
+        },
+        "matcher": {
+          "ignore": [
+            "id"
+          ]
+        }
+      }
+    }
+  },
+  "ShouldReturnUserForGivenId_V2": {
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/unknown"
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {},
+        "body": {
+          "name": "test",
+          "email": "test@test.com"
+        },
+        "matcher": {
+          "pattern": {
+            "id": "^(0|[1-9][0-9]?|100)$",
+            "age": "^(0|[1-9][0-9]?|100)$"
+          }
+        }
+      }
+    }
+  },
+  "ShouldReturnUserForGivenEmailId": {
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/test@test.com"
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {},
+        "body": {
+          "id": 1,
+          "name": "test",
+          "email": "test@test.com",
+          "age": 10
+        }
+      }
+    }
+  },
+  "ShouldReturnUserForGivenEmailId_V1": {
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/testv2@test.com"
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {},
+        "bodyFromFile": "return_user_for_given_id.json",
+        "override": {
+          "name": "testv1",
+          "email": "testv2@test.com",
+          "age": 30
+        },
+        "matcher": {
+          "ignore": [
+            "id"
+          ]
+        }
+      }
+    }
+  },
+  "ShouldReturnErrorIfUserNotExist": {
+    "tags": ["errors", "user"],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/notexist@test.com"
+      },
+      "response": {
+        "statusCode": 404,
+        "body": {
+          "error": {
+            "status": 404,
+            "code": "NotFound",
+            "description": "User doesn't exist with email : notexist@test.com"
+          }
+        }
+      }
+    }
+  }
+}

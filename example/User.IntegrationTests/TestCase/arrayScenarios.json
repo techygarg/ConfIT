@@ -1,0 +1,174 @@
+{
+  "ShouldMatchAnArrayResponse": {
+    "tags": [
+      "arrays"
+    ],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/examples/1"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": [
+          {
+            "id": 11,
+            "name": "Eleven",
+            "email": "eleven@gmail.com",
+            "age": 11
+          },
+          {
+            "id": 12,
+            "name": "Twelve",
+            "email": "telve@gmail.com",
+            "age": 12
+          },
+          {
+            "id": 13,
+            "name": "Thirteen",
+            "email": "thirteen@gmail.com",
+            "age": 13
+          },
+          {
+            "id": 14,
+            "name": "Fourteen",
+            "email": "fourteen@gmail.com",
+            "age": 14
+          }
+        ]
+      }
+    }
+  },
+  "ShouldMatchAnArrayResponseFromFile": {
+    "tags": [
+      "arrays"
+    ],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/examples/1"
+      },
+      "response": {
+        "statusCode": 200,
+        "bodyFromFile": "users.json"
+      }
+    }
+  },
+  "ShouldOverrideFieldInArray": {
+    "tags": [
+      "arrays"
+    ],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/examples/2"
+      },
+      "response": {
+        "statusCode": 200,
+        "bodyFromFile": "users.json",
+        "override": {
+          "age": 20
+        }
+      }
+    }
+  },
+  "ShouldIgnoreFieldInArray": {
+    "tags": [
+      "arrays"
+    ],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/examples/2"
+      },
+      "response": {
+        "statusCode": 200,
+        "bodyFromFile": "users.json",
+        "override": {
+          "age": 20
+        },
+        "matcher": {
+          "ignore": [
+            "id"
+          ]
+        }
+      }
+    }
+  },
+  "ShouldMatchMultiLevelResponse": {
+    "tags": [
+      "arrays"
+    ],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/examples/3"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "id": 1,
+          "child1": {
+            "email": "child1@gmail.com",
+            "age": 20,
+            "child2": {
+              "name": "test-3",
+              "pincode": 989898
+            }
+          },
+          "child3": {
+            "email": "child3@gmail.com",
+            "age": 30,
+            "child4": {
+              "name": "test-4",
+              "pincode": 676767
+            }
+          },
+          "child5": {
+            "email": "child5@gmail.com",
+            "age": 40
+          }
+        }
+      }
+    }
+  },
+  "ShouldIgnoreFieldInMultiLevelParent": {
+    "tags": [
+      "arrays"
+    ],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/examples/3"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "id": 1,
+          "child1": {
+            "email": "child1@gmail.com",
+            "age": 20,
+            "child2": {
+              "name": "test-3",
+              "pincode": 989898
+            }
+          },
+          "child3": {
+            "email": "child3@gmail.com",
+            "age": 30,
+            "child4": {
+              "name": "test-4",
+              "pincode": 121212
+            }
+          }
+        },
+        "matcher": {
+          "ignore": [
+            "child3__child4__pincode",
+            "child5"
+          ]
+        }
+      }
+    }
+  }
+}

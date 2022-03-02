@@ -1,0 +1,146 @@
+{
+  "ShouldMatchMultiLevelResponse": {
+    "tags": [
+      "multilevel"
+    ],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/examples/3"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "id": 1,
+          "child1": {
+            "email": "child1@gmail.com",
+            "age": 20,
+            "child2": {
+              "name": "test-3",
+              "pincode": 989898
+            }
+          },
+          "child3": {
+            "email": "child3@gmail.com",
+            "age": 30,
+            "child4": {
+              "name": "test-4",
+              "pincode": 676767
+            }
+          },
+          "child5": {
+            "email": "child5@gmail.com",
+            "age": 40
+          }
+        }
+      }
+    }
+  },
+  "ShouldMatchMultiLevelResponseWithOverride": {
+    "tags": [
+      "multilevel"
+    ],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/examples/4"
+      },
+      "response": {
+        "statusCode": 200,
+        "bodyFromFile": "multiLevel.json",
+        "override": {
+          "child1": {
+            "child2": {
+              "extra": "extra1"
+            }
+          },
+          "child3": {
+            "child4": {
+              "extra": "extra2"
+            }
+          }
+        }
+      }
+    }
+  },
+  "ShouldApplyMatcherInMultiLevelParent": {
+    "tags": [
+      "multilevel"
+    ],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/examples/3"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "id": 1,
+          "child1": {
+            "email": "child1@gmail.com",
+            "age": 20,
+            "child2": {
+              "name": "test-3",
+              "pincode": 989898
+            }
+          },
+          "child3": {
+            "email": "child3@gmail.com",
+            "age": 30,
+            "child4": {
+              "name": "test-4"
+            }
+          },
+          "child5": {
+            "email": "child5@gmail.com",
+            "age": 40
+          }
+        },
+        "matcher": {
+          "pattern": {
+            "child3__child4__pincode": "^[0-9]{1,6}$"
+          }
+        }
+      }
+    }
+  },
+  "ShouldIgnoreFieldInMultiLevelParent": {
+    "tags": [
+      "multilevel"
+    ],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/examples/3"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "id": 1,
+          "child1": {
+            "email": "child1@gmail.com",
+            "age": 20,
+            "child2": {
+              "name": "test-3",
+              "pincode": 989898
+            }
+          },
+          "child3": {
+            "email": "child3@gmail.com",
+            "age": 30,
+            "child4": {
+              "name": "test-4",
+              "pincode": 121212
+            }
+          }
+        },
+        "matcher": {
+          "ignore": [
+            "child3__child4__pincode",
+            "child5"
+          ]
+        }
+      }
+    }
+  }
+}

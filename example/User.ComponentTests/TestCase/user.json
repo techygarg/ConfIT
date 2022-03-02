@@ -1,0 +1,85 @@
+{
+  "ShouldCreateAUser": {
+    "mock": {
+      "interactions": [
+        {
+          "request": {
+            "method": "GET",
+            "path": "/api/demo/test@test.com"
+          },
+          "response": {
+            "statusCode": 200,
+            "body": {
+              "isValid": true
+            }
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "path": "/api/demo",
+            "params": {
+              "email": "test@test.com"
+            }
+          },
+          "response": {
+            "statusCode": 200,
+            "body": {
+              "isValid": true
+            }
+          }
+        },
+        {
+          "request": {
+            "method": "POST",
+            "path": "/api/demo",
+            "body": {
+              "email": "test@test.com"
+            }
+          },
+          "response": {
+            "statusCode": 200,
+            "body": {
+              "isValid": true
+            }
+          }
+        }
+      ]
+    },
+    "api": {
+      "request": {
+        "method": "POST",
+        "path": "/api/user",
+        "body": {
+          "name": "test",
+          "email": "test@test.com",
+          "age": 10
+        }
+      },
+      "response": {
+        "statusCode": 201,
+        "body": {
+          "id": 1
+        }
+      }
+    }
+  },
+  "ShouldReturnUserForGivenEmailId": {
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/test@test.com"
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {},
+        "body": {
+          "id": 1,
+          "name": "test",
+          "email": "test@test.com",
+          "age": 10
+        }
+      }
+    }
+  }
+}

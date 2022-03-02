@@ -1,0 +1,10 @@
+fileignoreconfig:
+- filename: src/ConfIT/Server/Http/TestSuiteInitializer.cs
+  checksum: 8b25e152680042fe3eb030ee8f90af897c82baa0d411040bfcbba07bc719eacc
+- filename: src/ConfIT/Extension/StringExtensions.cs
+  checksum: d275630d7cca830370f3ddb68e187e4b5d0c6a491f57db9f7914444c68abf61f
+- filename: src/ConfIT/Extension/DictionaryExtensions.cs
+  checksum: 1b3247e987bcefecf7b92bbe8dc6209832d3efd1a0d1fc909bf66b689b109c09
+- filename: src/ConfIT/Util/ResultMatcher.cs
+  checksum: 6137f408a279e8338aef10f3a0b5d111133abc36ab4eb455b32d48dd07ef68b9
+version: ""

@@ -1,0 +1,74 @@
+name: Build, Test & Checks
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - "release*"
+
+env:
+  CONFIT_SOLUTION_FILE: './src/ConfIT.sln'
+  EXAMPLE_SOLUTION_FILE: './example/User.sln'
+  MY_GIT_USER: ${{ github.actor }}
+  MY_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  ConfIT-Build-Test:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'skip')"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Install Dependencies
+        run: dotnet restore ${{ env.CONFIT_SOLUTION_FILE }}
+
+      - name: Build
+        run: dotnet build ${{ env.CONFIT_SOLUTION_FILE }}  --configuration Release --no-restore
+
+  Example-Build-Test:
+    needs: ConfIT-Build-Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Install Dependencies
+        run: dotnet restore ${{ env.EXAMPLE_SOLUTION_FILE }}
+
+      - name: Build
+        run: dotnet build ${{ env.EXAMPLE_SOLUTION_FILE }}  --configuration Release --no-restore
+
+      - name: Run Component Tests
+        working-directory: ./example/User.ComponentTests
+        run: dotnet test
+
+      - name: Run UserApi
+        working-directory: ./example/User.Api
+        run: dotnet run &
+
+      - name: Run JustAnotherService
+        working-directory: ./example/JustAnotherService
+        run: dotnet run &
+
+      - name: Run Integration Tests
+        working-directory: ./example/User.IntegrationTests
+        run: dotnet test
+
+  Release:
+    needs: Example-Build-Test
+    runs-on: ubuntu-latest
+    if: "contains(github.ref, '/tags/release')"
+    steps:
+      - name: Release source code
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ env.MY_GIT_TOKEN }}

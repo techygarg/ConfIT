@@ -1,0 +1,20 @@
+{
+  "ShouldReturnErrorIfUserNotExist": {
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/notexist@test.com"
+      },
+      "response": {
+        "statusCode": 404,
+        "body": {
+          "error": {
+            "status": 404,
+            "code": "NotFound",
+            "description": "User doesn't exist with email : notexist@test.com"
+          }
+        }
+      }
+    }
+  }
+}
