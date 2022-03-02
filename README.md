@@ -1,6 +1,6 @@
 # ConfIT
 
-[![Build](https://github.com/Regional-IT-India/catalyst-integration-test-framework-dotnet/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Regional-IT-India/catalyst-integration-test-framework-dotnet/actions/workflows/build.yml)
+[![Build, Test & Checks](https://github.com/techygarg/ConfIT/actions/workflows/build.yml/badge.svg)](https://github.com/techygarg/ConfIT/actions/workflows/build.yml)
 
 ## Table Of Content
 
