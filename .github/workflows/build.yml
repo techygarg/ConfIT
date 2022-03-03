@@ -5,7 +5,7 @@ on:
     branches:
       - '*'
     tags:
-      - "release*"
+      - "v*"
 
 env:
   CONFIT_SOLUTION_FILE: './src/ConfIT.sln'
