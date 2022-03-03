@@ -72,3 +72,25 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ env.MY_GIT_TOKEN }}
+  
+  Publish-Nuget:
+    needs: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Get Release Version From Tag
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+      
+      - name: Pack
+        working-directory: ./src/ConfIT
+        run: dotnet pack --configuration Release /p:Version=${VERSION} --output .
+      
+      - name: Push To Nuget
+        run: dotnet nuget push ConfIT.${VERSION}.nupkg --api-key ${NUGET_API_TOKEN} --source https://api.nuget.org/v3/index.json
+        env:
+          NUGET_API_TOKEN: ${{ secrets.NUGET_API_KEY }}
