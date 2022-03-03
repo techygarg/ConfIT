@@ -92,6 +92,6 @@ jobs:
       
       - name: Push To Nuget
         working-directory: ./src/ConfIT
-        run: dotnet nuget push ConfIT.${VERSION}.nupkg --api-key ${NUGET_API_TOKEN} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push ConfIT.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_API_TOKEN}
         env:
           NUGET_API_TOKEN: ${{ secrets.NUGET_API_KEY }}
