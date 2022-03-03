@@ -4,10 +4,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfIT", "ConfIT\ConfIT.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{909C3B25-10CF-4916-896D-018D595B58F4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{1BFC505F-EE91-4346-8BD9-BC3C3D14A5D3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfIT.UnitTests", "ConfIT.UnitTests\ConfIT.UnitTests.csproj", "{934910F0-D635-4226-915C-F3937C8500A2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,13 +14,8 @@ Global
 		{142A8513-7C48-491F-A95B-72AC1D8DAC0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{142A8513-7C48-491F-A95B-72AC1D8DAC0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{142A8513-7C48-491F-A95B-72AC1D8DAC0C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{934910F0-D635-4226-915C-F3937C8500A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{934910F0-D635-4226-915C-F3937C8500A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{934910F0-D635-4226-915C-F3937C8500A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{934910F0-D635-4226-915C-F3937C8500A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{142A8513-7C48-491F-A95B-72AC1D8DAC0C} = {909C3B25-10CF-4916-896D-018D595B58F4}
-		{934910F0-D635-4226-915C-F3937C8500A2} = {1BFC505F-EE91-4346-8BD9-BC3C3D14A5D3}
 	EndGlobalSection
 EndGlobal
