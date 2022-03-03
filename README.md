@@ -2,6 +2,8 @@
 
 [![Build, Test & Checks](https://github.com/techygarg/ConfIT/actions/workflows/build.yml/badge.svg)](https://github.com/techygarg/ConfIT/actions/workflows/build.yml)
 
+[![NuGet version (ConfIT)](https://img.shields.io/nuget/v/ConfIT?color=green&logo=nuget&logoColor=green)](https://www.nuget.org/packages/ConfIT/)
+
 ## Table Of Content
 
 - [What](#what)
