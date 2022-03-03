@@ -92,6 +92,6 @@ jobs:
 
       - name: Push To Nuget
         working-directory: ./tools
-        run: ./push_nuget.sh ${VERSION} ${NUGET_API_TOKEN}
+        run: ./push_nuget.sh ${VERSION} "$NUGET_API_TOKEN"
         env:
           NUGET_API_TOKEN: ${{ secrets.NUGET_API_KEY }}
