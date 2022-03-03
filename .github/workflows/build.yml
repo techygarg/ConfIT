@@ -72,7 +72,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ env.MY_GIT_TOKEN }}
-  
+
   Publish-Nuget:
     needs: Release
     runs-on: ubuntu-latest
@@ -85,13 +85,13 @@ jobs:
 
       - name: Get Release Version From Tag
         run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
-      
+
       - name: Pack
         working-directory: ./src/ConfIT
         run: dotnet pack --configuration Release /p:Version=${VERSION} --output .
-      
+
       - name: Push To Nuget
-        working-directory: ./src/ConfIT
-        run: dotnet nuget push ConfIT.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_API_TOKEN}
+        working-directory: ./tools
+        run: ./push_nuget.sh ${VERSION} ${NUGET_API_TOKEN}
         env:
           NUGET_API_TOKEN: ${{ secrets.NUGET_API_KEY }}
