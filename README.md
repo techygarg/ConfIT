@@ -6,10 +6,10 @@
 
 ## Table Of Content
 
-- [What](#what)
-- [Why](#why)
+- [What Is ConfIT](#what-is-confit)
+- [Why ConfIT](#why-confit)
     - [Type Of Tests](#type-of-tests)
-- [How](#how)
+- [How To Consume ConfIT](#how-to-consume-confit)
     - [Code Structure](#code-structure)
     - [DSL](#dsl)
         - [Request](#request)
@@ -19,7 +19,7 @@
         - [Refer For Examples](#refer)
     - [Run](#run)
 
-## What
+## What Is ConfIT
 
 `ConfIT` is a library which is taking shape to optimise the Api integration test process. The library equipped with all
 necessary bells & whistles required to automate several repeated tasks in the test suite. The library add support to
@@ -30,7 +30,7 @@ against the configured server.
 One important point is that `ConfIT` is not a test framework like `xUnit` or `nUnit` but it is a library which can
 integrate with these frameworks. Please refer [Code Structure](#code-structure) section for more details.
 
-## Why
+## Why ConfIt
 
 ### Type Of Tests
 
@@ -67,7 +67,7 @@ Below are the few initial reasons that why this library was created
 * Reduce tech dept and need for continuous refactoring for test cases and code
 * Remove the need to pick different frameworks, language for unit, component and integration tests.
 
-## How
+## How To Consume ConfIT
 
 ### Code Structure
 
