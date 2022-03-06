@@ -17,6 +17,7 @@
         - [Matchers](#matchers)
         - [Mocks](#mocks)
         - [Refer For Examples](#refer)
+    - [Dynamic Test & Data Linking](#dynamic-test--data-linking)
     - [Run](#run)
 
 ## What Is ConfIT
@@ -30,11 +31,13 @@ against the configured server.
 One important point is that `ConfIT` is not a test framework like `xUnit` or `nUnit` but it is a library which can
 integrate with these frameworks. Please refer [Code Structure](#code-structure) section for more details.
 
-## Why ConfIt
+## Why ConfIT
+
+Let's try to understand at what all test layers, ConfIT can be used.
 
 ### Type Of Tests
 
-Let's discuss the below diagram for different test stages in a test pyramid.
+Let's discuss the below diagram for different test stages. 
 
 ![Image](./doc/image/test-process-flow.jpeg)
 
@@ -202,6 +205,28 @@ Tests is defined in declarative way in `json` files. The `DSL` supports below at
             * [Multi Level UseCases](./example/User.IntegrationTests/TestCase/multiLevel.json)
             * [TestSuiteFixture](./example/User.IntegrationTests/TestSuiteFixture.cs) does all basic initial set up,
               which later pass to [UserIntegrationTests](./example/User.IntegrationTests/UserIntegrationTests.cs)
+
+### Dynamic Test & Data Linking 
+DSL support several rich features, but there are few scenarios where we need more customization than what DSL is supporting. Let's take a example,
+
+* #### Use Case:
+  * First Test 
+    * Create a user and response will return newly created user id.
+    * This id is dynamic and could be any integer depends on the state of server/ database etc.
+    * Let' suppose, we get user `{id : 51}`
+  * Second Test
+    * Retrieve newly created user, which we created in first test.
+    * We need to know exact user id received from server, `51` in this case.
+    
+* #### Solution:
+  * Auto save all responses from server on a local folder.
+  * During `Second Test` run, retrieve user id from the saved response from the `First Test` and update accordingly `Second Test` url.
+  * **How**
+    * To handle, such cases, we can have light implementation for these logics. 
+    * Library expose, two interfaces [ITestProcessorFactory](./src/ConfIT/Contract/ITestProcessorFactory.cs) and [ITestProcessor](./src/ConfIT/Contract/ITestProcessor.cs).
+    * Refer 
+      * [TestProcessor](./example/User.IntegrationTests/TestProcessor) folder for code example.
+      * `ShouldReturnUserForGivenId_V1` and `ShouldReturnUserForGivenId_V2` in [users.json](./example/User.IntegrationTests/TestCase/user.json) 
 
 ### Run
 
