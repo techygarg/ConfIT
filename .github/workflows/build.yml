@@ -9,8 +9,6 @@ on:
       - "v*"
 
 env:
-  CONFIT_SOLUTION_FILE: './src/ConfIT.sln'
-  EXAMPLE_SOLUTION_FILE: './example/User.sln'
   MY_GIT_USER: ${{ github.actor }}
   MY_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -26,10 +24,10 @@ jobs:
           dotnet-version: 6.0.x
 
       - name: Install Dependencies
-        run: dotnet restore ${{ env.CONFIT_SOLUTION_FILE }}
+        run: dotnet restore './src/ConfIT.sln'
 
       - name: Build
-        run: dotnet build ${{ env.CONFIT_SOLUTION_FILE }}  --configuration Release --no-restore
+        run: dotnet build './src/ConfIT.sln'  --configuration Release --no-restore
 
   Example-Build-Test:
     needs: ConfIT-Build-Test
@@ -43,10 +41,10 @@ jobs:
           dotnet-version: 6.0.x
 
       - name: Install Dependencies
-        run: dotnet restore ${{ env.EXAMPLE_SOLUTION_FILE }}
+        run: dotnet restore './example/User.sln'
 
       - name: Build
-        run: dotnet build ${{ env.EXAMPLE_SOLUTION_FILE }}  --configuration Release --no-restore
+        run: dotnet build './example/User.sln'  --configuration Release --no-restore
 
       - name: Run Component Tests
         working-directory: ./example/User.ComponentTests
