@@ -18,14 +18,6 @@ namespace ConfIT
             };
         }
 
-        public static TestFilter CreateForTests(string testNames)
-        {
-            return new TestFilter
-            {
-                Tags = testNames.Split(",").ToList(),
-            };
-        }
-
         public static TestFilter CreateForTagsFromEnvVariable(string tagKey)
         {
             List<string> tags = null;
@@ -39,6 +31,14 @@ namespace ConfIT
             };
         }
 
+        public static TestFilter CreateForTests(string testNames)
+        {
+            return new TestFilter
+            {
+                TestNames = testNames.Split(",").ToList(),
+            };
+        }
+        
         public static TestFilter CreateForTestsFromEnvVariable(string testNamesKey)
         {
             List<string> tests = null;
