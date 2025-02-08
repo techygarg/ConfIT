@@ -11,7 +11,7 @@ namespace ConfIT.Server.Dto
         public TestCase Initialize(string requestFolder, string responseFolder)
         {
             Api.Initialize(requestFolder, responseFolder);
-            Mock?.Interactions.ForEach(interaction => interaction.Initialize(requestFolder, responseFolder));
+            Mock?.Interactions?.ForEach(interaction => interaction.Initialize(requestFolder, responseFolder));
             return this;
         }
     }

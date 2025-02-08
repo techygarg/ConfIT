@@ -10,13 +10,17 @@ namespace ConfIT.Util
         public static IEnumerable<object[]> GetTestsForAFile(string testFolderName, string fileName)
         {
             var fileContent = JObject.Parse(File.ReadAllText(Path.GetFullPath($"{testFolderName}/" + fileName)));
+            if (fileContent == null) yield break;
 
-            return fileContent.Properties().Select(testCaseScenario =>
-                new object[]
+            foreach (var testCaseScenario in fileContent.Properties())
+            {
+                if (testCaseScenario == null) continue;
+                yield return new object[]
                 {
                     testCaseScenario.Name,
                     testCaseScenario.Value
-                }).ToList();
+                };
+            }
         }
 
         public static IEnumerable<object[]> GetTestsForAFolder(string testFolderName)
@@ -27,6 +31,8 @@ namespace ConfIT.Util
             foreach (var filePath in filesPath)
             {
                 var fileContent = JObject.Parse(File.ReadAllText(filePath));
+                if (fileContent == null) continue;
+
                 result.AddRange(fileContent.Properties().Select(testCaseScenario =>
                     new object[]
                     {

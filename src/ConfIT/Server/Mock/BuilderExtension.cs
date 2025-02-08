@@ -6,7 +6,6 @@ using WireMock.ResponseBuilders;
 
 namespace ConfIT.Server.Mock
 {
-
     public static class BuilderExtension
     {
         public static IRequestBuilder WithBodyIfProvided(this IRequestBuilder builder, JToken body)
@@ -19,7 +18,7 @@ namespace ConfIT.Server.Mock
 
         public static IRequestBuilder WithQueryParams(this IRequestBuilder builder, Dictionary<string, string> queryParams)
         {
-            if (queryParams is { Count: > 0 })
+            if (queryParams != null && queryParams.Count > 0)
                 foreach (var (key, value) in queryParams)
                     builder.WithParam(key.Trim(), new ExactMatcher(value.Trim()));
 
@@ -28,7 +27,7 @@ namespace ConfIT.Server.Mock
 
         public static IRequestBuilder WithHeaders(this IRequestBuilder builder, Dictionary<string, string> headers)
         {
-            if (headers is { Count: > 0 })
+            if (headers != null && headers.Count > 0)
                 foreach (var (key, value) in headers)
                     builder.WithHeader(key.Trim(), new ExactMatcher(value.Trim()));
 
@@ -45,7 +44,7 @@ namespace ConfIT.Server.Mock
         
         public static IResponseBuilder WithHeadersIfProvided(this IResponseBuilder builder, Dictionary<string, string> headers)
         {
-            if (headers is { Count: > 0 })
+            if (headers != null && headers.Count > 0)
                 foreach (var (key, value) in headers)
                     builder.WithHeader(key.Trim(), new string(value.Trim()));
 

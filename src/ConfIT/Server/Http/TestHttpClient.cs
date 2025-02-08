@@ -9,19 +9,21 @@ using Newtonsoft.Json.Linq;
 
 namespace ConfIT.Server.Http
 {
-    public class TestHttpClient
+    public class TestHttpClient : IDisposable
     {
         private readonly HttpClient _client;
         private readonly IAuthTokenProvider _tokenProvider;
 
         public TestHttpClient(HttpClient client, IAuthTokenProvider tokenProvider = default)
         {
-            _client = client;
+            _client = client ?? throw new ArgumentNullException(nameof(client));
             _tokenProvider = tokenProvider;
         }
 
         public async Task<HttpResponseMessage> Execute(TestApi testApi)
         {
+            if (testApi == null) throw new ArgumentNullException(nameof(testApi));
+
             AddRequestHeaders(testApi.Request.Headers);
             return testApi.Request.Method.ToUpper() switch
             {
@@ -35,12 +37,12 @@ namespace ConfIT.Server.Http
         }
 
         private static StringContent RequestBody(JToken body) =>
-            new(body.ToString(), Encoding.UTF8, "application/json");
+            new(body?.ToString() ?? string.Empty, Encoding.UTF8, "application/json");
 
         private void AddRequestHeaders(Dictionary<string, string> headers)
         {
             _client.DefaultRequestHeaders.Clear();
-            if (headers is { Count: > 0 })
+            if (headers != null && headers.Count > 0)
                 foreach (var (name, value) in headers)
                     _client.DefaultRequestHeaders.Add(name, value);
 
@@ -53,6 +55,8 @@ namespace ConfIT.Server.Http
 
         public static TestHttpClient Create(string serverUrl, IAuthTokenProvider authTokenProvider)
         {
+            if (string.IsNullOrWhiteSpace(serverUrl)) throw new ArgumentException("Server URL cannot be null or empty", nameof(serverUrl));
+
             return new TestHttpClient(
                 new HttpClient { BaseAddress = new Uri(serverUrl) },
                 authTokenProvider);

@@ -23,11 +23,13 @@ namespace ConfIT.Server.Mock
 
         public void Initialize(TestMock mock)
         {
-            if (mock == null || mock.Interactions?.Count == 0)
+            if (mock?.Interactions == null || mock.Interactions.Count == 0)
                 return;
 
             foreach (var interaction in mock.Interactions)
             {
+                if (interaction?.Request == null || interaction.Response == null) continue;
+
                 switch (interaction.Request.Method.ToUpper())
                 {
                     case "GET":
@@ -38,11 +40,10 @@ namespace ConfIT.Server.Mock
                         SetUpMock(interaction);
                         break;
                     default:
-                        throw new Exception($"{interaction.Request.Method} not supported yet. Pls add required methods support here.");
+                        throw new Exception($"{interaction.Request.Method} not supported yet. Please add required methods support here.");
                 }
             }
         }
-
 
         private void SetUpMock(MockInteraction interaction)
         {

@@ -14,7 +14,7 @@ namespace ConfIT
         {
             return new TestFilter
             {
-                Tags = tags.Split(",").ToList(),
+                Tags = tags?.Split(",").ToList() ?? new List<string>(),
             };
         }
 
@@ -23,11 +23,11 @@ namespace ConfIT
             List<string> tags = null;
 
             if (!tagKey.IsNullOrWhiteSpace())
-                tags = GetEnvironmentVariable(tagKey)?.Split(",").ToList();
+                tags = GetEnvironmentVariable(tagKey)?.Split(",").ToList() ?? new List<string>();
 
             return new TestFilter
             {
-                Tags = tags
+                Tags = tags ?? new List<string>()
             };
         }
 
@@ -35,7 +35,7 @@ namespace ConfIT
         {
             return new TestFilter
             {
-                TestNames = testNames.Split(",").ToList(),
+                TestNames = testNames?.Split(",").ToList() ?? new List<string>(),
             };
         }
         
@@ -44,11 +44,11 @@ namespace ConfIT
             List<string> tests = null;
 
             if (!testNamesKey.IsNullOrWhiteSpace())
-                tests = GetEnvironmentVariable(testNamesKey)?.Split(",").ToList();
+                tests = GetEnvironmentVariable(testNamesKey)?.Split(",").ToList() ?? new List<string>();
 
             return new TestFilter
             {
-                TestNames = tests
+                TestNames = tests ?? new List<string>()
             };
         }
     }

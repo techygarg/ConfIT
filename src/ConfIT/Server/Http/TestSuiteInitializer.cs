@@ -22,7 +22,6 @@ namespace ConfIT.Server.Http
             InitializeHttpClient();
         }
 
-
         private void InitializeHttpClient() =>
             TestHttpClient = new TestHttpClient(TestServer.CreateClient());
 
@@ -48,8 +47,8 @@ namespace ConfIT.Server.Http
 
         public void Dispose()
         {
-            TestServer.Dispose();
-            TestHttpClient.Dispose();
+            TestServer?.Dispose();
+            TestHttpClient?.Dispose();
         }
     }
 }
