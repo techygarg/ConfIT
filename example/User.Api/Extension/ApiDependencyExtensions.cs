@@ -13,7 +13,7 @@ namespace User.Api.Extension
         {
             return services
                 .AddHttpContextAccessor()
-                .AddMediatR(typeof(Startup))
+                .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly))
                 .AddScoped<IJustAnotherServiceProvider, JustAnotherServiceProvider>();
         }
     }
