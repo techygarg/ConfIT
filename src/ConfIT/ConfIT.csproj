@@ -11,9 +11,6 @@
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
         <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.33" />
     </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="5.0.17" />
-    </ItemGroup>
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="6.12.1" />
         <PackageReference Include="JsonDiffPatch.Net" Version="2.3.0" />
