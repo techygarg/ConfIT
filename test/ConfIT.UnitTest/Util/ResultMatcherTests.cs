@@ -7,7 +7,7 @@ namespace ConfIT.UnitTest.Util
     public class ResultMatcherTests
     {
         [Fact]
-        public void ShouldPassForIdenticalJson()
+        public void MatchResponseBody_ShouldPassForIdenticalJson()
         {
             // Given
             var actual = JToken.Parse("{'name': 'test', 'value': 123}");
@@ -22,7 +22,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldMatchWhenPatternMatchesFieldValue()
+        public void MatchResponseBody_ShouldMatchWhenPatternMatchesFieldValue()
         {
             // Given
             var actual = JToken.Parse("{'id': 'abc-123', 'name': 'test'}");
@@ -41,7 +41,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldIgnoreSpecifiedFields()
+        public void MatchResponseBody_ShouldIgnoreSpecifiedFields()
         {
             // Given
             var actual = JToken.Parse("{'id': '123', 'name': 'test', 'timestamp': '2023-01-01'}");
@@ -59,7 +59,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldHandleNestedJsonStructures()
+        public void MatchResponseBody_ShouldHandleNestedJsonStructures()
         {
             // Given
             var actual = JToken.Parse("{'user': {'id': '123', 'details': {'age': 30}}}");
@@ -77,7 +77,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldRemoveFieldsWithSpecificParentPath()
+        public void MatchResponseBody_ShouldRemoveFieldsWithSpecificParentPath()
         {
             // Given
             var actual = JToken.Parse("{'data': {'id': '123'}, 'metadata': {'id': '456'}}");
@@ -95,7 +95,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldHandleMultipleParentLevels()
+        public void MatchResponseBody_ShouldHandleMultipleParentLevels()
         {
             // Given
             var actual = JToken.Parse("{'level1': {'level2': {'level3': {'id': '123'}}}}");
@@ -113,7 +113,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldHandleNullActualResponse()
+        public void MatchResponseBody_ShouldHandleNullActualResponse()
         {
             // Given
             JToken actual = null;
@@ -128,7 +128,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldHandleNullExpectedResponse()
+        public void MatchResponseBody_ShouldHandleNullExpectedResponse()
         {
             // Given
             var actual = JToken.Parse("{}");
@@ -143,7 +143,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldHandleNullMatcher()
+        public void MatchResponseBody_ShouldHandleNullMatcher()
         {
             // Given
             var actual = JToken.Parse("{'id': '123', 'name': 'test'}");
@@ -158,7 +158,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldHandleEmptyPatternDictionary()
+        public void MatchResponseBody_ShouldHandleEmptyPatternDictionary()
         {
             // Given
             var actual = JToken.Parse("{'id': '123', 'name': 'test'}");
@@ -176,7 +176,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldHandleEmptyIgnoreList()
+        public void MatchResponseBody_ShouldHandleEmptyIgnoreList()
         {
             // Given
             var actual = JToken.Parse("{'id': '123', 'name': 'test'}");
@@ -194,7 +194,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldHandleInvalidRegexPattern()
+        public void MatchResponseBody_ShouldHandleInvalidRegexPattern()
         {
             // Given
             var actual = JToken.Parse("{'id': '123', 'name': 'test'}");
@@ -212,7 +212,7 @@ namespace ConfIT.UnitTest.Util
         }
 
         [Fact]
-        public void ShouldHandleAdditionalFieldsInExpected()
+        public void MatchResponseBody_ShouldHandleAdditionalFieldsInExpected()
         {
             // Given
             var actual = JToken.Parse("{'name': 'John', 'age': 30}");
