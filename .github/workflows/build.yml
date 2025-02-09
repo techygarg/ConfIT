@@ -32,6 +32,9 @@ jobs:
       - name: Build
         run: dotnet build './src/ConfIT.sln'  --configuration Release --no-restore
 
+      - name: Run ConfIT Unit Tests
+        run: dotnet test './test/ConfIT.UnitTest/ConfIT.UnitTest.csproj' --configuration Release
+
   Example-Build-Test:
     needs: ConfIT-Build-Test
     runs-on: ubuntu-latest
@@ -48,9 +51,6 @@ jobs:
 
       - name: Build
         run: dotnet build './example/User.sln'  --configuration Release --no-restore
-
-      - name: Run ConfIT Unit Tests
-        run: dotnet test './test/ConfIT.UnitTest/ConfIT.UnitTest.csproj' --configuration Release
 
       - name: Run Component Tests
         working-directory: ./example/User.ComponentTests
