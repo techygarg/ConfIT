@@ -49,6 +49,9 @@ jobs:
       - name: Build
         run: dotnet build './example/User.sln'  --configuration Release --no-restore
 
+      - name: Run ConfIT Unit Tests
+        run: dotnet test './test/ConfIT.UnitTest/ConfIT.UnitTest.csproj' --configuration Release
+
       - name: Run Component Tests
         working-directory: ./example/User.ComponentTests
         run: dotnet test
