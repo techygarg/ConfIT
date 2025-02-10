@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ConfIT.Contract;
 using ConfIT.Server.Dto;
 using ConfIT.Server.Http;
+using FluentAssertions;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json.Linq;
@@ -47,8 +48,8 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            VerifyHttpCall(HttpMethod.Get, DefaultPath, Times.Once());
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            await VerifyHttpCallAsync(HttpMethod.Get, DefaultPath, Times.Once());
         }
 
         [Fact]
@@ -62,8 +63,8 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            VerifyHttpCall(HttpMethod.Post, DefaultPath, Times.Once());
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+            await VerifyHttpCallAsync(HttpMethod.Post, DefaultPath, Times.Once());
         }
 
         [Fact]
@@ -77,8 +78,8 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            VerifyHttpCall(HttpMethod.Put, DefaultPath, Times.Once());
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            await VerifyHttpCallAsync(HttpMethod.Put, DefaultPath, Times.Once());
         }
 
         [Fact]
@@ -92,8 +93,8 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            VerifyHttpCall(HttpMethod.Patch, DefaultPath, Times.Once());
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            await VerifyHttpCallAsync(HttpMethod.Patch, DefaultPath, Times.Once());
         }
 
         [Fact]
@@ -107,8 +108,8 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            VerifyHttpCall(HttpMethod.Delete, DefaultPath, Times.Once());
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+            await VerifyHttpCallAsync(HttpMethod.Delete, DefaultPath, Times.Once());
         }
     }
 
@@ -126,8 +127,8 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            VerifyHttpCallWithHeaders(headers);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            await VerifyHttpCallWithHeadersAsync(headers);
         }
 
         [Fact]
@@ -142,8 +143,8 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            VerifyAuthorizationHeader(DefaultAuthToken);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            await VerifyAuthorizationHeaderAsync(DefaultAuthToken);
         }
 
         [Fact]
@@ -163,8 +164,8 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            VerifyHttpCallWithHeaders(headers);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            await VerifyHttpCallWithHeadersAsync(headers);
         }
 
         [Fact]
@@ -178,8 +179,9 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            VerifyHttpCall(HttpMethod.Get, DefaultPath, Times.Once());
+            response.Should().NotBeNull();
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            await VerifyHttpCallAsync(HttpMethod.Get, DefaultPath, Times.Once());
         }
     }
 
@@ -196,8 +198,8 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            VerifyHttpCallToBaseUrl();
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            await VerifyHttpCallToBaseUrlAsync();
         }
 
         [Fact]
@@ -211,8 +213,8 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            VerifyEmptyRequestContent();
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            await VerifyEmptyRequestContentAsync();
         }
 
         [Fact]
@@ -226,8 +228,8 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            VerifyHttpCall(HttpMethod.Get, DefaultPath, Times.Once());
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            await VerifyHttpCallAsync(HttpMethod.Get, DefaultPath, Times.Once());
         }
 
         [Fact]
@@ -241,7 +243,7 @@ public class HttpClientTests
             var response = await _testHttpClient.Execute(testApi);
 
             // Assert
-            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         }
     }
 
@@ -253,35 +255,59 @@ public class HttpClientTests
         [InlineData(" ")]
         public void Create_WithInvalidServerUrl_ShouldThrowArgumentException(string serverUrl)
         {
-            Assert.Throws<ArgumentException>(() => 
-                TestHttpClient.Create(serverUrl, _mockAuthTokenProvider.Object));
+            // Act
+            var action = () => TestHttpClient.Create(serverUrl, _mockAuthTokenProvider.Object);
+
+            // Assert
+            action.Should().Throw<ArgumentException>()
+                .WithMessage("Server URL cannot be null or empty*")
+                .WithParameterName(nameof(serverUrl));
         }
 
         [Fact]
         public void Create_WithValidServerUrl_ShouldReturnInstance()
         {
+            // Act
             var client = TestHttpClient.Create(BaseUrl, _mockAuthTokenProvider.Object);
-            Assert.NotNull(client);
+
+            // Assert
+            client.Should().NotBeNull();
         }
 
         [Fact]
         public void Constructor_WithNullHttpClient_ShouldThrowArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new TestHttpClient(null));
+            // Act
+            var action = () => new TestHttpClient(null);
+
+            // Assert
+            action.Should().Throw<ArgumentNullException>()
+                .WithParameterName("client");
         }
 
         [Fact]
         public async Task Execute_WithNullTestApi_ShouldThrowArgumentNullException()
         {
-            await Assert.ThrowsAsync<ArgumentNullException>(() => 
-                _testHttpClient.Execute(null));
+            // Act
+            var action = () => _testHttpClient.Execute(null);
+
+            // Assert
+            await action.Should().ThrowAsync<ArgumentNullException>()
+                .WithParameterName("testApi");
         }
 
         [Fact]
         public async Task Execute_WithUnsupportedMethod_ShouldThrowException()
         {
+            // Arrange
             var testApi = CreateTestApi("HEAD");
-            await Assert.ThrowsAsync<Exception>(() => _testHttpClient.Execute(testApi));
+
+            // Act
+            var action = () => _testHttpClient.Execute(testApi);
+
+            // Assert
+            await action.Should().ThrowAsync<Exception>()
+                .WithMessage("HEAD not supported. Please add.");
         }
     }
 
@@ -290,13 +316,16 @@ public class HttpClientTests
         [Fact]
         public void Dispose_ShouldDisposeHttpClient()
         {
+            // Arrange
             var handler = new DisposeTrackingHandler();
             var client = new HttpClient(handler);
             var testHttpClient = new TestHttpClient(client);
 
+            // Act
             testHttpClient.Dispose();
 
-            Assert.True(handler.WasDisposed);
+            // Assert
+            handler.WasDisposed.Should().BeTrue();
         }
     }
 
@@ -324,8 +353,8 @@ public class HttpClientTests
     private static TestApi CreateTestApi(
         string method, 
         string path = DefaultPath, 
-        JToken body = null, 
-        Dictionary<string, string> headers = null)
+        JToken? body = null, 
+        Dictionary<string, string>? headers = null)
     {
         return new TestApi
         {
@@ -350,7 +379,7 @@ public class HttpClientTests
             .ReturnsAsync(new HttpResponseMessage(statusCode));
     }
 
-    private void VerifyHttpCall(HttpMethod method, string path, Times times)
+    private Task VerifyHttpCallAsync(HttpMethod method, string path, Times times)
     {
         _mockHttpMessageHandler
             .Protected()
@@ -361,9 +390,11 @@ public class HttpClientTests
                     req.RequestUri != null &&
                     req.RequestUri.ToString() == $"{BaseUrl}{path}"),
                 ItExpr.IsAny<CancellationToken>());
+
+        return Task.CompletedTask;
     }
 
-    private void VerifyHttpCallWithHeaders(Dictionary<string, string> headers)
+    private Task VerifyHttpCallWithHeadersAsync(Dictionary<string, string> headers)
     {
         _mockHttpMessageHandler.Protected()
             .Verify("SendAsync", Times.Once(), ItExpr.Is<HttpRequestMessage>(req =>
@@ -371,18 +402,22 @@ public class HttpClientTests
                     req.Headers.Contains(header.Key) &&
                     req.Headers.GetValues(header.Key).First() == header.Value)),
                 ItExpr.IsAny<CancellationToken>());
+
+        return Task.CompletedTask;
     }
 
-    private void VerifyAuthorizationHeader(string expectedToken)
+    private Task VerifyAuthorizationHeaderAsync(string expectedToken)
     {
         _mockHttpMessageHandler.Protected()
             .Verify("SendAsync", Times.Once(), ItExpr.Is<HttpRequestMessage>(req =>
                 req.Headers.Authorization != null &&
                 req.Headers.Authorization.ToString() == expectedToken),
                 ItExpr.IsAny<CancellationToken>());
+
+        return Task.CompletedTask;
     }
 
-    private void VerifyHttpCallToBaseUrl()
+    private Task VerifyHttpCallToBaseUrlAsync()
     {
         _mockHttpMessageHandler.Protected()
             .Verify("SendAsync",
@@ -392,14 +427,18 @@ public class HttpClientTests
                     req.RequestUri != null &&
                     req.RequestUri.ToString() == $"{BaseUrl}/"),
                 ItExpr.IsAny<CancellationToken>());
+
+        return Task.CompletedTask;
     }
 
-    private void VerifyEmptyRequestContent()
+    private Task VerifyEmptyRequestContentAsync()
     {
         _mockHttpMessageHandler.Protected()
             .Verify("SendAsync", Times.Once(), ItExpr.Is<HttpRequestMessage>(req =>
                 req.Content != null && 
                 req.Content.ReadAsStringAsync().Result == string.Empty),
                 ItExpr.IsAny<CancellationToken>());
+
+        return Task.CompletedTask;
     }
 }
