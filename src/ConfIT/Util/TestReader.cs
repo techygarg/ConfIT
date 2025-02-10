@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,8 +27,8 @@ namespace ConfIT.Util
         public static IEnumerable<object[]> GetTestsForAFolder(string testFolderName)
         {
             var result = new List<object[]>();
-            var filesPath = Directory.GetFiles(Path.GetFullPath(testFolderName));
-
+            var filesPath = Directory.GetFiles(Path.GetFullPath(testFolderName))
+                .Where(f => Path.GetExtension(f).Equals(".json", StringComparison.OrdinalIgnoreCase));
             foreach (var filePath in filesPath)
             {
                 var fileContent = JObject.Parse(File.ReadAllText(filePath));
