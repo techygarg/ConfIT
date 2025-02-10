@@ -1,9 +1,3 @@
-using System.Text;
-using ConfIT.Util;
-using FluentAssertions;
-using Newtonsoft.Json.Linq;
-using Xunit;
-
 namespace ConfIT.UnitTest.Util
 {
     public class TestReaderTests

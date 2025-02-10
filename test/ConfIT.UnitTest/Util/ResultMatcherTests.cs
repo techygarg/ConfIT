@@ -1,7 +1,3 @@
-using ConfIT.Server.Dto;
-using ConfIT.Util;
-using Xunit.Sdk;
-
 namespace ConfIT.UnitTest.Util
 {
     public class ResultMatcherTests

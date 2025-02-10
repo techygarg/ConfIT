@@ -1,16 +1,3 @@
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using ConfIT.Contract;
-using ConfIT.Server.Dto;
-using ConfIT.Server.Http;
-using FluentAssertions;
-using Moq;
-using Moq.Protected;
-using Newtonsoft.Json.Linq;
-using Xunit;
-
 namespace ConfIT.UnitTest.Server.Http;
 
 public class HttpClientTests
