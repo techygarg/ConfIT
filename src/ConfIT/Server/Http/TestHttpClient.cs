@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using ConfIT.Contract;
+using ConfIT.Extension;
 using ConfIT.Server.Dto;
 using Newtonsoft.Json.Linq;
 
@@ -42,11 +43,12 @@ namespace ConfIT.Server.Http
         private void AddRequestHeaders(Dictionary<string, string> headers)
         {
             _client.DefaultRequestHeaders.Clear();
-            if (headers != null && headers.Count > 0)
+            if (headers is { Count: > 0 })
                 foreach (var (name, value) in headers)
-                    _client.DefaultRequestHeaders.Add(name, value);
+                    if (!string.IsNullOrEmpty(value))
+                        _client.DefaultRequestHeaders.Add(name, value);
 
-            if (_tokenProvider != null)
+            if (_tokenProvider != null && !_tokenProvider.Token().IsNullOrWhiteSpace())
                 _client.DefaultRequestHeaders.Add("Authorization", _tokenProvider.Token());
         }
 
@@ -55,7 +57,8 @@ namespace ConfIT.Server.Http
 
         public static TestHttpClient Create(string serverUrl, IAuthTokenProvider authTokenProvider)
         {
-            if (string.IsNullOrWhiteSpace(serverUrl)) throw new ArgumentException("Server URL cannot be null or empty", nameof(serverUrl));
+            if (string.IsNullOrWhiteSpace(serverUrl))
+                throw new ArgumentException("Server URL cannot be null or empty", nameof(serverUrl));
 
             return new TestHttpClient(
                 new HttpClient { BaseAddress = new Uri(serverUrl) },
