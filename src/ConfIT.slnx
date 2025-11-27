@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="ConfIT/ConfIT.csproj" />
+  </Folder>
+  <Project Path="../test/ConfIT.UnitTest/ConfIT.UnitTest.csproj" />
+</Solution>
