@@ -20,17 +20,17 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'skip')"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 10.0.x
 
       - name: Install Dependencies
-        run: dotnet restore './src/ConfIT.sln'
+        run: dotnet restore './src/ConfIT.slnx'
 
       - name: Build
-        run: dotnet build './src/ConfIT.sln'  --configuration Release --no-restore
+        run: dotnet build './src/ConfIT.slnx'  --configuration Release --no-restore
 
       - name: Run ConfIT Unit Tests
         run: dotnet test './test/ConfIT.UnitTest/ConfIT.UnitTest.csproj' --configuration Release
@@ -40,9 +40,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
@@ -82,11 +82,11 @@ jobs:
     needs: Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 10.0.x
 
       - name: Get Release Version From Tag
         run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
