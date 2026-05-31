@@ -1,5 +1,4 @@
 using System.IO;
-using ConfIT.Extension;
 using static System.IO.Path;
 
 namespace ConfIT.Server.Dto;
@@ -13,7 +12,7 @@ public abstract class BaseRequestResponse
 
     public virtual void Initialize(string folder)
     {
-        if (BodyFromFile.IsNullOrWhiteSpace()) return;
+        if (string.IsNullOrWhiteSpace(BodyFromFile)) return;
 
         var payload = JToken.Parse(File.ReadAllText(GetFullPath($"{folder}/{BodyFromFile}")));
         ApplyOverride(payload);

@@ -1,4 +1,3 @@
-using ConfIT.Extension;
 using static System.Environment;
 
 namespace ConfIT;
@@ -15,7 +14,7 @@ public class TestFilter
 
     public static TestFilter CreateForTagsFromEnvVariable(string tagKey) => new()
     {
-        Tags = tagKey.IsNullOrWhiteSpace() ? []
+        Tags = string.IsNullOrWhiteSpace(tagKey) ? []
             : GetEnvironmentVariable(tagKey)?.Split(',').ToList() ?? []
     };
 
@@ -26,7 +25,7 @@ public class TestFilter
 
     public static TestFilter CreateForTestsFromEnvVariable(string testNamesKey) => new()
     {
-        TestNames = testNamesKey.IsNullOrWhiteSpace() ? []
+        TestNames = string.IsNullOrWhiteSpace(testNamesKey) ? []
             : GetEnvironmentVariable(testNamesKey)?.Split(',').ToList() ?? []
     };
 }

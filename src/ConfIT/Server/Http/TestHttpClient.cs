@@ -2,7 +2,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using ConfIT.Contract;
-using ConfIT.Extension;
 using ConfIT.Server.Dto;
 
 namespace ConfIT.Server.Http;
@@ -47,7 +46,7 @@ public class TestHttpClient : IDisposable
                     _client.DefaultRequestHeaders.Add(name, value);
 
         var token = _tokenProvider?.Token();
-        if (!token.IsNullOrWhiteSpace())
+        if (!string.IsNullOrWhiteSpace(token))
             _client.DefaultRequestHeaders.Add("Authorization", token);
     }
 

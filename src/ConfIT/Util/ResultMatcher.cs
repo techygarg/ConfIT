@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using ConfIT.Extension;
 using ConfIT.Server.Dto;
 using FluentAssertions;
 using JsonDiffPatchDotNet;
@@ -65,7 +64,7 @@ public static class ResultMatcher
         foreach (var el in container.Children())
         {
             if (el is JProperty p && key.Equals(p.Name) && IsParentMatching(p, parentsKey))
-                if (regex.IsNullOrWhiteSpace() || Regex.IsMatch(p.Value.ToString(), regex))
+                if (string.IsNullOrWhiteSpace(regex) || Regex.IsMatch(p.Value.ToString(), regex))
                     removeList.Add(el);
 
             el.RemoveField(key, parentsKey, regex);
@@ -76,7 +75,7 @@ public static class ResultMatcher
     }
 
     private static bool IsParentMatching(JProperty prop, string parentsKey) =>
-        parentsKey.IsNullOrWhiteSpace() || prop.Parent.Path.Equals(parentsKey);
+        string.IsNullOrWhiteSpace(parentsKey) || prop.Parent.Path.Equals(parentsKey);
 
     private static (string key, string parents) ExtractKeyAndParentPath(string keyWithParents)
     {

@@ -39,7 +39,7 @@ public abstract class BaseTest : IDisposable
         TestOutputLogger = testOutputLogger;
         Filter = filter;
 
-        if (!Config.MockServerUrl.IsNullOrWhiteSpace())
+        if (!string.IsNullOrWhiteSpace(Config.MockServerUrl))
             HttpMockServer = new HttpMockServer(Config.MockServerUrl, Config.EnableMockServerLogs);
     }
 
