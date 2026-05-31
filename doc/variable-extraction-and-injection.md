@@ -12,6 +12,8 @@ When testing multi-step API flows, later tests often need data produced by earli
 
 The variable store is shared across all tests in a suite run. Tests within a file execute in definition order, so extraction from an earlier test is always available to a later one.
 
+**Variable names are case-sensitive.** `{{userId}}` and `{{UserId}}` are distinct variables. Whatever name you define in `extract`, use exactly the same casing when injecting. The convention across ConfIT examples is `camelCase` — `userId`, `userEmail`, `requestId`.
+
 ---
 
 ## Extracting Values
