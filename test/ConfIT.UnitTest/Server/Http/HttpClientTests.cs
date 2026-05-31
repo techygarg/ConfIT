@@ -293,8 +293,8 @@ public class HttpClientTests
             var action = () => _testHttpClient.Execute(testApi);
 
             // Assert
-            await action.Should().ThrowAsync<Exception>()
-                .WithMessage("HEAD not supported. Please add.");
+            await action.Should().ThrowAsync<NotSupportedException>()
+                .WithMessage("HTTP method 'HEAD' is not supported.");
         }
     }
 

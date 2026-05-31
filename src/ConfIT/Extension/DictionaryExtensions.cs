@@ -1,17 +1,7 @@
-using System.Collections.Generic;
+namespace ConfIT.Extension;
 
-namespace ConfIT.Extension
+public static class DictionaryExtensions
 {
-    public static class DictionaryExtensions
-    {
-        public static string DictionaryToString(this Dictionary<string, string> dictionary)
-        {
-            var output = "{";
-            foreach (var (key, value) in dictionary)
-                output += key + " : " + value + ", ";
-
-            return output.TrimEnd(',', ' ') + "}";
-        }
-       
-    }
+    public static string DictionaryToString(this Dictionary<string, string> dictionary) =>
+        "{" + string.Join(", ", dictionary.Select(kvp => $"{kvp.Key} : {kvp.Value}")) + "}";
 }

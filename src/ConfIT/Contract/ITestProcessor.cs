@@ -1,11 +1,9 @@
 using ConfIT.Server.Dto;
-using Newtonsoft.Json.Linq;
 
-namespace ConfIT.Contract
+namespace ConfIT.Contract;
+
+public interface ITestProcessor
 {
-    public interface ITestProcessor
-    {
-        void Before(TestApi testApi);
-        void After(TestApi testApi, JToken actualResponse);
-    }
+    void Before(TestApi testApi);
+    void After(TestApi testApi, JToken actualResponse);
 }

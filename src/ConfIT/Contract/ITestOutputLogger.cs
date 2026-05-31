@@ -1,7 +1,6 @@
-namespace ConfIT.Contract
+namespace ConfIT.Contract;
+
+public interface ITestOutputLogger
 {
-    public interface ITestOutputLogger
-    {
-        void Log(string msg);
-    }
+    void Log(string msg);
 }

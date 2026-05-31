@@ -1,7 +1,6 @@
-namespace ConfIT.Contract
+namespace ConfIT.Contract;
+
+public interface IAuthTokenProvider
 {
-    public interface IAuthTokenProvider
-    {
-        string Token();
-    }
+    string Token();
 }

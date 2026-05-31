@@ -1,6 +1,3 @@
-using Newtonsoft.Json.Linq;
+namespace ConfIT;
 
-namespace ConfIT
-{
-    public delegate string? SemanticMatcherFunc(JToken value, string? parameter);
-}
+public delegate string? SemanticMatcherFunc(JToken value, string? parameter);
