@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace ConfIT
 {
     public class SuiteConfig
@@ -8,5 +10,6 @@ namespace ConfIT
         public string ApiResponseFolder { get; set; } = string.Empty;
         public string RequestBodyFolder { get; set; } = string.Empty;
         public string ResponseBodyFolder { get; set; } = string.Empty;
+        public Dictionary<string, SemanticMatcherFunc> CustomMatchers { get; set; } = new();
     }
 }

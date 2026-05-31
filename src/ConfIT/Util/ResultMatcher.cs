@@ -11,9 +11,12 @@ namespace ConfIT.Util
 {
     public static class ResultMatcher
     {
-        public static void MatchResponseBody(JToken actualResponse, JToken expectedResponse, Matcher matcher)
+        public static void MatchResponseBody(JToken actualResponse, JToken expectedResponse, Matcher matcher,
+            IReadOnlyDictionary<string, SemanticMatcherFunc>? customMatchers = null)
         {
-            var response = ApplyMatcher(actualResponse.DeepClone(), matcher);
+            var actual = actualResponse.DeepClone();
+            SemanticMatcher.Apply(actual, expectedResponse, matcher?.Semantic, customMatchers);
+            var response = ApplyMatcher(actual, matcher);
             expectedResponse = ApplyIgnoreMatcher(expectedResponse, matcher?.Ignore);
             var diff = new JsonDiffPatch().Diff(response, expectedResponse);
             diff?.ToString().Should().BeNullOrWhiteSpace();

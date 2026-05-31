@@ -1,5 +1,3 @@
-using ConfIT.Variable;
-
 namespace ConfIT.UnitTest.Variable
 {
     public class VariableExtractorTests

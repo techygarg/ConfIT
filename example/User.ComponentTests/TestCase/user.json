@@ -90,5 +90,28 @@
         }
       }
     }
+  },
+
+  "ShouldValidateUserFieldsWithSemanticMatchers": {
+    "tags": ["user", "semantic"],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/test@test.com"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "name": "test",
+          "age": 10
+        },
+        "matcher": {
+          "semantic": {
+            "id": "greaterThan(0)",
+            "email": "isEmail"
+          }
+        }
+      }
+    }
   }
 }

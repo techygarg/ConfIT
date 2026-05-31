@@ -37,6 +37,9 @@ example/
 
 ## Build and Test Commands
 
+**Always use `make` targets for building and testing — do not use `dotnet build` / `dotnet test` directly.**
+The Makefile handles multi-target builds, service lifecycle, and DB resets correctly. Direct `dotnet` commands below are for reference only.
+
 **Makefile — primary local workflow:**
 ```bash
 make              # build + unit + component tests (default)
@@ -295,8 +298,9 @@ When adding matchers: `ResultMatcher.cs` is the single point of change for match
 The `example/` projects are not just demos — they run in CI as regression gates for the library at the component and integration level. When making any library change, the examples must stay current:
 
 **When adding a new DSL feature** (new JSON/YAML fields, new matcher types, extraction, etc.):
-- Add at least one test case in `example/User.IntegrationTests/TestCase/` demonstrating the feature
-- If the feature involves mocking, add a case in `example/User.ComponentTests/TestCase/` too
+- Add test cases in **both** `example/User.IntegrationTests/TestCase/` and `example/User.ComponentTests/TestCase/`. Component + integration coverage together is the primary confidence gate beyond unit tests — not optional.
+- New JSON files in `User.ComponentTests/TestCase/` must be registered in `User.ComponentTests.csproj` under `<None Update>` with `<CopyToOutputDirectory>Always</CopyToOutputDirectory>` or they will not be discovered at runtime.
+- Component tests run JSON files alphabetically via `GetTestCasesForFolder`. Tests that depend on prior state (e.g., a created user) must live in the same file as their prerequisite — not a separate file.
 
 **When changing existing behaviour** (response matching, request execution, filter logic):
 - Review existing example test cases — update any that relied on the old behaviour

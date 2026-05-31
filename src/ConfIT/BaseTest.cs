@@ -12,6 +12,7 @@ using ConfIT.Server.Mock;
 using ConfIT.Variable;
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
+using ConfIT.Util;
 using static ConfIT.Util.ResultMatcher;
 using static System.IO.Path;
 
@@ -56,6 +57,8 @@ namespace ConfIT
 
             var resolvedCase = VariableInjector.Inject(testCase, VariableStore.Instance);
 
+            SemanticMatcher.ValidateSpecs(resolvedCase.Api.Response.Matcher?.Semantic, Config.CustomMatchers);
+
             HttpMockServer?.Initialize(resolvedCase.Mock);
 
             var testProcessor = Factory?.GetTestProcessor(testName);
@@ -95,7 +98,7 @@ namespace ConfIT
         protected virtual void Verify(HttpResponseMessage response, JToken actualResponseBody, JToken expectedResponseBodyJToken, TestApi testApi)
         {
             response.StatusCode.Should().Be(Enum.Parse<HttpStatusCode>(testApi.Response.StatusCode.ToString()));
-            MatchResponseBody(actualResponseBody, expectedResponseBodyJToken, testApi.Response.Matcher);
+            MatchResponseBody(actualResponseBody, expectedResponseBodyJToken, testApi.Response.Matcher, Config.CustomMatchers);
         }
 
         protected bool ShouldSkipTheTest(string testName, TestCase testCase)

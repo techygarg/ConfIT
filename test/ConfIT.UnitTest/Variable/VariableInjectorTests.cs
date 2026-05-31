@@ -1,4 +1,3 @@
-using ConfIT.Variable;
 using ConfIT.Variable.Exception;
 
 namespace ConfIT.UnitTest.Variable
