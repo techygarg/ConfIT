@@ -9,39 +9,29 @@
           },
           "response": {
             "statusCode": 200,
-            "body": {
-              "isValid": true
-            }
+            "body": { "isValid": true }
           }
         },
         {
           "request": {
             "method": "GET",
             "path": "/api/demo",
-            "params": {
-              "email": "test@test.com"
-            }
+            "params": { "email": "test@test.com" }
           },
           "response": {
             "statusCode": 200,
-            "body": {
-              "isValid": true
-            }
+            "body": { "isValid": true }
           }
         },
         {
           "request": {
             "method": "POST",
             "path": "/api/demo",
-            "body": {
-              "email": "test@test.com"
-            }
+            "body": { "email": "test@test.com" }
           },
           "response": {
             "statusCode": 200,
-            "body": {
-              "isValid": true
-            }
+            "body": { "isValid": true }
           }
         }
       ]
@@ -50,20 +40,18 @@
       "request": {
         "method": "POST",
         "path": "/api/user",
-        "body": {
-          "name": "test",
-          "email": "test@test.com",
-          "age": 10
-        }
+        "body": { "name": "test", "email": "test@test.com", "age": 10 }
       },
       "response": {
         "statusCode": 201,
-        "body": {
-          "id": 1
+        "body": { "id": 1 },
+        "extract": {
+          "userId": "$.body.id"
         }
       }
     }
   },
+
   "ShouldReturnUserForGivenEmailId": {
     "api": {
       "request": {
@@ -72,12 +60,33 @@
       },
       "response": {
         "statusCode": 200,
-        "headers": {},
         "body": {
-          "id": 1,
           "name": "test",
           "email": "test@test.com",
           "age": 10
+        },
+        "matcher": {
+          "ignore": ["id"]
+        }
+      }
+    }
+  },
+
+  "ShouldGetUserById": {
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/{{userId}}"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "name": "test",
+          "email": "test@test.com",
+          "age": 10
+        },
+        "matcher": {
+          "ignore": ["id"]
         }
       }
     }

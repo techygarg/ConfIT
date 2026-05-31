@@ -18,6 +18,9 @@
           "pattern": {
             "id": "^(0|[1-9][0-9]?|100)$"
           }
+        },
+        "extract": {
+          "userId": "$.body.id"
         }
       }
     }
@@ -81,7 +84,7 @@
     "api": {
       "request": {
         "method": "GET",
-        "path": "/api/user/unknown"
+        "path": "/api/user/{{userId}}"
       },
       "response": {
         "statusCode": 200,
@@ -103,7 +106,7 @@
     "api": {
       "request": {
         "method": "GET",
-        "path": "/api/user/unknown"
+        "path": "/api/user/{{userId}}"
       },
       "response": {
         "statusCode": 200,

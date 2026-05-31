@@ -14,7 +14,7 @@ namespace User.IntegrationTests
         public UserIntegrationTests(TestSuiteFixture fixture, ITestOutputHelper output)
             : base(fixture.TestHttpClient,
                 fixture.SuiteConfig,
-                fixture.TestProcessFactory,
+                null,
                 new TestOutputLogger(output),
                 fixture.Filter)
         {

@@ -9,6 +9,7 @@ using ConfIT.Extension;
 using ConfIT.Server.Dto;
 using ConfIT.Server.Http;
 using ConfIT.Server.Mock;
+using ConfIT.Variable;
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using static ConfIT.Util.ResultMatcher;
@@ -52,18 +53,25 @@ namespace ConfIT
     
             Log("*********************************************");
             Log($"Start Executing testCase {testName}..........");
-            HttpMockServer?.Initialize(testCase.Mock);
+
+            var resolvedCase = VariableInjector.Inject(testCase, VariableStore.Instance);
+
+            HttpMockServer?.Initialize(resolvedCase.Mock);
 
             var testProcessor = Factory?.GetTestProcessor(testName);
-            testProcessor?.Before(testCase.Api);
+            testProcessor?.Before(resolvedCase.Api);
 
-            var response = await HttpClient.Execute(testCase.Api);
+            var response = await HttpClient.Execute(resolvedCase.Api);
             var actualResponseBody = JToken.Parse(response.Content.ReadAsStringAsync().Result);
-            var expectedResponseBodyJToken = testCase.Api.Response.Body;
+            var expectedResponseBodyJToken = resolvedCase.Api.Response.Body;
 
-            Log(actualResponseBody, expectedResponseBodyJToken, testCase);
-            testProcessor?.After(testCase.Api, actualResponseBody);
-            Verify(response, actualResponseBody, expectedResponseBodyJToken, testCase.Api);
+            Log(actualResponseBody, expectedResponseBodyJToken, resolvedCase);
+            testProcessor?.After(resolvedCase.Api, actualResponseBody);
+            Verify(response, actualResponseBody, expectedResponseBodyJToken, resolvedCase.Api);
+
+            VariableExtractor.Extract(testName, response, actualResponseBody,
+                resolvedCase.Api.Response.Extract, VariableStore.Instance);
+
             SaveApiResponse(Config.ApiResponseFolder, testName, actualResponseBody);
             Log("*********************************************");
             Console.WriteLine();

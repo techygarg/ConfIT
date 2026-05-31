@@ -10,7 +10,7 @@ namespace ConfIT.Server.Mock
     {
         public static IRequestBuilder WithBodyIfProvided(this IRequestBuilder builder, JToken body)
         {
-            if (body != null)
+            if (body != null && body.Type != JTokenType.Null)
                 builder.WithBody(new JsonMatcher(MatchBehaviour.AcceptOnMatch, body, true, true));
 
             return builder;
@@ -36,7 +36,7 @@ namespace ConfIT.Server.Mock
 
         public static IResponseBuilder WithBodyIfProvided(this IResponseBuilder builder, JToken body)
         {
-            if (body != null)
+            if (body != null && body.Type != JTokenType.Null)
                 builder.WithBody(body.ToString());
 
             return builder;

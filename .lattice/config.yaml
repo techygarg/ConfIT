@@ -1,0 +1,7 @@
+# .lattice/config.yaml — Lattice Framework Configuration
+# All paths are relative to the repository root.
+
+version: 1
+language: csharp
+paths:
+  knowledge_base: .lattice/standards/knowledge-base.md

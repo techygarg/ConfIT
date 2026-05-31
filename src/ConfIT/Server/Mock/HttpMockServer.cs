@@ -23,6 +23,8 @@ namespace ConfIT.Server.Mock
 
         public void Initialize(TestMock mock)
         {
+            _server.Reset();
+
             if (mock?.Interactions == null || mock.Interactions.Count == 0)
                 return;
 

@@ -16,7 +16,7 @@ namespace User.ComponentTests
             : base(
                 fixture.TestHttpClient,
                 fixture.SuiteConfig,
-                fixture.TestProcessFactory,
+                null,
                 new TestOutputLogger(output),
                 fixture.Filter)
         {
