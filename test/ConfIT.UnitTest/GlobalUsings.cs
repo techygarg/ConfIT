@@ -14,6 +14,7 @@ global using ConfIT.Server.Dto;
 global using ConfIT.Server.Http;
 global using ConfIT.Util;
 global using ConfIT.Variable;
+global using ConfIT.Variable.Exception;
 global using FluentAssertions;
 global using FluentAssertions.Execution;
 global using Moq;
