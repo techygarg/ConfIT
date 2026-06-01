@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 using ConfIT.Server.Dto;
-using FluentAssertions;
+using FluentAssertions.Execution;
 using JsonDiffPatchDotNet;
 
 namespace ConfIT.Util;
@@ -18,7 +18,9 @@ public static class ResultMatcher
         var response = ApplyMatcher(actual, matcher);
         expectedResponse = ApplyIgnoreMatcher(expectedResponse, matcher?.Ignore);
         var diff = new JsonDiffPatch().Diff(response, expectedResponse);
-        diff?.ToString().Should().BeNullOrWhiteSpace();
+        if (diff is not null)
+            // FailWith treats {N} as format placeholders; safe here because leaf delta values are always primitives.
+            AssertionChain.GetOrCreate().FailWith(DeltaFormatter.Format(diff));
     }
 
     private static JToken ApplyMatcher(JToken response, Matcher matcher)

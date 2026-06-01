@@ -196,6 +196,56 @@ public class ResultMatcherTests
         action.Should().Throw<XunitException>();
     }
 
+    // ── Field-level failure output ────────────────────────────────────────────
+
+    [Fact]
+    public void MatchResponseBody_WhenFieldsDiffer_FailureMessageNamesField()
+    {
+        // Given
+        var actual   = JToken.Parse("{'name': 'alice'}");
+        var expected = JToken.Parse("{'name': 'bob'}");
+
+        // When
+        var action = () => ResultMatcher.MatchResponseBody(actual, expected, null);
+        var ex = action.Should().Throw<Exception>().Which;
+
+        // Then
+        ex.Message.Should().Contain("name");
+        ex.Message.Should().Contain("expected: \"bob\"");
+        ex.Message.Should().Contain("actual:   \"alice\"");
+    }
+
+    [Fact]
+    public void MatchResponseBody_WhenMultipleFieldsDiffer_FailureMessageIncludesAllFields()
+    {
+        // Given
+        var actual   = JToken.Parse("{'name': 'alice', 'age': 30}");
+        var expected = JToken.Parse("{'name': 'bob',   'age': 31}");
+
+        // When
+        var action = () => ResultMatcher.MatchResponseBody(actual, expected, null);
+        var ex = action.Should().Throw<Exception>().Which;
+
+        // Then
+        ex.Message.Should().Contain("name");
+        ex.Message.Should().Contain("age");
+    }
+
+    [Fact]
+    public void MatchResponseBody_WhenBodyDiffers_FailureMessageContainsHeader()
+    {
+        // Given
+        var actual   = JToken.Parse("{'x': 1}");
+        var expected = JToken.Parse("{'x': 2}");
+
+        // When
+        var action = () => ResultMatcher.MatchResponseBody(actual, expected, null);
+        var ex = action.Should().Throw<Exception>().Which;
+
+        // Then
+        ex.Message.Should().Contain("Response body mismatch:");
+    }
+
     // ── Semantic integration ───────────────────────────────────────────────────
 
     [Fact]
