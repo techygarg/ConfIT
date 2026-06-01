@@ -7,6 +7,8 @@ ConfIT is a .NET library for declarative API integration testing. Define tests i
 
 It works at two levels: **component tests** (service runs in-process, external dependencies mocked via WireMock) and **integration tests** (full environment, real services). Both levels use the same DSL and the same xUnit setup pattern.
 
+📖 [ConfIT — A Declarative Way to Define Your Integration Tests](https://www.linkedin.com/pulse/confit-declarative-way-define-your-integration-tests-rahul-garg/) — background and motivation from the author.
+
 ---
 
 ## Why ConfIT
@@ -61,10 +63,10 @@ The `example/` directory contains a working reference implementation:
 
 | Project | Role |
 |---|---|
-| `User.Api` | Sample ASP.NET Core service — user creation and retrieval |
-| `JustAnotherService` | Sample dependency service — email validation |
-| `User.ComponentTests` | Component test suite — in-process server, WireMock dependencies |
-| `User.IntegrationTests` | Integration test suite — real services, SQLite database |
+| [`User.Api`](example/User.Api) | Sample ASP.NET Core service — user creation and retrieval |
+| [`JustAnotherService`](example/JustAnotherService) | Sample dependency service — email validation |
+| [`User.ComponentTests`](example/User.ComponentTests) | Component test suite — in-process server, WireMock dependencies |
+| [`User.IntegrationTests`](example/User.IntegrationTests) | Integration test suite — real services, SQLite database |
 
 ---
 

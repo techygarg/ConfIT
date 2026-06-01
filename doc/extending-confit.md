@@ -96,9 +96,11 @@ Full wiring context is shown in [suite-setup.md](suite-setup.md).
 
 ## Imperative hooks around each test — `ITestProcessor` and `ITestProcessorFactory`
 
-`ITestProcessor` lets you run code immediately before a request is sent and immediately after a response is received. Use it for logic that genuinely requires C# — request signing, writing to external systems, conditional mutations, or anything that can't be expressed declaratively.
+> **Before reaching for this:** `ITestProcessor` is a legacy escape hatch. The majority of cases it was historically used for — passing a created resource's ID into a later request, injecting dynamic values into paths or bodies — are now fully covered by the `extract` + `{{inject}}` DSL. Try those first. If you can express it declaratively, do so. `ITestProcessor` may be removed or deprecated in a future version.
+>
+> Only use `ITestProcessor` when you have exhausted the declarative options and genuinely need C# — request signing, writing to an external system, conditional mutations based on runtime state, or side effects that have no DSL equivalent. See [variable-extraction-and-injection.md](variable-extraction-and-injection.md) to confirm `extract` and `{{inject}}` cannot cover your case before proceeding.
 
-**For data flow between tests — passing an ID from a create response into a later GET — use `extract` and `{{inject}}` instead.** That approach requires no C# and is described in [variable-extraction-and-injection.md](variable-extraction-and-injection.md).
+`ITestProcessor` lets you run code immediately before a request is sent and immediately after a response is received.
 
 ### Interfaces
 
