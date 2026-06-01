@@ -20,9 +20,12 @@ public abstract class BaseTest : IDisposable
     private const string HeaderSep = "══════════════════════════════════════════════════════";
     private const string FooterSep = "──────────────────────────────────────────────────────";
 
+    // Colours on by default; opt out by setting NO_COLOR env var (https://no-color.org).
+    // Console.IsOutputRedirected is intentionally NOT checked — dotnet test always
+    // redirects stdout through its pipe, which would suppress colours even in a TTY.
     private static readonly bool UseColor =
-        !Console.IsOutputRedirected &&
-        string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NO_COLOR"));
+        string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NO_COLOR")) &&
+        Environment.GetEnvironmentVariable("TERM") != "dumb";
 
     private static string Dim(string s)    => UseColor ? $"\x1b[90m{s}\x1b[0m" : s;
     private static string Bold(string s)   => UseColor ? $"\x1b[1m{s}\x1b[0m" : s;
@@ -30,9 +33,11 @@ public abstract class BaseTest : IDisposable
     private static string Green(string s)  => UseColor ? $"\x1b[32m{s}\x1b[0m" : s;
     private static string Cyan(string s)   => UseColor ? $"\x1b[36m{s}\x1b[0m" : s;
 
-    // Console output is buffered per-test and flushed atomically in Execute's finally block.
-    // This prevents interleaving with the next test when xUnit flushes a failed test's
-    // ITestOutputHelper buffer after the next test has already started writing to Console.
+    // Console is the single channel for structured test output (header, bodies, matchers).
+    // ITestOutputHelper is intentionally NOT used for structured content — both xUnit's
+    // failure reporter and MSBuild's error reporter replay it, causing visible duplication.
+    // Output is buffered per-test and flushed atomically in Execute's finally block so
+    // one test's console block never interleaves with the next test's.
     private readonly List<string> _consoleBuffer = new();
 
     protected readonly TestHttpClient HttpClient;
@@ -92,7 +97,6 @@ public abstract class BaseTest : IDisposable
                 resolvedCase.Api.Response.Extract, VariableStore.Instance);
 
             SaveApiResponse(Config.ApiResponseFolder, testName, actualResponseBody);
-            TestOutputLogger?.Log(FooterSep);
             _consoleBuffer.Add(Dim(FooterSep));
             _consoleBuffer.Add(string.Empty);
         }
@@ -108,13 +112,6 @@ public abstract class BaseTest : IDisposable
     {
         var matcher = test.Api.Response.Matcher;
 
-        TestOutputLogger?.Log($"Actual:   {actualBody}");
-        TestOutputLogger?.Log($"Expected: {expectedBody}");
-        if (matcher?.Semantic?.Count > 0) TestOutputLogger?.Log($"Semantic: {matcher.Semantic.DictionaryToString()}");
-        if (matcher?.Pattern?.Count  > 0) TestOutputLogger?.Log($"Pattern:  {matcher.Pattern.DictionaryToString()}");
-        if (matcher?.Ignore?.Count   > 0) TestOutputLogger?.Log($"Ignore:   {matcher.Ignore.ListToString()}");
-        if (test.Tags?.Count         > 0) TestOutputLogger?.Log($"Tags:     {test.Tags.ListToString()}");
-
         _consoleBuffer.Add($"{Yellow("Actual:")}   {actualBody}");
         _consoleBuffer.Add(string.Empty);
         _consoleBuffer.Add($"{Green("Expected:")} {expectedBody}");
@@ -127,9 +124,6 @@ public abstract class BaseTest : IDisposable
 
     private void LogHeader(string testName)
     {
-        TestOutputLogger?.Log(HeaderSep);
-        TestOutputLogger?.Log($"  ▶  {testName}");
-        TestOutputLogger?.Log(HeaderSep);
         _consoleBuffer.Add(Cyan(HeaderSep));
         _consoleBuffer.Add($"  {Cyan("▶")}  {Bold(testName)}");
         _consoleBuffer.Add(Cyan(HeaderSep));
