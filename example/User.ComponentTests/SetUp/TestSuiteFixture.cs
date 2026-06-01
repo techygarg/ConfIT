@@ -7,7 +7,7 @@ using User.Api.Persistence;
 
 namespace User.ComponentTests.SetUp
 {
-    public class TestSuiteFixture
+    public class TestSuiteFixture : IDisposable
     {
         public TestSuiteFixture()
         {
@@ -18,6 +18,7 @@ namespace User.ComponentTests.SetUp
         public TestHttpClient TestHttpClient { get; private set; }
         public SuiteConfig SuiteConfig { get; private set; }
         public TestFilter Filter { get; private set; }
+        public TestResultCollector ResultCollector { get; } = new TestResultCollector();
 
         private TestSuiteInitializer<TestServerStartup> InitializeServer()
         {
@@ -45,5 +46,7 @@ namespace User.ComponentTests.SetUp
             var directoryInfo = Directory.CreateDirectory(Environment.CurrentDirectory + "/responses");
             return directoryInfo.FullName;
         }
+
+        public void Dispose() => ResultCollector.Dispose();
     }
 }

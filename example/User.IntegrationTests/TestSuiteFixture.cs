@@ -5,7 +5,7 @@ using ConfIT.Server.Http;
 
 namespace User.IntegrationTests
 {
-    public class TestSuiteFixture
+    public class TestSuiteFixture : IDisposable
     {
         public TestSuiteFixture()
         {
@@ -26,6 +26,9 @@ namespace User.IntegrationTests
         public TestHttpClient TestHttpClient { get; }
         public SuiteConfig SuiteConfig { get; }
         public TestFilter Filter { get; }
+        public TestResultCollector ResultCollector { get; } = new TestResultCollector();
+
+        public void Dispose() => ResultCollector.Dispose();
 
         private void CreateDirectoryForResponse(string folder) =>
             Directory.CreateDirectory(Environment.CurrentDirectory + $"/{folder}");

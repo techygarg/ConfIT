@@ -12,7 +12,7 @@ public static class TestReader
         var fileContent = IsYaml(filePath) ? LoadYaml(content, filePath) : JObject.Parse(content);
 
         foreach (var scenario in fileContent.Properties())
-            yield return [scenario.Name, scenario.Value];
+            yield return [scenario.Name, scenario.Value, fileName];
     }
 
     public static IEnumerable<object[]> GetTestsForAFolder(string testFolderName)
@@ -25,8 +25,9 @@ public static class TestReader
         {
             var content     = File.ReadAllText(filePath);
             var fileContent = IsYaml(filePath) ? LoadYaml(content, filePath) : JObject.Parse(content);
+            var fileName    = Path.GetFileName(filePath);
             foreach (var scenario in fileContent.Properties())
-                yield return [scenario.Name, scenario.Value];
+                yield return [scenario.Name, scenario.Value, fileName];
         }
     }
 

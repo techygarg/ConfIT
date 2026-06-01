@@ -84,3 +84,42 @@ ShouldGetCreatedUser_InYamlFormat:
       matcher:
         ignore:
           - id  # auto-generated — ignored to keep the test stable
+
+ShouldGetCreatedUser_WithPatternMatcher_InYamlFormat:
+  # Exercises matcher.pattern in YAML — validates field shapes with regex
+  tags:
+    - yaml
+    - user
+  api:
+    request:
+      method: GET
+      path: /api/user/yaml@test.com
+    response:
+      statusCode: 200
+      body:
+        name: yaml-user
+        age: 28
+      matcher:
+        pattern:
+          id: "^[1-9][0-9]*$"      # any positive integer
+          email: "^[^@]+@[^@]+$"   # basic email shape
+
+ShouldGetCreatedUser_WithCombinedMatchers_InYamlFormat:
+  # Exercises ignore + pattern together in a single YAML test
+  tags:
+    - yaml
+    - user
+  api:
+    request:
+      method: GET
+      path: /api/user/yaml@test.com
+    response:
+      statusCode: 200
+      body:
+        name: yaml-user
+        email: yaml@test.com
+      matcher:
+        pattern:
+          id: "^[1-9][0-9]*$"
+        ignore:
+          - age  # not relevant to this assertion

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -26,6 +27,7 @@ public abstract class BaseTest : IDisposable
     // Output is buffered per-test and flushed atomically in Execute's finally block so
     // one test's console block never interleaves with the next test's.
     private readonly List<string> _consoleBuffer = new();
+    private readonly TestResultCollector? _resultCollector;
 
     protected readonly TestHttpClient HttpClient;
     protected static SuiteConfig Config;
@@ -39,26 +41,30 @@ public abstract class BaseTest : IDisposable
         SuiteConfig config,
         ITestProcessorFactory factory,
         ITestOutputLogger testOutputLogger,
-        TestFilter filter)
+        TestFilter filter,
+        TestResultCollector? resultCollector = null)
     {
         Config = config;
         Factory = factory;
         HttpClient = httpClient;
         TestOutputLogger = testOutputLogger;
         Filter = filter;
+        _resultCollector = resultCollector;
 
         if (!string.IsNullOrWhiteSpace(Config.MockServerUrl))
             HttpMockServer = new HttpMockServer(Config.MockServerUrl, Config.EnableMockServerLogs);
     }
 
-    protected virtual async Task Execute(string testName, TestCase testCase)
+    protected virtual async Task Execute(string testName, TestCase testCase, string? sourceFile = null)
     {
+        var sw = Stopwatch.StartNew();
         try
         {
             if (ShouldSkipTheTest(testName, testCase))
             {
                 TestOutputLogger?.Log($"  ⏭  Skipping: {testName}");
                 _consoleBuffer.Add(TestColor.Subtle($"  ⏭  Skipping: {testName}"));
+                _resultCollector?.Record(testName, TestResultCollector.TestStatus.Skipped, sourceFile: sourceFile);
                 return;
             }
 
@@ -86,9 +92,16 @@ public abstract class BaseTest : IDisposable
             SaveApiResponse(Config.ApiResponseFolder, testName, actualResponseBody);
             _consoleBuffer.Add(TestColor.Subtle(FooterSep));
             _consoleBuffer.Add(string.Empty);
+            _resultCollector?.Record(testName, TestResultCollector.TestStatus.Passed, sw.Elapsed, sourceFile);
+        }
+        catch (Exception)
+        {
+            _resultCollector?.Record(testName, TestResultCollector.TestStatus.Failed, sw.Elapsed, sourceFile);
+            throw;
         }
         finally
         {
+            sw.Stop();
             foreach (var line in _consoleBuffer)
                 Console.WriteLine(line);
             _consoleBuffer.Clear();

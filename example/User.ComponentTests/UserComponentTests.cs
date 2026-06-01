@@ -18,7 +18,8 @@ namespace User.ComponentTests
                 fixture.SuiteConfig,
                 null,
                 new TestOutputLogger(output),
-                fixture.Filter)
+                fixture.Filter,
+                fixture.ResultCollector)
         {
         }
 
@@ -35,8 +36,8 @@ namespace User.ComponentTests
         /// <param name="mocks"></param>
         [Theory]
         [MemberData(nameof(GetTestCasesForFolder), "TestCase")]
-        public async Task ExecuteTest(string testName, JToken test) =>
-            await Execute(testName, test.ToTestCase(null, null));
+        public async Task ExecuteTest(string testName, JToken test, string sourceFile) =>
+            await Execute(testName, test.ToTestCase(null, null), sourceFile);
 
 
         /// <summary>

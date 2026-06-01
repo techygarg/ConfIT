@@ -56,3 +56,43 @@ ShouldGetCreatedUser_InYamlFormat:
       matcher:
         ignore:
           - id
+
+ShouldGetCreatedUser_ByEmail_WithPatternMatcher_InYamlFormat:
+  # Exercises matcher.pattern in YAML — validates field shapes with regex
+  tags:
+    - yaml
+    - user
+  api:
+    request:
+      method: GET
+      path: /api/user/yaml@test.com
+    response:
+      statusCode: 200
+      body:
+        name: yaml-user
+        age: 28
+      matcher:
+        semantic:
+          email: "isEmail"  # built-in email validator
+        pattern:
+          id: "^[0-9]+$"           # any non-negative integer
+
+ShouldGetCreatedUser_ById_WithPatternMatcher_InYamlFormat:
+  # Pattern matcher + variable injection together in YAML
+  tags:
+    - yaml
+    - user
+  api:
+    request:
+      method: GET
+      path: /api/user/{{yamlUserId}}
+    response:
+      statusCode: 200
+      body:
+        name: yaml-user
+        email: yaml@test.com
+      matcher:
+        pattern:
+          id: "^[0-9]+$"
+        semantic:
+          age: "greaterThan(0)"  # built-in email validator
