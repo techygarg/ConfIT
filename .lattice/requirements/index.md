@@ -16,7 +16,7 @@ The moment a test scenario gets moderately complex today, it requires C# fallbac
 |----|---------|-----------|--------|
 | [FLOW-001] | [Variable Extraction + Injection](features/flow-001.md) | Extract response values, inject into subsequent tests. Eliminates ~80% of `ITestProcessor` usage. | ✅ implemented |
 | [ASSERT-001] | [Semantic Matcher Library](features/semantic-matcher-library.md) | Type-aware assertions: `isUuid`, `isIsoDate`, `greaterThan`, `hasLength`, `isNull`, and more. | ✅ implemented |
-| [ASSERT-002] | Field-Level Failure Output | Replace raw JSON diffs with per-field pass/fail lines showing expected vs actual. | — |
+| [ASSERT-002] | [Field-Level Failure Output](features/assert-002-field-level-failure-output.md) | Replace raw JSON diffs with per-field pass/fail lines showing expected vs actual. | ✅ implemented |
 | [ASSERT-003] | Soft Assertions | Continue evaluating all assertions after first failure; report all failures at once. | — |
 | [DSL-001] | Snapshot / Record Mode | First run captures real responses as expected baselines. No hand-written expected bodies needed. | — |
 
