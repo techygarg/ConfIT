@@ -15,7 +15,7 @@ public static class DeltaFormatter
 
         return lines.Count == 0
             ? string.Empty
-            : "Response body mismatch:\n\n" + string.Join("\n\n", lines);
+            : TestColor.Error("Response body mismatch:") + "\n\n" + string.Join("\n\n", lines);
     }
 
     private static void Walk(JToken node, string path, List<string> lines)
@@ -59,17 +59,17 @@ public static class DeltaFormatter
                 break;
             case 1: // field in expected, not in actual → [expectedVal]
                 expected = FormatValue(arr[0]);
-                actual   = "<missing>";
+                actual   = TestColor.Subtle("<missing>");
                 break;
             case 3: // field in actual, not in expected → [actualVal, 0, 0]
                 actual   = FormatValue(arr[0]);
-                expected = "<absent>";
+                expected = TestColor.Subtle("<absent>");
                 break;
             default:
                 return;
         }
 
-        lines.Add($"{path}\n  expected: {expected}\n  actual:   {actual}");
+        lines.Add($"{TestColor.Emphasis(path)}\n  {TestColor.Expected("expected:")} {expected}\n  {TestColor.Actual("actual:")}   {actual}");
     }
 
     private static string FormatValue(JToken value) => value.Type switch

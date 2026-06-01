@@ -20,19 +20,6 @@ public abstract class BaseTest : IDisposable
     private const string HeaderSep = "══════════════════════════════════════════════════════";
     private const string FooterSep = "──────────────────────────────────────────────────────";
 
-    // Colours on by default; opt out by setting NO_COLOR env var (https://no-color.org).
-    // Console.IsOutputRedirected is intentionally NOT checked — dotnet test always
-    // redirects stdout through its pipe, which would suppress colours even in a TTY.
-    private static readonly bool UseColor =
-        string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NO_COLOR")) &&
-        Environment.GetEnvironmentVariable("TERM") != "dumb";
-
-    private static string Dim(string s)    => UseColor ? $"\x1b[90m{s}\x1b[0m" : s;
-    private static string Bold(string s)   => UseColor ? $"\x1b[1m{s}\x1b[0m" : s;
-    private static string Yellow(string s) => UseColor ? $"\x1b[33m{s}\x1b[0m" : s;
-    private static string Green(string s)  => UseColor ? $"\x1b[32m{s}\x1b[0m" : s;
-    private static string Cyan(string s)   => UseColor ? $"\x1b[36m{s}\x1b[0m" : s;
-
     // Console is the single channel for structured test output (header, bodies, matchers).
     // ITestOutputHelper is intentionally NOT used for structured content — both xUnit's
     // failure reporter and MSBuild's error reporter replay it, causing visible duplication.
@@ -71,7 +58,7 @@ public abstract class BaseTest : IDisposable
             if (ShouldSkipTheTest(testName, testCase))
             {
                 TestOutputLogger?.Log($"  ⏭  Skipping: {testName}");
-                _consoleBuffer.Add(Dim($"  ⏭  Skipping: {testName}"));
+                _consoleBuffer.Add(TestColor.Subtle($"  ⏭  Skipping: {testName}"));
                 return;
             }
 
@@ -97,7 +84,7 @@ public abstract class BaseTest : IDisposable
                 resolvedCase.Api.Response.Extract, VariableStore.Instance);
 
             SaveApiResponse(Config.ApiResponseFolder, testName, actualResponseBody);
-            _consoleBuffer.Add(Dim(FooterSep));
+            _consoleBuffer.Add(TestColor.Subtle(FooterSep));
             _consoleBuffer.Add(string.Empty);
         }
         finally
@@ -112,21 +99,21 @@ public abstract class BaseTest : IDisposable
     {
         var matcher = test.Api.Response.Matcher;
 
-        _consoleBuffer.Add($"{Yellow("Actual:")}   {actualBody}");
+        _consoleBuffer.Add($"{TestColor.Info("Actual:")}   {actualBody}");
         _consoleBuffer.Add(string.Empty);
-        _consoleBuffer.Add($"{Green("Expected:")} {expectedBody}");
-        if (matcher?.Semantic?.Count > 0) _consoleBuffer.Add(Dim($"Semantic: {matcher.Semantic.DictionaryToString()}"));
-        if (matcher?.Pattern?.Count  > 0) _consoleBuffer.Add(Dim($"Pattern:  {matcher.Pattern.DictionaryToString()}"));
-        if (matcher?.Ignore?.Count   > 0) _consoleBuffer.Add(Dim($"Ignore:   {matcher.Ignore.ListToString()}"));
-        if (test.Tags?.Count         > 0) _consoleBuffer.Add(Dim($"Tags:     {test.Tags.ListToString()}"));
+        _consoleBuffer.Add($"{TestColor.Expected("Expected:")} {expectedBody}");
+        if (matcher?.Semantic?.Count > 0) _consoleBuffer.Add(TestColor.Subtle($"Semantic: {matcher.Semantic.DictionaryToString()}"));
+        if (matcher?.Pattern?.Count  > 0) _consoleBuffer.Add(TestColor.Subtle($"Pattern:  {matcher.Pattern.DictionaryToString()}"));
+        if (matcher?.Ignore?.Count   > 0) _consoleBuffer.Add(TestColor.Subtle($"Ignore:   {matcher.Ignore.ListToString()}"));
+        if (test.Tags?.Count         > 0) _consoleBuffer.Add(TestColor.Subtle($"Tags:     {test.Tags.ListToString()}"));
         _consoleBuffer.Add(string.Empty);
     }
 
     private void LogHeader(string testName)
     {
-        _consoleBuffer.Add(Cyan(HeaderSep));
-        _consoleBuffer.Add($"  {Cyan("▶")}  {Bold(testName)}");
-        _consoleBuffer.Add(Cyan(HeaderSep));
+        _consoleBuffer.Add(TestColor.Structure(HeaderSep));
+        _consoleBuffer.Add($"  {TestColor.Structure("▶")}  {TestColor.Emphasis(testName)}");
+        _consoleBuffer.Add(TestColor.Structure(HeaderSep));
         _consoleBuffer.Add(string.Empty);
     }
 

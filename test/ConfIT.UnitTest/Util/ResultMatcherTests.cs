@@ -211,8 +211,10 @@ public class ResultMatcherTests
 
         // Then
         ex.Message.Should().Contain("name");
-        ex.Message.Should().Contain("expected: \"bob\"");
-        ex.Message.Should().Contain("actual:   \"alice\"");
+        ex.Message.Should().Contain("expected:");
+        ex.Message.Should().Contain("\"bob\"");
+        ex.Message.Should().Contain("actual:");
+        ex.Message.Should().Contain("\"alice\"");
     }
 
     [Fact]
