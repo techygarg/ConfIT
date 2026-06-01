@@ -17,7 +17,18 @@ namespace ConfIT;
 
 public abstract class BaseTest : IDisposable
 {
-    private const string Separator = "*********************************************";
+    private const string HeaderSep = "══════════════════════════════════════════════════════";
+    private const string FooterSep = "──────────────────────────────────────────────────────";
+
+    private static readonly bool UseColor =
+        !Console.IsOutputRedirected &&
+        string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NO_COLOR"));
+
+    private static string Dim(string s)    => UseColor ? $"\x1b[90m{s}\x1b[0m" : s;
+    private static string Bold(string s)   => UseColor ? $"\x1b[1m{s}\x1b[0m" : s;
+    private static string Yellow(string s) => UseColor ? $"\x1b[33m{s}\x1b[0m" : s;
+    private static string Green(string s)  => UseColor ? $"\x1b[32m{s}\x1b[0m" : s;
+    private static string Cyan(string s)   => UseColor ? $"\x1b[36m{s}\x1b[0m" : s;
 
     protected readonly TestHttpClient HttpClient;
     protected static SuiteConfig Config;
@@ -47,12 +58,12 @@ public abstract class BaseTest : IDisposable
     {
         if (ShouldSkipTheTest(testName, testCase))
         {
-            Log($"Skipping Test : {testName}");
+            TestOutputLogger?.Log($"  ⏭  Skipping: {testName}");
+            Console.WriteLine(Dim($"  ⏭  Skipping: {testName}"));
             return;
         }
 
-        Log(Separator);
-        Log($"Start Executing testCase {testName}..........");
+        LogHeader(testName);
         var testProcessor = Factory?.GetTestProcessor(testName);
         var resolvedCase = VariableInjector.Inject(testCase, VariableStore.Instance);
 
@@ -74,18 +85,41 @@ public abstract class BaseTest : IDisposable
             resolvedCase.Api.Response.Extract, VariableStore.Instance);
 
         SaveApiResponse(Config.ApiResponseFolder, testName, actualResponseBody);
-        Log(Separator);
+        TestOutputLogger?.Log(FooterSep);
+        Console.WriteLine(Dim(FooterSep));
         Console.WriteLine();
     }
 
     protected void Log(JToken actualBody, JToken expectedBody, TestCase test)
     {
-        Log($"Actual Response Body --> {actualBody}");
-        Log($"Expected Response Body --> {expectedBody}");
-        Log($"Semantic Matchers --> {test.Api.Response.Matcher?.Semantic?.DictionaryToString()}");
-        Log($"Pattern Matchers --> {test.Api.Response.Matcher?.Pattern?.DictionaryToString()}");
-        Log($"Ignore Matchers --> {test.Api.Response.Matcher?.Ignore?.ListToString()}");
-        Log($"Tags --> {test.Tags?.ListToString()}");
+        var matcher = test.Api.Response.Matcher;
+
+        TestOutputLogger?.Log($"Actual:   {actualBody}");
+        TestOutputLogger?.Log($"Expected: {expectedBody}");
+        if (matcher?.Semantic?.Count > 0) TestOutputLogger?.Log($"Semantic: {matcher.Semantic.DictionaryToString()}");
+        if (matcher?.Pattern?.Count  > 0) TestOutputLogger?.Log($"Pattern:  {matcher.Pattern.DictionaryToString()}");
+        if (matcher?.Ignore?.Count   > 0) TestOutputLogger?.Log($"Ignore:   {matcher.Ignore.ListToString()}");
+        if (test.Tags?.Count         > 0) TestOutputLogger?.Log($"Tags:     {test.Tags.ListToString()}");
+
+        Console.WriteLine($"{Yellow("Actual:")}   {actualBody}");
+        Console.WriteLine();
+        Console.WriteLine($"{Green("Expected:")} {expectedBody}");
+        if (matcher?.Semantic?.Count > 0) Console.WriteLine(Dim($"Semantic: {matcher.Semantic.DictionaryToString()}"));
+        if (matcher?.Pattern?.Count  > 0) Console.WriteLine(Dim($"Pattern:  {matcher.Pattern.DictionaryToString()}"));
+        if (matcher?.Ignore?.Count   > 0) Console.WriteLine(Dim($"Ignore:   {matcher.Ignore.ListToString()}"));
+        if (test.Tags?.Count         > 0) Console.WriteLine(Dim($"Tags:     {test.Tags.ListToString()}"));
+        Console.WriteLine();
+    }
+
+    private void LogHeader(string testName)
+    {
+        TestOutputLogger?.Log(HeaderSep);
+        TestOutputLogger?.Log($"  ▶  {testName}");
+        TestOutputLogger?.Log(HeaderSep);
+        Console.WriteLine(Cyan(HeaderSep));
+        Console.WriteLine($"  {Cyan("▶")}  {Bold(testName)}");
+        Console.WriteLine(Cyan(HeaderSep));
+        Console.WriteLine();
     }
 
     protected virtual void Log(string msg)

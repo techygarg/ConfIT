@@ -5,7 +5,14 @@ public static class DeltaFormatter
     public static string Format(JToken delta)
     {
         var lines = new List<string>();
-        Walk(delta, string.Empty, lines);
+
+        // JsonDiffPatch returns a root-level JArray when the entire value was replaced
+        // (e.g. Diff({}, null) → [{}, null]). Walk only handles JObject deltas.
+        if (delta is JArray rootArr)
+            AppendChange(lines, "(root)", rootArr);
+        else
+            Walk(delta, string.Empty, lines);
+
         return lines.Count == 0
             ? string.Empty
             : "Response body mismatch:\n\n" + string.Join("\n\n", lines);
