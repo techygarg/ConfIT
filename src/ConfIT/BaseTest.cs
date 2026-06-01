@@ -30,6 +30,11 @@ public abstract class BaseTest : IDisposable
     private static string Green(string s)  => UseColor ? $"\x1b[32m{s}\x1b[0m" : s;
     private static string Cyan(string s)   => UseColor ? $"\x1b[36m{s}\x1b[0m" : s;
 
+    // Console output is buffered per-test and flushed atomically in Execute's finally block.
+    // This prevents interleaving with the next test when xUnit flushes a failed test's
+    // ITestOutputHelper buffer after the next test has already started writing to Console.
+    private readonly List<string> _consoleBuffer = new();
+
     protected readonly TestHttpClient HttpClient;
     protected static SuiteConfig Config;
     protected readonly ITestProcessorFactory Factory;
@@ -56,38 +61,47 @@ public abstract class BaseTest : IDisposable
 
     protected virtual async Task Execute(string testName, TestCase testCase)
     {
-        if (ShouldSkipTheTest(testName, testCase))
+        try
         {
-            TestOutputLogger?.Log($"  ⏭  Skipping: {testName}");
-            Console.WriteLine(Dim($"  ⏭  Skipping: {testName}"));
-            return;
+            if (ShouldSkipTheTest(testName, testCase))
+            {
+                TestOutputLogger?.Log($"  ⏭  Skipping: {testName}");
+                _consoleBuffer.Add(Dim($"  ⏭  Skipping: {testName}"));
+                return;
+            }
+
+            LogHeader(testName);
+            var testProcessor = Factory?.GetTestProcessor(testName);
+            var resolvedCase = VariableInjector.Inject(testCase, VariableStore.Instance);
+
+            SemanticMatcher.ValidateSpecs(resolvedCase.Api.Response.Matcher?.Semantic, Config.CustomMatchers);
+
+            HttpMockServer?.Initialize(resolvedCase.Mock);
+
+            testProcessor?.Before(resolvedCase.Api);
+
+            var response = await HttpClient.Execute(resolvedCase.Api);
+            var actualResponseBody = JToken.Parse(response.Content.ReadAsStringAsync().Result);
+            var expectedResponseBody = resolvedCase.Api.Response.Body;
+
+            Log(actualResponseBody, expectedResponseBody, resolvedCase);
+            testProcessor?.After(resolvedCase.Api, actualResponseBody);
+            Verify(response, actualResponseBody, expectedResponseBody, resolvedCase.Api);
+
+            VariableExtractor.Extract(testName, response, actualResponseBody,
+                resolvedCase.Api.Response.Extract, VariableStore.Instance);
+
+            SaveApiResponse(Config.ApiResponseFolder, testName, actualResponseBody);
+            TestOutputLogger?.Log(FooterSep);
+            _consoleBuffer.Add(Dim(FooterSep));
+            _consoleBuffer.Add(string.Empty);
         }
-
-        LogHeader(testName);
-        var testProcessor = Factory?.GetTestProcessor(testName);
-        var resolvedCase = VariableInjector.Inject(testCase, VariableStore.Instance);
-
-        SemanticMatcher.ValidateSpecs(resolvedCase.Api.Response.Matcher?.Semantic, Config.CustomMatchers);
-
-        HttpMockServer?.Initialize(resolvedCase.Mock);
-        
-        testProcessor?.Before(resolvedCase.Api);
-
-        var response = await HttpClient.Execute(resolvedCase.Api);
-        var actualResponseBody = JToken.Parse(response.Content.ReadAsStringAsync().Result);
-        var expectedResponseBody = resolvedCase.Api.Response.Body;
-
-        Log(actualResponseBody, expectedResponseBody, resolvedCase);
-        testProcessor?.After(resolvedCase.Api, actualResponseBody);
-        Verify(response, actualResponseBody, expectedResponseBody, resolvedCase.Api);
-
-        VariableExtractor.Extract(testName, response, actualResponseBody,
-            resolvedCase.Api.Response.Extract, VariableStore.Instance);
-
-        SaveApiResponse(Config.ApiResponseFolder, testName, actualResponseBody);
-        TestOutputLogger?.Log(FooterSep);
-        Console.WriteLine(Dim(FooterSep));
-        Console.WriteLine();
+        finally
+        {
+            foreach (var line in _consoleBuffer)
+                Console.WriteLine(line);
+            _consoleBuffer.Clear();
+        }
     }
 
     protected void Log(JToken actualBody, JToken expectedBody, TestCase test)
@@ -101,14 +115,14 @@ public abstract class BaseTest : IDisposable
         if (matcher?.Ignore?.Count   > 0) TestOutputLogger?.Log($"Ignore:   {matcher.Ignore.ListToString()}");
         if (test.Tags?.Count         > 0) TestOutputLogger?.Log($"Tags:     {test.Tags.ListToString()}");
 
-        Console.WriteLine($"{Yellow("Actual:")}   {actualBody}");
-        Console.WriteLine();
-        Console.WriteLine($"{Green("Expected:")} {expectedBody}");
-        if (matcher?.Semantic?.Count > 0) Console.WriteLine(Dim($"Semantic: {matcher.Semantic.DictionaryToString()}"));
-        if (matcher?.Pattern?.Count  > 0) Console.WriteLine(Dim($"Pattern:  {matcher.Pattern.DictionaryToString()}"));
-        if (matcher?.Ignore?.Count   > 0) Console.WriteLine(Dim($"Ignore:   {matcher.Ignore.ListToString()}"));
-        if (test.Tags?.Count         > 0) Console.WriteLine(Dim($"Tags:     {test.Tags.ListToString()}"));
-        Console.WriteLine();
+        _consoleBuffer.Add($"{Yellow("Actual:")}   {actualBody}");
+        _consoleBuffer.Add(string.Empty);
+        _consoleBuffer.Add($"{Green("Expected:")} {expectedBody}");
+        if (matcher?.Semantic?.Count > 0) _consoleBuffer.Add(Dim($"Semantic: {matcher.Semantic.DictionaryToString()}"));
+        if (matcher?.Pattern?.Count  > 0) _consoleBuffer.Add(Dim($"Pattern:  {matcher.Pattern.DictionaryToString()}"));
+        if (matcher?.Ignore?.Count   > 0) _consoleBuffer.Add(Dim($"Ignore:   {matcher.Ignore.ListToString()}"));
+        if (test.Tags?.Count         > 0) _consoleBuffer.Add(Dim($"Tags:     {test.Tags.ListToString()}"));
+        _consoleBuffer.Add(string.Empty);
     }
 
     private void LogHeader(string testName)
@@ -116,10 +130,10 @@ public abstract class BaseTest : IDisposable
         TestOutputLogger?.Log(HeaderSep);
         TestOutputLogger?.Log($"  ▶  {testName}");
         TestOutputLogger?.Log(HeaderSep);
-        Console.WriteLine(Cyan(HeaderSep));
-        Console.WriteLine($"  {Cyan("▶")}  {Bold(testName)}");
-        Console.WriteLine(Cyan(HeaderSep));
-        Console.WriteLine();
+        _consoleBuffer.Add(Cyan(HeaderSep));
+        _consoleBuffer.Add($"  {Cyan("▶")}  {Bold(testName)}");
+        _consoleBuffer.Add(Cyan(HeaderSep));
+        _consoleBuffer.Add(string.Empty);
     }
 
     protected virtual void Log(string msg)
