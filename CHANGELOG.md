@@ -34,3 +34,7 @@ ConfIT uses [Semantic Versioning](https://semver.org/).
 
 - `TestSuiteInitializer.TestServer` — use `TestSuiteInitializer.Services` (`IServiceProvider`) instead.
 - `ITestProcessor` / `ITestProcessorFactory` — the `extract` + `{{inject}}` DSL covers the majority of use cases without C#. These interfaces remain for genuinely imperative cases such as request signing or external side effects.
+
+### Removed
+
+- **net8.0 support** — The library now targets `net9.0` and `net10.0` only. Projects still on .NET 8 must upgrade before adopting 3.0.0.
