@@ -22,12 +22,15 @@ Component and integration tests share a large common surface — how tests are d
 - **One format across both test levels.** The same test definition works in a component suite (with mocks) and an integration suite (without) by changing only the fixture configuration.
 - **Rich assertion model.** `ignore`, `pattern` regex, and `semantic` type-aware matchers handle dynamic fields (IDs, timestamps, server-assigned values) declaratively.
 - **Declarative data flow.** `extract` captures values from responses; `{{inject}}` passes them forward — no C# required for the typical create-then-retrieve pattern.
+- **Language-agnostic.** With [AppLauncher](doc/app-launcher.md), ConfIT runs any shell command and speaks HTTP — test a Go API, a Node.js service, or a Python microservice using the same test files. Your API manages its own test environment; ConfIT just invokes the command.
 
 ---
 
 ## Getting Started
 
-→ **[Suite Setup](doc/suite-setup.md)** — install the package, configure `SuiteConfig`, create a fixture, wire up `BaseTest`. Start here.
+→ **[Suite Setup](doc/suite-setup.md)** — install the package, configure via `suite.config.yaml` or manual wiring, choose your startup mode (in-process or AppLauncher). Start here.
+
+→ **[Test Execution Flow](doc/test-execution-flow.md)** — ASCII flow diagrams showing what happens at runtime across all three suite types.
 
 ---
 
@@ -47,6 +50,12 @@ Component and integration tests share a large common surface — how tests are d
 |---|---|
 | [Matchers and Patterns](doc/matchers-and-patterns.md) | `ignore`, `pattern` regex, `semantic` named matchers (`isUuid`, `greaterThan`, `isEmail`, …), custom matchers |
 | [Variable Extraction + Injection](doc/variable-extraction-and-injection.md) | `extract` from responses, `{{varName}}` injection into later tests, `${ENV}` for environment values |
+
+### Suite Startup Modes
+
+| Document | What it covers |
+|---|---|
+| [AppLauncher](doc/app-launcher.md) | Out-of-process startup — run any language/framework, app manages its own test environment, language-agnostic testing |
 
 ### Operations and Extension
 

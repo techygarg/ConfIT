@@ -172,7 +172,7 @@ ProcessorFactory = new TestProcessorFactory(SuiteConfig);
 
 // In test class constructor:
 : base(fixture.TestHttpClient, fixture.SuiteConfig, fixture.ProcessorFactory,
-       new TestOutputLogger(output), fixture.Filter)
+       new TestOutputLogger(output), fixture.Filter, fixture.ResultCollector)
 ```
 
 If no test in a suite needs a processor, pass `null` — this is the common case and both example suites do exactly that.

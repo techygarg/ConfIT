@@ -1,89 +1,280 @@
 # Suite Setup
 
-This guide covers how to install ConfIT and wire it into an xUnit project. Examples use the component test setup — an in-process server with mocked dependencies. Integration tests follow the same pattern without the mock server and `TestSuiteInitializer`.
+There are two ways to wire a ConfIT test suite:
+
+- **Config-driven (recommended)** — a `suite.config.yaml` file holds all URLs, folders, and filter settings. One API call loads it; extension methods convert it to the objects `BaseTest` needs.
+- **Manual wiring** — construct `SuiteConfig`, `TestFilter`, and `TestSuiteInitializer` directly in code. Use this when you need fine-grained control that the YAML format doesn't expose.
+
+Both approaches produce the same objects and work identically at runtime.
 
 ---
 
-## Install
+## Config-Driven Setup (Recommended)
 
-```bash
-dotnet add package ConfIT
+### `suite.config.yaml`
+
+Place `suite.config.yaml` in the test project root. It drives both component and integration suites.
+
+#### Component suite — in-process mode
+
+```yaml
+component:
+  startup:
+    mode: in-process
+    settings: appsettings.Tests.json
+  api:
+    url: http://localhost:5170
+  mock:
+    url: http://localhost:8888
+  folders:
+    response: responses
+  filter:
+    strategy: tags
+    envVariable: RUN_POOLS
+```
+
+#### Component suite — command mode
+
+```yaml
+component:
+  startup:
+    mode: command
+    command: dotnet run --no-build --project ../../../../User.Api --launch-profile ComponentTest
+    readiness:
+      port: 5170
+      timeoutSeconds: 60
+  api:
+    url: http://localhost:5170
+  mock:
+    url: http://localhost:8888
+  folders:
+    response: responses
+  filter:
+    strategy: tags
+    envVariable: RUN_POOLS
+```
+
+#### Integration suite — multi-environment
+
+```yaml
+integration:
+  default: local
+
+  local:
+    api:
+      url: http://localhost:5170
+    folders:
+      response: ApiResponses
+      requestBody: TestCase/Request
+      responseBody: TestCase/Response
+    filter:
+      strategy: tags
+      envVariable: RUN_POOLS
+
+  qa:
+    api:
+      url: ${QA_API_URL}
+      authToken: ${QA_API_TOKEN}
+    folders:
+      response: ApiResponses
+      requestBody: TestCase/Request
+      responseBody: TestCase/Response
+    filter:
+      strategy: tags
+      envVariable: RUN_POOLS
+```
+
+#### `${ENV_VAR}` interpolation
+
+Any scalar string value can reference an environment variable with `${VAR_NAME}`. Variables are resolved at load time. If a referenced variable is not set, `SuiteConfiguration` throws with a clear message identifying the field and file.
+
+```yaml
+api:
+  url: ${QA_API_URL}
+  authToken: ${QA_API_TOKEN}
+```
+
+#### Copy to output
+
+`suite.config.yaml` must be present in the test output directory at runtime. Add this to your `.csproj`:
+
+```xml
+<None Update="suite.config.yaml">
+  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+</None>
 ```
 
 ---
 
-## The Three Moving Parts
-
-Every ConfIT test suite needs:
-
-1. **`TestSuiteFixture`** — created once per test class, holds shared infrastructure (HTTP client, config, collector)
-2. **A test class** extending `BaseTest` — defines where test files live and drives xUnit's `[Theory]`
-3. **Test definition files** — `.json` or `.yaml` files in your project
-
----
-
-## `SuiteConfig`
-
-`SuiteConfig` is the configuration bag passed to `BaseTest`. Set it up in your fixture.
-
-| Property | Description |
-|---|---|
-| `ApiServerUrl` | Base URL of the service under test |
-| `MockServerUrl` | WireMock base URL. Omit (or leave empty) to disable mocking. |
-| `EnableMockServerLogs` | Print WireMock request logs to the console. Useful during debugging. |
-| `RequestBodyFolder` | Folder to resolve `bodyFromFile` paths in request definitions |
-| `ResponseBodyFolder` | Folder to resolve `bodyFromFile` paths in expected response definitions |
-| `ApiResponseFolder` | Folder where actual responses are written after each test (used by `ITestProcessor`) |
-| `CustomMatchers` | Additional named matchers — see [Matchers and Patterns](./matchers-and-patterns.md#custom-matchers) |
-
-For component tests, `ApiServerUrl` can be left empty — the in-process `TestServer` handles routing.
-
----
-
-## `TestSuiteFixture`
-
-The fixture is shared across all tests in a class (via xUnit's `IClassFixture<T>`). It should:
-- Start and configure the test server
-- Build `SuiteConfig`
-- Create a `TestResultCollector` and dispose it when the suite ends
+### Component test fixture (in-process mode)
 
 ```csharp
 public class TestSuiteFixture : IDisposable
 {
     public TestSuiteFixture()
     {
-        // Spin up an in-process TestServer using your service's Startup class
-        var initializer = new TestSuiteInitializer<Startup>("appsettings.Tests.json");
-        TestHttpClient = initializer.TestHttpClient;
-
-        SuiteConfig = new SuiteConfig
-        {
-            MockServerUrl      = "http://localhost:8888",
-            ApiResponseFolder  = Directory.CreateDirectory("responses").FullName
-        };
-
-        // Optional: filter by tags (RUN_POOLS) or names (RUN_TESTS) at runtime
-        // Filter = TestFilter.CreateForTagsFromEnvVariable("RUN_POOLS");
+        var cfg = SuiteConfiguration.LoadComponent("suite.config.yaml");
+        var initializer = new TestSuiteInitializer<Startup>(cfg.Startup.Settings!);
+        InitializeDb(initializer);
+        TestHttpClient  = initializer.TestHttpClient;
+        SuiteConfig     = cfg.ToSuiteConfig();
+        SuiteConfig.ApiResponseFolder = EnsureDirectory(cfg.Folders?.Response ?? "responses");
+        Filter          = cfg.ToTestFilter();
+        ResultCollector = new TestResultCollector();
     }
 
     public TestHttpClient       TestHttpClient  { get; private set; }
     public SuiteConfig          SuiteConfig     { get; private set; }
     public TestFilter           Filter          { get; private set; }
+    public TestResultCollector  ResultCollector { get; }
+
+    private static void InitializeDb(TestSuiteInitializer<Startup> initializer)
+    {
+        using var scope = initializer.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+        db.Database.EnsureCreated();
+    }
+
+    private static string EnsureDirectory(string relativePath) =>
+        Directory.CreateDirectory(
+            Path.Combine(Environment.CurrentDirectory, relativePath)).FullName;
+
+    public void Dispose() => ResultCollector.Dispose();
+}
+```
+
+`SuiteConfiguration.LoadComponent` reads the `component` section, validates all keys, and resolves `${ENV_VAR}` tokens. `.ToSuiteConfig()` and `.ToTestFilter()` convert it to the objects `BaseTest` expects.
+
+`ApiResponseFolder` is set after `.ToSuiteConfig()` because the directory must exist on disk — `EnsureDirectory` creates it if absent.
+
+📄 Live example: [`User.ComponentTests/SetUp/TestSuiteFixture.cs`](../example/User.ComponentTests/SetUp/TestSuiteFixture.cs)
+
+---
+
+### Integration test fixture
+
+```csharp
+public class TestSuiteFixture : IDisposable
+{
+    public TestSuiteFixture()
+    {
+        var cfg = SuiteConfiguration.LoadIntegration("suite.config.yaml");
+        SuiteConfig     = cfg.ToSuiteConfig();
+        TestHttpClient  = TestHttpClient.Create(cfg.Api.Url!, new AuthTokenProvider());
+        Filter          = cfg.ToTestFilter();
+        ResultCollector = new TestResultCollector();
+        Directory.CreateDirectory(
+            Environment.CurrentDirectory + $"/{SuiteConfig.ApiResponseFolder}");
+    }
+
+    public TestHttpClient       TestHttpClient  { get; }
+    public SuiteConfig          SuiteConfig     { get; }
+    public TestFilter           Filter          { get; }
+    public TestResultCollector  ResultCollector { get; }
+
+    public void Dispose() => ResultCollector.Dispose();
+}
+```
+
+`SuiteConfiguration.LoadIntegration` reads the `integration` section. It selects the active environment by checking, in order:
+
+1. The `environment` argument passed directly to `LoadIntegration`
+2. The `TEST_ENVIRONMENT` environment variable
+3. The `default` key in the config file
+
+Select the environment at runtime:
+
+```bash
+TEST_ENVIRONMENT=qa RUN_POOLS=smoke dotnet test   # QA smoke run
+dotnet test                                        # falls back to 'default' (local)
+```
+
+📄 Live example: [`User.IntegrationTests/TestSuiteFixture.cs`](../example/User.IntegrationTests/TestSuiteFixture.cs)
+
+---
+
+### Command mode (AppLauncher)
+
+Command mode starts the service under test as an external process before tests run and stops it afterwards. The fixture uses `AppLauncher.Start(cfg.ToAppLauncherConfig())` instead of `TestSuiteInitializer`. See [AppLauncher](./app-launcher.md) for full coverage, including readiness probe options and environment variable injection.
+
+---
+
+## Manual Wiring
+
+Use manual wiring when you need properties `suite.config.yaml` doesn't expose (e.g., `EnableMockServerLogs`, `CustomMatchers`) or when loading config from a different source.
+
+### `SuiteConfig`
+
+`SuiteConfig` is the configuration bag passed to `BaseTest`.
+
+| Property | Description |
+|---|---|
+| `ApiServerUrl` | Base URL of the service under test. Can be empty for in-process component tests — the `TestServer` handles routing. |
+| `MockServerUrl` | WireMock base URL. Omit or leave empty to disable mocking. |
+| `EnableMockServerLogs` | Print WireMock request logs to the console. Useful during debugging. |
+| `RequestBodyFolder` | Folder to resolve `bodyFromFile` paths in request definitions. |
+| `ResponseBodyFolder` | Folder to resolve `bodyFromFile` paths in expected response definitions. |
+| `ApiResponseFolder` | Folder where actual responses are written after each test (used by `ITestProcessor`). |
+| `CustomMatchers` | Additional named matchers — see [Matchers and Patterns](./matchers-and-patterns.md#custom-matchers). |
+
+### `TestSuiteInitializer`
+
+`TestSuiteInitializer<TProgram>` boots the service in-process using ASP.NET Core's `WebApplicationFactory`. Pass the app's `Startup` or `Program` class as the type argument — no `TestServerStartup` subclass is needed.
+
+```csharp
+var initializer = new TestSuiteInitializer<Startup>(
+    "appsettings.Tests.json",
+    services =>
+    {
+        // Optional: override services registered by the app.
+        // Only needed when the app can't configure itself via
+        // ASPNETCORE_ENVIRONMENT or a test-specific appsettings file.
+        var descriptor = services.Single(
+            s => s.ServiceType == typeof(DbContextOptions<MyDb>));
+        services.Remove(descriptor);
+        services.AddDbContext<MyDb>(o => o.UseInMemoryDatabase("test"));
+    });
+
+// Seed the database via DI:
+using var scope = initializer.Services.CreateScope();
+var db = scope.ServiceProvider.GetRequiredService<MyDb>();
+db.Database.EnsureCreated();
+```
+
+The first argument is an appsettings JSON file name, resolved relative to the test output directory. The second argument is an optional `Action<IServiceCollection>` for service overrides.
+
+`initializer.TestHttpClient` routes requests through the in-process server — no network required.
+
+### `TestSuiteFixture` (manual)
+
+```csharp
+public class TestSuiteFixture : IDisposable
+{
+    public TestSuiteFixture()
+    {
+        var initializer = new TestSuiteInitializer<Startup>("appsettings.Tests.json");
+        TestHttpClient = initializer.TestHttpClient;
+
+        SuiteConfig = new SuiteConfig
+        {
+            MockServerUrl     = "http://localhost:8888",
+            ApiResponseFolder = Directory.CreateDirectory("responses").FullName
+        };
+
+        Filter          = TestFilter.CreateForTagsFromEnvVariable("RUN_POOLS");
+        ResultCollector = new TestResultCollector();
+    }
+
+    public TestHttpClient       TestHttpClient  { get; }
+    public SuiteConfig          SuiteConfig     { get; }
+    public TestFilter           Filter          { get; }
     public TestResultCollector  ResultCollector { get; } = new TestResultCollector();
 
     public void Dispose() => ResultCollector.Dispose();
 }
 ```
 
-`TestSuiteInitializer<TStartup>` boots your service in-process using ASP.NET Core's `TestServer`. The `TestHttpClient` it exposes routes requests through that in-process server — no network required.
-
-📄 Live example: [`User.ComponentTests/SetUp/TestSuiteFixture.cs`](../example/User.ComponentTests/SetUp/TestSuiteFixture.cs)
-
----
-
-## The Test Class
-
-Extend `BaseTest`, implement `IClassFixture<T>`, and define a `[Theory]` that feeds test cases from your files.
+### Test class
 
 ```csharp
 public class UserTests : BaseTest, IClassFixture<TestSuiteFixture>
@@ -111,18 +302,15 @@ public class UserTests : BaseTest, IClassFixture<TestSuiteFixture>
 
 `TestReader.GetTestsForAFolder("TestCase")` discovers all `.json` and `.yaml` files in the `TestCase` output directory and yields `(testName, testBody, sourceFileName)` tuples. xUnit feeds each tuple as a theory row.
 
-`test.ToTestCase(requestFolder, responseFolder)` deserialises the raw token into a typed `TestCase`. Pass `null` for both folders if your tests use inline bodies (no `bodyFromFile`).
+`test.ToTestCase(requestFolder, responseFolder)` deserialises the raw token into a typed `TestCase`. Pass `null` for both folders when tests use inline bodies only.
 
 📄 Live example: [`User.ComponentTests/UserComponentTests.cs`](../example/User.ComponentTests/UserComponentTests.cs)
 
----
+### Copy test files to output
 
-## Test Files Must Be Copied to Output
-
-Test files in your project need `CopyToOutputDirectory` set, otherwise `TestReader` won't find them at runtime.
+Every test definition file needs `CopyToOutputDirectory` set or `TestReader` won't find it at runtime.
 
 ```xml
-<!-- User.ComponentTests.csproj -->
 <ItemGroup>
   <None Update="TestCase\user.json">
     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -135,38 +323,36 @@ Test files in your project need `CopyToOutputDirectory` set, otherwise `TestRead
 
 ---
 
-## `TestFilter`
+## Shared Setup
+
+### `TestFilter`
 
 Controls which tests run. Pass a `TestFilter` to the `BaseTest` constructor. If `null`, all tests run.
 
 ```csharp
-// Run only tests tagged "smoke"
-Filter = TestFilter.CreateForTags("smoke");
-
-// Read tag list from RUN_POOLS env var — unset means all tests run
+// Read tag list from RUN_POOLS — unset means all tests run
 Filter = TestFilter.CreateForTagsFromEnvVariable("RUN_POOLS");
 
-// Run specific tests by name
-Filter = TestFilter.CreateForTests("ShouldCreateAUser,ShouldGetUserById");
-
-// Read test names from RUN_TESTS env var
+// Read test names from RUN_TESTS
 Filter = TestFilter.CreateForTestsFromEnvVariable("RUN_TESTS");
+
+// Hardcode tags or names (useful for local debugging)
+Filter = TestFilter.CreateForTags("smoke");
+Filter = TestFilter.CreateForTests("ShouldCreateAUser,ShouldGetUserById");
 ```
 
-At runtime, set the env var before running:
+At runtime:
 
 ```bash
 RUN_POOLS=smoke dotnet test
 RUN_TESTS=ShouldCreateAUser,ShouldGetUserById dotnet test
 ```
 
-Tests without tags always run when a tag filter is active. Tests not in the name list are skipped when a name filter is active.
+Tests without tags always run when a tag filter is active. Tests not in the name list are skipped when a name filter is active. When using `suite.config.yaml`, `.ToTestFilter()` builds the filter from the `filter` section automatically — no manual construction needed.
 
----
+### `TestResultCollector`
 
-## `TestResultCollector`
-
-`TestResultCollector` accumulates the pass/fail/skip result of every test and prints a grouped summary table when the suite ends. Wire it up in your fixture — create it, pass it to `BaseTest`, dispose it in `Dispose()`.
+Accumulates pass/fail/skip results and prints a grouped summary table when the suite ends. Create it in the fixture, pass it to `BaseTest`, and dispose it in `Dispose()`.
 
 ```csharp
 // In TestSuiteFixture
@@ -199,13 +385,9 @@ The summary prints once after xUnit calls `Dispose()` on the fixture:
 
 Results are grouped by source file — useful when a suite spans several test files.
 
-📄 Live example: [`User.ComponentTests/SetUp/TestSuiteFixture.cs`](../example/User.ComponentTests/SetUp/TestSuiteFixture.cs)
+### `TestOutputLogger`
 
----
-
-## `TestOutputLogger`
-
-ConfIT's `BaseTest` accepts an `ITestOutputLogger` for routing log messages to xUnit's `ITestOutputHelper` (so they appear in the IDE test output pane alongside the test). The example projects provide a thin adapter:
+`BaseTest` accepts an `ITestOutputLogger` to route log messages into xUnit's `ITestOutputHelper` (so they appear in the IDE test output pane alongside each test). The interface has one method; implement a thin adapter in your test project:
 
 ```csharp
 public class TestOutputLogger : ITestOutputLogger
@@ -219,36 +401,3 @@ public class TestOutputLogger : ITestOutputLogger
 Pass it in the constructor: `new TestOutputLogger(output)`.
 
 📄 Live example: [`User.ComponentTests/SetUp/TestOutputLogger.cs`](../example/User.ComponentTests/SetUp/TestOutputLogger.cs)
-
----
-
-## Minimal Integration Test Setup
-
-Integration tests use the same structure but without `TestSuiteInitializer`. The service runs out-of-process; `TestHttpClient.Create` points at its URL.
-
-```csharp
-public class TestSuiteFixture : IDisposable
-{
-    public TestSuiteFixture()
-    {
-        SuiteConfig = new SuiteConfig
-        {
-            ApiServerUrl       = "http://localhost:5170",
-            RequestBodyFolder  = "TestCase/Request",
-            ResponseBodyFolder = "TestCase/Response",
-            ApiResponseFolder  = "ApiResponses"
-        };
-        TestHttpClient  = TestHttpClient.Create(SuiteConfig.ApiServerUrl);
-        Filter          = TestFilter.CreateForTagsFromEnvVariable("RUN_POOLS");
-    }
-
-    public TestHttpClient       TestHttpClient  { get; }
-    public SuiteConfig          SuiteConfig     { get; }
-    public TestFilter           Filter          { get; }
-    public TestResultCollector  ResultCollector { get; } = new TestResultCollector();
-
-    public void Dispose() => ResultCollector.Dispose();
-}
-```
-
-📄 Live example: [`User.IntegrationTests/TestSuiteFixture.cs`](../example/User.IntegrationTests/TestSuiteFixture.cs)
