@@ -7,13 +7,13 @@ API_PORT  := 5170
 SVC_PORT  := 9999
 DB        := example/User.Api/User.db
 
-.PHONY: default help build unit component test integration services-start services-stop ci clean
+.PHONY: default help build unit component component.applauncher test integration services-start services-stop ci clean
 
 default: build test
 
 # ── Help ────────────────────────────────────────────────────────────────────────
 help: ## Show available targets
-	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) \
+	@grep -E '^[a-zA-Z_.-]+:.*## ' $(MAKEFILE_LIST) \
 	  | sort \
 	  | awk 'BEGIN {FS=":.*## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
@@ -32,6 +32,10 @@ unit: ## Run unit tests
 
 component: ## Run component tests (in-process, no live services needed)
 	@$(DOTNET) test example/User.ComponentTests $(TEST_OPTS)
+
+component.applauncher: ## Run AppLauncher component tests (starts User.Api as a real process on port 5170)
+	@lsof -ti :$(API_PORT) 2>/dev/null | xargs kill -9 2>/dev/null || true
+	@$(DOTNET) test example/User.ComponentTests.AppLauncher $(TEST_OPTS)
 
 test: unit component ## Run unit + component tests (default test suite, no live services)
 
