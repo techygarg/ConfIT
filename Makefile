@@ -1,8 +1,9 @@
 # ConfIT — local build and test
 # Requires .NET 9 SDK or later (uses ~/.dotnet if available).
 
-DOTNET    := $(shell [ -x "$(HOME)/.dotnet/dotnet" ] && echo "$(HOME)/.dotnet/dotnet" || echo "dotnet")
-TEST_OPTS := --logger "console;verbosity=minimal" -nologo
+DOTNET     := $(shell [ -x "$(HOME)/.dotnet/dotnet" ] && echo "$(HOME)/.dotnet/dotnet" || echo "dotnet")
+BUILD_OPTS := --configuration Release --verbosity quiet -nologo -p:WarningLevel=0 -p:NoWarn=NU1510
+TEST_OPTS  := --logger "console;verbosity=minimal" -nologo -p:WarningLevel=0 -p:NoWarn=NU1510
 API_PORT  := 5170
 SVC_PORT  := 9999
 DB        := example/User.Api/User.db
@@ -20,9 +21,9 @@ help: ## Show available targets
 # ── Build ───────────────────────────────────────────────────────────────────────
 build: ## Build library and all example projects
 	@echo "Building library..."
-	@$(DOTNET) build src/ConfIT.slnx --configuration Release -v minimal -nologo
+	@$(DOTNET) build src/ConfIT.slnx $(BUILD_OPTS)
 	@echo "Building examples..."
-	@$(DOTNET) build example/User.sln  --configuration Release -v minimal -nologo
+	@$(DOTNET) build example/User.sln  $(BUILD_OPTS)
 	@echo "  ✓ Built"
 
 # ── Tests ───────────────────────────────────────────────────────────────────────
@@ -35,7 +36,7 @@ component: ## Run component tests (in-process, no live services needed)
 
 component.applauncher: ## Run AppLauncher component tests (starts User.Api as a real process on port 5170)
 	@lsof -ti :$(API_PORT) 2>/dev/null | xargs kill -9 2>/dev/null || true
-	@dotnet build example/User.Api --configuration Debug -v minimal -nologo
+	@dotnet build example/User.Api --verbosity quiet -nologo
 	@$(DOTNET) test example/User.ComponentTests.AppLauncher $(TEST_OPTS)
 
 test: unit component ## Run unit + component tests (default test suite, no live services)

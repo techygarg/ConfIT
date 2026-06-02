@@ -15,7 +15,7 @@ public static class SuiteConfiguration
     private static readonly IReadOnlySet<string> ComponentKeys = KeySet("startup", "api", "mock", "folders", "filter");
 
     private static readonly IReadOnlySet<string>
-        StartupKeys = KeySet("mode", "settings", "command", "readiness", "env");
+        StartupKeys = KeySet("mode", "settings", "command", "stopCommand", "readiness", "env");
 
     private static readonly IReadOnlySet<string> ReadinessKeys = KeySet("url", "port", "timeoutSeconds", "intervalMs");
     private static readonly IReadOnlySet<string> ApiKeys = KeySet("url", "authToken");
@@ -196,6 +196,7 @@ public sealed class StartupConfig
     public bool IsCommand => Mode == CommandMode;
     public string? Settings { get; set; }
     public string? Command { get; set; }
+    public string? StopCommand { get; set; }
     public ReadinessConfig? Readiness { get; set; }
     public Dictionary<string, string>? Env { get; set; }
 }

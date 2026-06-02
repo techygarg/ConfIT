@@ -46,9 +46,10 @@ public static class SuiteConfigurationExtensions
 
         return new AppLauncherConfig
         {
-            Command = config.Startup.Command!,
-            Readiness = config.Startup.Readiness!,
-            Env = config.Startup.Env ?? new Dictionary<string, string>()
+            Command     = config.Startup.Command!,
+            StopCommand = config.Startup.StopCommand,
+            Readiness   = config.Startup.Readiness!,
+            Env         = config.Startup.Env ?? new Dictionary<string, string>()
         };
     }
 

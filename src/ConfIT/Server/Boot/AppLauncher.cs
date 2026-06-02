@@ -10,14 +10,19 @@ public sealed class AppLauncher : IDisposable
 {
     private readonly int _gracePeriodMs;
     private readonly OutputBuffer _outputBuffer;
+    private readonly int? _port;
     private readonly Process _process;
+    private readonly string? _stopCommand;
     private bool _disposed;
 
-    private AppLauncher(Process process, OutputBuffer outputBuffer, int gracePeriodMs)
+    private AppLauncher(Process process, OutputBuffer outputBuffer, int gracePeriodMs,
+                        string? stopCommand, int? port)
     {
-        _process = process;
+        _process     = process;
         _outputBuffer = outputBuffer;
         _gracePeriodMs = gracePeriodMs;
+        _stopCommand  = stopCommand;
+        _port         = port;
     }
 
     public IReadOnlyList<string> RecentOutput => _outputBuffer.GetLines();
@@ -27,26 +32,17 @@ public sealed class AppLauncher : IDisposable
         if (_disposed) return;
         _disposed = true;
 
-        if (!_process.HasExited)
-            try
-            {
-                _process.Kill(true);
-            }
-            catch (InvalidOperationException)
-            {
-                /* exited between check and kill */
-            }
+        if (_stopCommand is not null)
+            RunStopCommand(_stopCommand);
+        else
+            KillProcess();
 
-        try
-        {
-            _process.WaitForExit(_gracePeriodMs);
-        }
-        catch
-        {
-            /* ignore */
-        }
-
+        try { _process.WaitForExit(_gracePeriodMs); } catch { /* ignore */ }
         _process.Dispose();
+
+        // Ensure the port is actually free before returning — the OS may hold it
+        // briefly after the process exits. Both StopCommand and Kill paths wait here.
+        WaitForPortRelease();
     }
 
     /// <summary>
@@ -68,29 +64,67 @@ public sealed class AppLauncher : IDisposable
             CheckPortAvailable(port.Value);
 
         var outputBuffer = new OutputBuffer();
-        var process = StartProcess(config, outputBuffer);
+        var process      = StartProcess(config, outputBuffer);
 
         WaitForReady(process, config, outputBuffer);
 
-        return new AppLauncher(process, outputBuffer, config.GracePeriodSeconds * 1000);
+        return new AppLauncher(process, outputBuffer, config.GracePeriodSeconds * 1000,
+                               config.StopCommand, port);
     }
 
     public static AppLauncher Start(string command, string readinessUrl, int timeoutSeconds = 30)
     {
         return Start(new AppLauncherConfig
         {
-            Command = command,
+            Command   = command,
             Readiness = new ReadinessConfig { Url = readinessUrl, TimeoutSeconds = timeoutSeconds }
         });
     }
 
     // ── Private helpers ────────────────────────────────────────────────────
 
+    private void KillProcess()
+    {
+        if (!_process.HasExited)
+            try { _process.Kill(entireProcessTree: true); }
+            catch (InvalidOperationException) { /* exited between check and kill */ }
+    }
+
+    private static void RunStopCommand(string stopCommand)
+    {
+        var psi = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? new ProcessStartInfo("cmd.exe")
+            : new ProcessStartInfo("/bin/sh");
+
+        psi.ArgumentList.Add(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "/c" : "-c");
+        psi.ArgumentList.Add(stopCommand);
+        psi.UseShellExecute = false;
+
+        try
+        {
+            using var stop = Process.Start(psi);
+            stop?.WaitForExit(5_000);
+        }
+        catch { /* best effort */ }
+    }
+
+    private void WaitForPortRelease()
+    {
+        if (_port is null) return;
+        var sw = Stopwatch.StartNew();
+        while (sw.Elapsed.TotalSeconds < 5)
+        {
+            var listener = new TcpListener(IPAddress.Loopback, _port.Value);
+            try { listener.Start(); listener.Stop(); return; }
+            catch (SocketException) { Thread.Sleep(100); }
+        }
+    }
+
     private static Process StartProcess(AppLauncherConfig config, OutputBuffer outputBuffer)
     {
         var process = new Process { StartInfo = BuildProcessStartInfo(config) };
         process.OutputDataReceived += (_, e) => outputBuffer.Append(e.Data);
-        process.ErrorDataReceived += (_, e) => outputBuffer.Append(e.Data);
+        process.ErrorDataReceived  += (_, e) => outputBuffer.Append(e.Data);
         process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
@@ -102,7 +136,7 @@ public sealed class AppLauncher : IDisposable
         var readinessTarget = config.Readiness.Url ?? $"tcp://localhost:{config.Readiness.Port}";
 
         using var probe = CreateProbe(config.Readiness);
-        var sw = Stopwatch.StartNew();
+        var sw      = Stopwatch.StartNew();
         var timeout = TimeSpan.FromSeconds(config.Readiness.TimeoutSeconds);
 
         while (sw.Elapsed < timeout)
@@ -118,15 +152,7 @@ public sealed class AppLauncher : IDisposable
             Thread.Sleep(config.Readiness.IntervalMs);
         }
 
-        try
-        {
-            process.Kill(true);
-        }
-        catch
-        {
-            /* already exited */
-        }
-
+        try { process.Kill(entireProcessTree: true); } catch { /* already exited */ }
         throw new AppLauncherException(
             $"App did not become ready after {(int)sw.Elapsed.TotalSeconds}s.\n" +
             $"Command: {config.Command}\n" +
@@ -166,11 +192,7 @@ public sealed class AppLauncher : IDisposable
     private static void CheckPortAvailable(int port)
     {
         var listener = new TcpListener(IPAddress.Loopback, port);
-        try
-        {
-            listener.Start();
-            listener.Stop();
-        }
+        try { listener.Start(); listener.Stop(); }
         catch (SocketException)
         {
             throw new AppLauncherException(
@@ -190,9 +212,9 @@ public sealed class AppLauncher : IDisposable
         psi.ArgumentList.Add(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "/c" : "-c");
         psi.ArgumentList.Add(config.Command);
 
-        psi.UseShellExecute = false;
+        psi.UseShellExecute        = false;
         psi.RedirectStandardOutput = true;
-        psi.RedirectStandardError = true;
+        psi.RedirectStandardError  = true;
 
         foreach (var (key, value) in config.Env)
             psi.EnvironmentVariables[key] = value;
@@ -219,10 +241,7 @@ public sealed class AppLauncher : IDisposable
 
         internal IReadOnlyList<string> GetLines()
         {
-            lock (_lock)
-            {
-                return _lines.ToList();
-            }
+            lock (_lock) { return _lines.ToList(); }
         }
     }
 }

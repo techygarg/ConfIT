@@ -10,6 +10,12 @@ component:
   startup:
     mode: command
     command: dotnet run --no-build --project ../../../../User.Api --launch-profile ComponentTest
+    # stopCommand: explicitly kills the process by port on dispose.
+    # Without this, AppLauncher kills the process tree and waits for port release automatically.
+    # Provide this when the default kill does not release the port reliably on your OS.
+    # Unix/macOS: lsof -ti :5170 | xargs kill -9
+    # Windows:    taskkill /F /IM User.Api.exe
+    stopCommand: lsof -ti :5170 -sTCP:LISTEN | xargs kill -9
     readiness:
       port: 5170          # TCP probe — app is ready when port 5170 responds
       timeoutSeconds: 60  # allow time for dotnet build on first run

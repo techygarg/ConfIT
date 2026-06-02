@@ -17,9 +17,13 @@ public static class TestReader
 
     public static IEnumerable<object[]> GetTestsForAFolder(string testFolderName)
     {
+        // Sort alphabetically — Directory.GetFiles returns inode order on Linux,
+        // which is non-deterministic. Tests that depend on prior state (e.g. create
+        // then retrieve) must run in consistent file order across all platforms.
         var files = Directory.GetFiles(Path.GetFullPath(testFolderName))
             .Where(f => Path.GetExtension(f).Equals(".json", StringComparison.OrdinalIgnoreCase)
-                        || IsYaml(f));
+                        || IsYaml(f))
+            .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase);
 
         foreach (var filePath in files)
         {
