@@ -1,0 +1,117 @@
+{
+  "ShouldCreateAUser": {
+    "mock": {
+      "interactions": [
+        {
+          "request": {
+            "method": "GET",
+            "path": "/api/demo/test@test.com"
+          },
+          "response": {
+            "statusCode": 200,
+            "body": { "isValid": true }
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "path": "/api/demo",
+            "params": { "email": "test@test.com" }
+          },
+          "response": {
+            "statusCode": 200,
+            "body": { "isValid": true }
+          }
+        },
+        {
+          "request": {
+            "method": "POST",
+            "path": "/api/demo",
+            "body": { "email": "test@test.com" }
+          },
+          "response": {
+            "statusCode": 200,
+            "body": { "isValid": true }
+          }
+        }
+      ]
+    },
+    "api": {
+      "request": {
+        "method": "POST",
+        "path": "/api/user",
+        "body": { "name": "test", "email": "test@test.com", "age": 10 }
+      },
+      "response": {
+        "statusCode": 201,
+        "body": { "id": 1 },
+        "extract": {
+          "userId": "$.body.id"
+        }
+      }
+    }
+  },
+
+  "ShouldReturnUserForGivenEmailId": {
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/test@test.com"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "name": "test",
+          "email": "test@test.com",
+          "age": 10
+        },
+        "matcher": {
+          "ignore": ["id"]
+        }
+      }
+    }
+  },
+
+  "ShouldGetUserById": {
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/{{userId}}"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "name": "test",
+          "email": "test@test.com",
+          "age": 10
+        },
+        "matcher": {
+          "ignore": ["id"]
+        }
+      }
+    }
+  },
+
+  "ShouldValidateUserFieldsWithSemanticMatchers": {
+    "tags": ["user", "semantic"],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/test@test.com"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "name": "test",
+          "age": 10
+        },
+        "matcher": {
+          "semantic": {
+            "id": "greaterThan(0)",
+            "email": "isEmail"
+          }
+        }
+      }
+    }
+  }
+}
