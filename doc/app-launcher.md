@@ -129,6 +129,11 @@ component:
   startup:
     mode: command
     command: dotnet run --no-build --project ../../../../User.Api --launch-profile ComponentTest
+    # stopCommand: OS-specific command that kills the server and releases its port on dispose.
+    # If omitted, AppLauncher kills the process tree and waits for port release automatically.
+    # Unix/macOS: target only the LISTENING server — not all processes with the port open:
+    stopCommand: lsof -ti :5170 -sTCP:LISTEN | xargs kill -9
+    # Windows:    taskkill /F /IM User.Api.exe
     readiness:
       port: 5170          # TCP probe — app is ready when port 5170 responds
       timeoutSeconds: 60  # allow time for dotnet build on first run
@@ -205,6 +210,26 @@ The test class itself is identical to other component test classes:
 
 ---
 
+## Stopping the Process
+
+When `Dispose()` is called, `AppLauncher` stops the running process in one of two ways.
+
+**Default behaviour (no `stopCommand`):** Calls `Kill(entireProcessTree: true)` on the shell wrapper process, then polls the port until it is free before returning. This works reliably in most cases but can leave orphan grandchild processes on some platforms (e.g. when the shell spawns `dotnet run` which spawns the app — killing the shell may not kill all descendants).
+
+**`stopCommand` (recommended when running sequential suites):** Runs the provided command and then polls the port until it is free. Use this when the default kill leaves stale processes that block subsequent test suites from binding the same port.
+
+```yaml
+startup:
+  stopCommand: lsof -ti :5170 -sTCP:LISTEN | xargs kill -9   # Unix/macOS
+  # Windows:  taskkill /F /IM User.Api.exe
+```
+
+**Critical:** on Unix, use `-sTCP:LISTEN` with `lsof`. Without it, `lsof -ti :5170` returns every process that has port 5170 open — including the **test runner itself**, which holds client connections to the same port. Killing the test runner causes an abrupt "test host crashed" failure. The `-sTCP:LISTEN` filter restricts the result to processes in the `LISTEN` state, which is only the server.
+
+In both cases `AppLauncher` waits for the port to be bindable before `Dispose()` returns, so the caller can immediately start the next service on the same port without a race.
+
+---
+
 ## Readiness Probes
 
 Exactly one probe type must be specified per `readiness` block.
@@ -259,12 +284,13 @@ var launcher = AppLauncher.Start(
     timeoutSeconds: 60);
 ```
 
-**Full config** (TCP probe with extra env):
+**Full config** (TCP probe, stop command, extra env):
 
 ```csharp
 var launcher = AppLauncher.Start(new AppLauncherConfig
 {
-    Command  = "dotnet run --launch-profile ComponentTest",
+    Command     = "dotnet run --launch-profile ComponentTest",
+    StopCommand = "lsof -ti :5170 -sTCP:LISTEN | xargs kill -9",  // Unix/macOS
     Readiness = new ReadinessConfig
     {
         Port           = 5170,
@@ -291,11 +317,11 @@ The recommended pattern is a Makefile target that builds the application first:
 
 ```makefile
 component.applauncher: ## Run AppLauncher component tests
-    @lsof -ti :5170 2>/dev/null | xargs kill -9 2>/dev/null || true
+    @lsof -ti :5170 -sTCP:LISTEN 2>/dev/null | xargs kill -9 2>/dev/null || true
     @dotnet build example/User.Api --configuration Debug -v minimal -nologo
     @$(DOTNET) test example/User.ComponentTests.AppLauncher $(TEST_OPTS)
 ```
 
-The `lsof` line ensures port 5170 is free before the test run starts. `AppLauncher` also checks this at startup and will throw `AppLauncherException` if the port is occupied, but the Makefile check avoids a less informative error when a previous run left a stale process.
+The `lsof` line ensures port 5170 is free before the test run starts. `AppLauncher` also checks this at startup and will throw `AppLauncherException` if the port is occupied, but the Makefile check avoids a less informative error when a previous run left a stale process. The `-sTCP:LISTEN` flag is required — without it, `lsof` would also target client-side connections held by any currently-running test runner.
 
 📄 Live example: [`Makefile`](../Makefile) — `component.applauncher` target

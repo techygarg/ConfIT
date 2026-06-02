@@ -35,7 +35,7 @@ component: ## Run component tests (in-process, no live services needed)
 	@$(DOTNET) test example/User.ComponentTests $(TEST_OPTS)
 
 component.applauncher: ## Run AppLauncher component tests (starts User.Api as a real process on port 5170)
-	@lsof -ti :$(API_PORT) 2>/dev/null | xargs kill -9 2>/dev/null || true
+	@lsof -ti :$(API_PORT) -sTCP:LISTEN 2>/dev/null | xargs kill -9 2>/dev/null || true
 	@dotnet build example/User.Api --verbosity quiet -nologo
 	@$(DOTNET) test example/User.ComponentTests.AppLauncher $(TEST_OPTS)
 
