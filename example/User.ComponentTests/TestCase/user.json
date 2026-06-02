@@ -44,9 +44,14 @@
       },
       "response": {
         "statusCode": 201,
-        "body": { "id": 1 },
+        "body": {  },
         "extract": {
           "userId": "$.body.id"
+        },        
+        "matcher": {
+          "semantic": {
+            "id": "greaterThan(0)"
+          }
         }
       }
     }
