@@ -12,7 +12,7 @@ public class TestFilterTests
         var filter = TestFilter.CreateForTags(tags);
 
         // Then
-        filter.Tags.Should().BeEquivalentTo(["tag1", "tag2", "tag3"]);
+        filter.Tags.Should().BeEquivalentTo("tag1", "tag2", "tag3");
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class TestFilterTests
             var filter = TestFilter.CreateForTagsFromEnvVariable(Key);
 
             // Then
-            filter.Tags.Should().BeEquivalentTo(["tag1", "tag2", "tag3"]);
+            filter.Tags.Should().BeEquivalentTo("tag1", "tag2", "tag3");
         }
         finally
         {
@@ -87,7 +87,7 @@ public class TestFilterTests
         var filter = TestFilter.CreateForTests(testNames);
 
         // Then
-        filter.TestNames.Should().BeEquivalentTo(["test1", "test2", "test3"]);
+        filter.TestNames.Should().BeEquivalentTo("test1", "test2", "test3");
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class TestFilterTests
             var filter = TestFilter.CreateForTestsFromEnvVariable(Key);
 
             // Then
-            filter.TestNames.Should().BeEquivalentTo(["test1", "test2", "test3"]);
+            filter.TestNames.Should().BeEquivalentTo("test1", "test2", "test3");
         }
         finally
         {

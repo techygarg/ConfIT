@@ -1,9 +1,5 @@
-using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using ConfIT.Server.Http;
-using ConfIT.Server.Launcher;
-using Xunit;
+using ConfIT.Server.Boot;
 
 namespace ConfIT.UnitTest.Server.Http;
 
@@ -16,7 +12,7 @@ public class AppLauncherTests
     {
         var config = new AppLauncherConfig
         {
-            Command   = "",
+            Command = "",
             Readiness = new ReadinessConfig { Port = GetFreePort() }
         };
         Assert.Throws<ArgumentException>(() => AppLauncher.Start(config));
@@ -34,7 +30,7 @@ public class AppLauncherTests
     {
         var config = new AppLauncherConfig
         {
-            Command   = "echo hello",
+            Command = "echo hello",
             Readiness = new ReadinessConfig { Url = "http://localhost:5000/", Port = 5000 }
         };
         Assert.Throws<ArgumentException>(() => AppLauncher.Start(config));
@@ -45,14 +41,14 @@ public class AppLauncherTests
     [Fact]
     public void Start_PortAlreadyInUse_ThrowsBeforeProcessStarts()
     {
-        var port     = GetFreePort();
+        var port = GetFreePort();
         var listener = new TcpListener(IPAddress.Loopback, port);
         listener.Start();
         try
         {
             var config = new AppLauncherConfig
             {
-                Command   = "echo hello",   // never executed — throws before start
+                Command = "echo hello", // never executed — throws before start
                 Readiness = new ReadinessConfig { Port = port }
             };
             var ex = Assert.Throws<AppLauncherException>(() => AppLauncher.Start(config));
@@ -72,7 +68,7 @@ public class AppLauncherTests
     {
         var config = new AppLauncherConfig
         {
-            Command   = "exit 1",
+            Command = "exit 1",
             Readiness = new ReadinessConfig { Port = GetFreePort(), TimeoutSeconds = 10, IntervalMs = 50 }
         };
         var ex = Assert.Throws<AppLauncherException>(() => AppLauncher.Start(config));
@@ -90,13 +86,19 @@ public class AppLauncherTests
         // We exercise Dispose via a crash scenario where the process exits before ready.
         var config = new AppLauncherConfig
         {
-            Command   = "exit 0",
+            Command = "exit 0",
             Readiness = new ReadinessConfig { Port = GetFreePort(), TimeoutSeconds = 5, IntervalMs = 50 }
         };
 
         AppLauncherException? thrown = null;
-        try { AppLauncher.Start(config); }
-        catch (AppLauncherException ex) { thrown = ex; }
+        try
+        {
+            AppLauncher.Start(config);
+        }
+        catch (AppLauncherException ex)
+        {
+            thrown = ex;
+        }
 
         // The crash path kills the process internally before rethrowing.
         // AppLauncherException was thrown — verify message is set (process path exercised).
@@ -129,7 +131,7 @@ public class TcpReadinessProbeTests
     [Fact]
     public void TryProbe_PortListening_ReturnsTrue()
     {
-        var port     = GetFreePort();
+        var port = GetFreePort();
         var listener = new TcpListener(IPAddress.Loopback, port);
         listener.Start();
         try
@@ -147,7 +149,7 @@ public class TcpReadinessProbeTests
     public void TryProbe_NothingListening_ReturnsFalse()
     {
         var port = GetFreePort();
-        using var probe = new TcpReadinessProbe("localhost", port, perAttemptTimeoutMs: 300);
+        using var probe = new TcpReadinessProbe("localhost", port, 300);
         Assert.False(probe.TryProbe());
     }
 
@@ -167,7 +169,7 @@ public class HttpReadinessProbeTests
     public void TryProbe_ServerReturns200_ReturnsTrue()
     {
         var port = GetFreePort();
-        var url  = $"http://localhost:{port}/";
+        var url = $"http://localhost:{port}/";
 
         using var listener = new HttpListener();
         listener.Prefixes.Add(url);
@@ -190,7 +192,7 @@ public class HttpReadinessProbeTests
     public void TryProbe_ServerReturns500_ReturnsFalse()
     {
         var port = GetFreePort();
-        var url  = $"http://localhost:{port}/";
+        var url = $"http://localhost:{port}/";
 
         using var listener = new HttpListener();
         listener.Prefixes.Add(url);
@@ -213,7 +215,7 @@ public class HttpReadinessProbeTests
     public void TryProbe_NoServer_ReturnsFalse()
     {
         var port = GetFreePort();
-        using var probe = new HttpReadinessProbe($"http://localhost:{port}/health", perAttemptTimeoutMs: 300);
+        using var probe = new HttpReadinessProbe($"http://localhost:{port}/health", 300);
         Assert.False(probe.TryProbe());
     }
 

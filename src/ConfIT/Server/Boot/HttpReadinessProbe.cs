@@ -1,15 +1,15 @@
 using System.Net.Http;
 
-namespace ConfIT.Server.Launcher;
+namespace ConfIT.Server.Boot;
 
 internal sealed class HttpReadinessProbe : IReadinessProbe
 {
-    private readonly string _url;
     private readonly HttpClient _client;
+    private readonly string _url;
 
     internal HttpReadinessProbe(string url, int perAttemptTimeoutMs = 2000)
     {
-        _url    = url;
+        _url = url;
         _client = new HttpClient { Timeout = TimeSpan.FromMilliseconds(perAttemptTimeoutMs) };
     }
 
@@ -26,5 +26,8 @@ internal sealed class HttpReadinessProbe : IReadinessProbe
         }
     }
 
-    public void Dispose() => _client.Dispose();
+    public void Dispose()
+    {
+        _client.Dispose();
+    }
 }

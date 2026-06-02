@@ -1,6 +1,6 @@
 using System.Net.Sockets;
 
-namespace ConfIT.Server.Launcher;
+namespace ConfIT.Server.Boot;
 
 internal sealed class TcpReadinessProbe : IReadinessProbe
 {
@@ -10,8 +10,8 @@ internal sealed class TcpReadinessProbe : IReadinessProbe
 
     internal TcpReadinessProbe(string host, int port, int perAttemptTimeoutMs = 2000)
     {
-        _host      = host;
-        _port      = port;
+        _host = host;
+        _port = port;
         _timeoutMs = perAttemptTimeoutMs;
     }
 
@@ -28,5 +28,7 @@ internal sealed class TcpReadinessProbe : IReadinessProbe
         }
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+    }
 }

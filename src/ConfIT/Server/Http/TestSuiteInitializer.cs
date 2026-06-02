@@ -25,15 +25,19 @@ public class TestSuiteInitializer<TProgram> : IDisposable where TProgram : class
 
     public IServiceProvider Services => _factory.Services;
 
-    [Obsolete("Use Services (IServiceProvider) instead. TestServer is an implementation detail of the legacy hosting model.")]
+    [Obsolete(
+        "Use Services (IServiceProvider) instead. TestServer is an implementation detail of the legacy hosting model.")]
     public TestServer TestServer => _factory.Server;
 
-    public void Dispose() => _factory.Dispose();
+    public void Dispose()
+    {
+        _factory.Dispose();
+    }
 
     private sealed class InternalFactory : WebApplicationFactory<TProgram>
     {
-        private readonly string _settingsFilePath;
         private readonly Action<IServiceCollection>? _configureServices;
+        private readonly string _settingsFilePath;
 
         internal InternalFactory(string settingsFile, Action<IServiceCollection>? configureServices)
         {
@@ -52,8 +56,8 @@ public class TestSuiteInitializer<TProgram> : IDisposable where TProgram : class
                 config.AddJsonFile(
                     new PhysicalFileProvider(Path.GetDirectoryName(_settingsFilePath)!),
                     Path.GetFileName(_settingsFilePath),
-                    optional: false,
-                    reloadOnChange: false);
+                    false,
+                    false);
             });
 
             if (_configureServices is not null)

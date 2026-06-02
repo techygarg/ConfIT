@@ -3,7 +3,9 @@ namespace ConfIT.Variable.Exception;
 public class AmbiguousVariableException : InvalidOperationException
 {
     public AmbiguousVariableException(string varName, IEnumerable<string> testNames)
-        : base(BuildMessage(varName, testNames)) { }
+        : base(BuildMessage(varName, testNames))
+    {
+    }
 
     private static string BuildMessage(string varName, IEnumerable<string> testNames)
     {

@@ -20,9 +20,9 @@ public class VariableExtractorTests
     {
         // Given
         const string UserJson = """{"id":"abc-123","name":"Alice"}""";
-        var store    = new VariableStore();
+        var store = new VariableStore();
         var response = CreateResponse(HttpStatusCode.Created, UserJson);
-        var body     = JToken.Parse(UserJson);
+        var body = JToken.Parse(UserJson);
 
         // When
         VariableExtractor.Extract("ShouldCreateUser", response, body,
@@ -36,9 +36,9 @@ public class VariableExtractorTests
     public void Extract_NestedBodyField_SetsVariable()
     {
         // Given
-        var store    = new VariableStore();
+        var store = new VariableStore();
         var response = CreateResponse(HttpStatusCode.OK, """{"address":{"city":"London"}}""");
-        var body     = JToken.Parse("""{"address":{"city":"London"}}""");
+        var body = JToken.Parse("""{"address":{"city":"London"}}""");
 
         // When
         VariableExtractor.Extract("ShouldGetUser", response, body,
@@ -52,7 +52,7 @@ public class VariableExtractorTests
     public void Extract_ResponseHeader_SetsVariable()
     {
         // Given
-        var store    = new VariableStore();
+        var store = new VariableStore();
         var response = CreateResponse(HttpStatusCode.Created, "{}",
             new Dictionary<string, string> { { "X-Request-Id", "req-abc" } });
         var body = JToken.Parse("{}");
@@ -69,9 +69,9 @@ public class VariableExtractorTests
     public void Extract_StatusCode_SetsNumericVariable()
     {
         // Given
-        var store    = new VariableStore();
+        var store = new VariableStore();
         var response = CreateResponse(HttpStatusCode.Created, "{}");
-        var body     = JToken.Parse("{}");
+        var body = JToken.Parse("{}");
 
         // When
         VariableExtractor.Extract("ShouldCreateUser", response, body,
@@ -85,9 +85,9 @@ public class VariableExtractorTests
     public void Extract_NullSpec_DoesNothing()
     {
         // Given
-        var store    = new VariableStore();
+        var store = new VariableStore();
         var response = CreateResponse(HttpStatusCode.OK, "{}");
-        var body     = JToken.Parse("{}");
+        var body = JToken.Parse("{}");
 
         // When
         var act = () => VariableExtractor.Extract("ShouldGetUser", response, body, null, store);
@@ -100,9 +100,9 @@ public class VariableExtractorTests
     public void Extract_EmptySpec_DoesNothing()
     {
         // Given
-        var store    = new VariableStore();
+        var store = new VariableStore();
         var response = CreateResponse(HttpStatusCode.OK, "{}");
-        var body     = JToken.Parse("{}");
+        var body = JToken.Parse("{}");
 
         // When
         var act = () => VariableExtractor.Extract("ShouldGetUser", response, body,
@@ -116,9 +116,9 @@ public class VariableExtractorTests
     public void Extract_PathMatchesNothing_ThrowsInvalidOperationException()
     {
         // Given
-        var store    = new VariableStore();
+        var store = new VariableStore();
         var response = CreateResponse(HttpStatusCode.OK, """{"name":"Alice"}""");
-        var body     = JToken.Parse("""{"name":"Alice"}""");
+        var body = JToken.Parse("""{"name":"Alice"}""");
 
         // When
         var act = () => VariableExtractor.Extract("ShouldGetUser", response, body,
@@ -132,9 +132,9 @@ public class VariableExtractorTests
     public void Extract_NumberType_PreservesType()
     {
         // Given
-        var store    = new VariableStore();
+        var store = new VariableStore();
         var response = CreateResponse(HttpStatusCode.OK, """{"score":42}""");
-        var body     = JToken.Parse("""{"score":42}""");
+        var body = JToken.Parse("""{"score":42}""");
 
         // When
         VariableExtractor.Extract("ShouldGetUser", response, body,

@@ -10,7 +10,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenIsUuid_AndValueIsValidUuid(string uuid)
     {
         // Given
-        var actual   = JToken.Parse($"{{'id': '{uuid}'}}");
+        var actual = JToken.Parse($"{{'id': '{uuid}'}}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -25,7 +25,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenIsUuid_AndValueIsNotUuid()
     {
         // Given
-        var actual   = JToken.Parse("{'id': 'not-a-uuid'}");
+        var actual = JToken.Parse("{'id': 'not-a-uuid'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -40,7 +40,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenIsIsoDate_AndValueIsValidDate()
     {
         // Given
-        var actual   = JToken.Parse("{'date': '2026-05-31'}");
+        var actual = JToken.Parse("{'date': '2026-05-31'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -55,7 +55,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenIsIsoDate_AndValueIsDateTime()
     {
         // Given
-        var actual   = JToken.Parse("{'date': '2026-05-31T10:30:00Z'}");
+        var actual = JToken.Parse("{'date': '2026-05-31T10:30:00Z'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -73,7 +73,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenIsIsoDateTime_AndValueIsValidDateTime(string dateTime)
     {
         // Given
-        var actual   = JToken.Parse($"{{'createdAt': '{dateTime}'}}");
+        var actual = JToken.Parse($"{{'createdAt': '{dateTime}'}}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -88,7 +88,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenIsIsoDateTime_AndValueIsDateOnly()
     {
         // Given
-        var actual   = JToken.Parse("{'createdAt': '2026-05-31'}");
+        var actual = JToken.Parse("{'createdAt': '2026-05-31'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -103,7 +103,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenIsEmail_AndValueIsValidEmail()
     {
         // Given
-        var actual   = JToken.Parse("{'email': 'user@example.com'}");
+        var actual = JToken.Parse("{'email': 'user@example.com'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -118,7 +118,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenIsEmail_AndValueIsNotEmail()
     {
         // Given
-        var actual   = JToken.Parse("{'email': 'not-an-email'}");
+        var actual = JToken.Parse("{'email': 'not-an-email'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -135,7 +135,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenIsNull_AndValueIsNull()
     {
         // Given
-        var actual   = JToken.Parse("{'deletedAt': null}");
+        var actual = JToken.Parse("{'deletedAt': null}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -150,7 +150,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenIsNull_AndValueIsNotNull()
     {
         // Given
-        var actual   = JToken.Parse("{'deletedAt': '2026-05-31'}");
+        var actual = JToken.Parse("{'deletedAt': '2026-05-31'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -165,7 +165,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenIsNotNull_AndValueIsPresent()
     {
         // Given
-        var actual   = JToken.Parse("{'id': 1}");
+        var actual = JToken.Parse("{'id': 1}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -180,7 +180,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenIsNotNull_AndValueIsNull()
     {
         // Given
-        var actual   = JToken.Parse("{'id': null}");
+        var actual = JToken.Parse("{'id': null}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -197,7 +197,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenIsEmpty_AndStringIsEmpty()
     {
         // Given
-        var actual   = JToken.Parse("{'name': ''}");
+        var actual = JToken.Parse("{'name': ''}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -212,7 +212,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenIsEmpty_AndArrayIsEmpty()
     {
         // Given
-        var actual   = JToken.Parse("{'items': []}");
+        var actual = JToken.Parse("{'items': []}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -227,7 +227,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenIsEmpty_AndObjectIsEmpty()
     {
         // Given
-        var actual   = JToken.Parse("{'meta': {}}");
+        var actual = JToken.Parse("{'meta': {}}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -242,7 +242,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenIsNotEmpty_AndArrayHasElements()
     {
         // Given
-        var actual   = JToken.Parse("{'items': [1, 2]}");
+        var actual = JToken.Parse("{'items': [1, 2]}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -257,7 +257,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenIsNotEmpty_AndStringIsEmpty()
     {
         // Given
-        var actual   = JToken.Parse("{'name': ''}");
+        var actual = JToken.Parse("{'name': ''}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -272,7 +272,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenIsNotEmpty_AndArrayIsEmpty()
     {
         // Given
-        var actual   = JToken.Parse("{'items': []}");
+        var actual = JToken.Parse("{'items': []}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -289,7 +289,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenGreaterThan_AndValueExceedsThreshold()
     {
         // Given
-        var actual   = JToken.Parse("{'count': 5}");
+        var actual = JToken.Parse("{'count': 5}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -304,7 +304,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenGreaterThan_AndValueDoesNotExceedThreshold()
     {
         // Given
-        var actual   = JToken.Parse("{'count': 0}");
+        var actual = JToken.Parse("{'count': 0}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -319,7 +319,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenGreaterThan_AndValueIsNonNumeric()
     {
         // Given
-        var actual   = JToken.Parse("{'score': 'high'}");
+        var actual = JToken.Parse("{'score': 'high'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -334,7 +334,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenLessThan_AndValueIsBelowThreshold()
     {
         // Given
-        var actual   = JToken.Parse("{'age': 17}");
+        var actual = JToken.Parse("{'age': 17}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -349,7 +349,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenLessThan_AndValueMeetsOrExceedsThreshold()
     {
         // Given
-        var actual   = JToken.Parse("{'age': 18}");
+        var actual = JToken.Parse("{'age': 18}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -366,7 +366,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenHasLength_ExactMatch()
     {
         // Given
-        var actual   = JToken.Parse("{'zip': '12345'}");
+        var actual = JToken.Parse("{'zip': '12345'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -381,7 +381,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenHasLength_WithinInclusiveRange()
     {
         // Given
-        var actual   = JToken.Parse("{'name': 'Al'}");
+        var actual = JToken.Parse("{'name': 'Al'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -396,7 +396,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenHasLength_AppliedToArray()
     {
         // Given
-        var actual   = JToken.Parse("{'tags': ['a', 'b', 'c']}");
+        var actual = JToken.Parse("{'tags': ['a', 'b', 'c']}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -411,7 +411,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldFail_WhenHasLength_LengthMismatch()
     {
         // Given
-        var actual   = JToken.Parse("{'zip': '1234'}");
+        var actual = JToken.Parse("{'zip': '1234'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -428,7 +428,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldPass_WhenMatcherAppliedToNestedField()
     {
         // Given
-        var actual   = JToken.Parse("{'user': {'profile': {'id': 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'}}}");
+        var actual = JToken.Parse("{'user': {'profile': {'id': 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'}}}");
         var expected = JToken.Parse("{'user': {'profile': {}}}");
 
         // When
@@ -459,7 +459,7 @@ public class SemanticMatcherTests
     {
         // Given
         var semantic = new Dictionary<string, string> { ["id"] = "isUuid" };
-        var custom   = new Dictionary<string, SemanticMatcherFunc> { ["isUuid"] = (_, _) => null };
+        var custom = new Dictionary<string, SemanticMatcherFunc> { ["isUuid"] = (_, _) => null };
 
         // When
         var action = () => SemanticMatcher.ValidateSpecs(semantic, custom);
@@ -480,7 +480,7 @@ public class SemanticMatcherTests
     public void Apply_ShouldThrow_WhenFieldIsAbsentFromResponse()
     {
         // Given
-        var actual   = JToken.Parse("{'name': 'test'}");
+        var actual = JToken.Parse("{'name': 'test'}");
         var expected = JToken.Parse("{}");
 
         // When
@@ -497,9 +497,9 @@ public class SemanticMatcherTests
     public void Apply_ShouldUseCustomMatcher_WhenNameNotInBuiltIns()
     {
         // Given
-        var actual   = JToken.Parse("{'code': 'DOM-42'}");
+        var actual = JToken.Parse("{'code': 'DOM-42'}");
         var expected = JToken.Parse("{}");
-        var custom   = new Dictionary<string, SemanticMatcherFunc>
+        var custom = new Dictionary<string, SemanticMatcherFunc>
         {
             ["isDomainId"] = (token, _) =>
                 token.Value<string>()?.StartsWith("DOM-") == true ? null : "Expected DOM-{n} format"

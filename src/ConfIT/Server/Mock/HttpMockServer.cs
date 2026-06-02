@@ -22,6 +22,11 @@ public class HttpMockServer : IDisposable
         _server = WireMockServer.Start(settings);
     }
 
+    public void Dispose()
+    {
+        _server?.Dispose();
+    }
+
     public void Initialize(TestMock mock)
     {
         _server.Reset();
@@ -59,7 +64,4 @@ public class HttpMockServer : IDisposable
                     .WithBodyIfProvided(interaction.Response.Body)
             );
     }
-
-    public void Dispose() =>
-        _server?.Dispose();
 }

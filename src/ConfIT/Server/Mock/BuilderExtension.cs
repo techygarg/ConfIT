@@ -40,7 +40,8 @@ public static class BuilderExtension
         return builder;
     }
 
-    public static IResponseBuilder WithHeadersIfProvided(this IResponseBuilder builder, Dictionary<string, string> headers)
+    public static IResponseBuilder WithHeadersIfProvided(this IResponseBuilder builder,
+        Dictionary<string, string> headers)
     {
         if (headers is { Count: > 0 })
             foreach (var (key, value) in headers)

@@ -44,6 +44,7 @@ public static class DeltaFormatter
             var index = key.TrimStart('_');
             return string.IsNullOrEmpty(parent) ? $"[{index}]" : $"{parent}[{index}]";
         }
+
         return string.IsNullOrEmpty(parent) ? key : $"{parent}.{key}";
     }
 
@@ -54,30 +55,34 @@ public static class DeltaFormatter
         switch (arr.Count)
         {
             case 2: // modification: Diff(actual, expected) → [actualVal, expectedVal]
-                actual   = FormatValue(arr[0]);
+                actual = FormatValue(arr[0]);
                 expected = FormatValue(arr[1]);
                 break;
             case 1: // field in expected, not in actual → [expectedVal]
                 expected = FormatValue(arr[0]);
-                actual   = TestColor.Subtle("<missing>");
+                actual = TestColor.Subtle("<missing>");
                 break;
             case 3: // field in actual, not in expected → [actualVal, 0, 0]
-                actual   = FormatValue(arr[0]);
+                actual = FormatValue(arr[0]);
                 expected = TestColor.Subtle("<absent>");
                 break;
             default:
                 return;
         }
 
-        lines.Add($"{TestColor.Emphasis(path)}\n  {TestColor.Expected("expected:")} {expected}\n  {TestColor.Actual("actual:")}   {actual}");
+        lines.Add(
+            $"{TestColor.Emphasis(path)}\n  {TestColor.Expected("expected:")} {expected}\n  {TestColor.Actual("actual:")}   {actual}");
     }
 
-    private static string FormatValue(JToken value) => value.Type switch
+    private static string FormatValue(JToken value)
     {
-        JTokenType.String  => $"\"{value}\"",
-        JTokenType.Date    => $"\"{((JValue)value).Value<DateTime>():s}\"",
-        JTokenType.Null    => "null",
-        JTokenType.Boolean => value.Value<bool>().ToString().ToLower(),
-        _                  => value.ToString()
-    };
+        return value.Type switch
+        {
+            JTokenType.String => $"\"{value}\"",
+            JTokenType.Date => $"\"{((JValue)value).Value<DateTime>():s}\"",
+            JTokenType.Null => "null",
+            JTokenType.Boolean => value.Value<bool>().ToString().ToLower(),
+            _ => value.ToString()
+        };
+    }
 }

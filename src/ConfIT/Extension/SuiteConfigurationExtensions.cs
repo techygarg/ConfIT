@@ -1,34 +1,41 @@
-using ConfIT.Config;
-using ConfIT.Server.Launcher;
+using ConfIT.Server.Boot;
 
 namespace ConfIT.Extension;
 
 public static class SuiteConfigurationExtensions
 {
-    public static SuiteConfig ToSuiteConfig(this ComponentConfig config) =>
-        new()
+    public static SuiteConfig ToSuiteConfig(this ComponentConfig config)
+    {
+        return new SuiteConfig
         {
-            ApiServerUrl       = config.Api.Url       ?? string.Empty,
-            MockServerUrl      = config.Mock?.Url      ?? string.Empty,
-            ApiResponseFolder  = config.Folders?.Response     ?? string.Empty,
-            RequestBodyFolder  = config.Folders?.RequestBody  ?? string.Empty,
+            ApiServerUrl = config.Api.Url ?? string.Empty,
+            MockServerUrl = config.Mock?.Url ?? string.Empty,
+            ApiResponseFolder = config.Folders?.Response ?? string.Empty,
+            RequestBodyFolder = config.Folders?.RequestBody ?? string.Empty,
             ResponseBodyFolder = config.Folders?.ResponseBody ?? string.Empty
         };
+    }
 
-    public static SuiteConfig ToSuiteConfig(this IntegrationEnvironmentConfig config) =>
-        new()
+    public static SuiteConfig ToSuiteConfig(this IntegrationEnvironmentConfig config)
+    {
+        return new SuiteConfig
         {
-            ApiServerUrl       = config.Api.Url ?? string.Empty,
-            ApiResponseFolder  = config.Folders?.Response     ?? string.Empty,
-            RequestBodyFolder  = config.Folders?.RequestBody  ?? string.Empty,
+            ApiServerUrl = config.Api.Url ?? string.Empty,
+            ApiResponseFolder = config.Folders?.Response ?? string.Empty,
+            RequestBodyFolder = config.Folders?.RequestBody ?? string.Empty,
             ResponseBodyFolder = config.Folders?.ResponseBody ?? string.Empty
         };
+    }
 
-    public static TestFilter? ToTestFilter(this ComponentConfig config) =>
-        BuildFilter(config.Filter);
+    public static TestFilter? ToTestFilter(this ComponentConfig config)
+    {
+        return BuildFilter(config.Filter);
+    }
 
-    public static TestFilter? ToTestFilter(this IntegrationEnvironmentConfig config) =>
-        BuildFilter(config.Filter);
+    public static TestFilter? ToTestFilter(this IntegrationEnvironmentConfig config)
+    {
+        return BuildFilter(config.Filter);
+    }
 
     public static AppLauncherConfig ToAppLauncherConfig(this ComponentConfig config)
     {
@@ -39,9 +46,9 @@ public static class SuiteConfigurationExtensions
 
         return new AppLauncherConfig
         {
-            Command   = config.Startup.Command!,
+            Command = config.Startup.Command!,
             Readiness = config.Startup.Readiness!,
-            Env       = config.Startup.Env ?? new Dictionary<string, string>()
+            Env = config.Startup.Env ?? new Dictionary<string, string>()
         };
     }
 

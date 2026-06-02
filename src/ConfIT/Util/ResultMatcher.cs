@@ -1,7 +1,6 @@
 using System.Text.RegularExpressions;
 using ConfIT.Server.Dto;
 using FluentAssertions;
-using FluentAssertions.Execution;
 using JsonDiffPatchDotNet;
 
 namespace ConfIT.Util;
@@ -20,7 +19,7 @@ public static class ResultMatcher
         expectedResponse = ApplyIgnoreMatcher(expectedResponse, matcher?.Ignore);
         var diff = new JsonDiffPatch().Diff(response, expectedResponse);
         if (diff is not null)
-         DeltaFormatter.Format(diff).Should().BeNullOrWhiteSpace();
+            DeltaFormatter.Format(diff).Should().BeNullOrWhiteSpace();
     }
 
     private static JToken ApplyMatcher(JToken response, Matcher matcher)
@@ -76,8 +75,10 @@ public static class ResultMatcher
             el.Remove();
     }
 
-    private static bool IsParentMatching(JProperty prop, string parentsKey) =>
-        string.IsNullOrWhiteSpace(parentsKey) || prop.Parent.Path.Equals(parentsKey);
+    private static bool IsParentMatching(JProperty prop, string parentsKey)
+    {
+        return string.IsNullOrWhiteSpace(parentsKey) || prop.Parent.Path.Equals(parentsKey);
+    }
 
     private static (string key, string parents) ExtractKeyAndParentPath(string keyWithParents)
     {

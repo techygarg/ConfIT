@@ -5,4 +5,6 @@ public class TestMock
     public List<MockInteraction> Interactions { get; set; } = new();
 }
 
-public class MockInteraction : ApiInteraction { }
+public class MockInteraction : ApiInteraction
+{
+}

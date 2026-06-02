@@ -11,11 +11,11 @@ public class YamlConverterTests
     {
         // Given
         var yaml = """
-            strVal:  hello
-            intVal:  42
-            boolVal: true
-            nullVal: ~
-            """;
+                   strVal:  hello
+                   intVal:  42
+                   boolVal: true
+                   nullVal: ~
+                   """;
 
         // When
         var result = YamlConverter.ToJObject(yaml);
@@ -32,13 +32,13 @@ public class YamlConverterTests
     {
         // Given
         var yaml = """
-            api:
-              request:
-                method: POST
-                path: /api/user
-              response:
-                statusCode: 201
-            """;
+                   api:
+                     request:
+                       method: POST
+                       path: /api/user
+                     response:
+                       statusCode: 201
+                   """;
 
         // When
         var result = YamlConverter.ToJObject(yaml);
@@ -54,10 +54,10 @@ public class YamlConverterTests
     {
         // Given
         var yaml = """
-            tags:
-              - user
-              - smoke
-            """;
+                   tags:
+                     - user
+                     - smoke
+                   """;
 
         // When
         var result = YamlConverter.ToJObject(yaml);
@@ -77,14 +77,14 @@ public class YamlConverterTests
         // Uses direct alias (*defaults replaces the node) rather than YAML 1.1
         // merge keys (<<: *defaults), which are not supported in dynamic deserialization.
         var yaml = """
-            defaults: &defaults
-              method: GET
-              path: /api/test
-            TestA:
-              request: *defaults
-            TestB:
-              request: *defaults
-            """;
+                   defaults: &defaults
+                     method: GET
+                     path: /api/test
+                   TestA:
+                     request: *defaults
+                   TestB:
+                     request: *defaults
+                   """;
 
         // When
         var result = YamlConverter.ToJObject(yaml);
@@ -101,10 +101,10 @@ public class YamlConverterTests
     {
         // Given
         var yaml = """
-            # standalone comment
-            name: alice # inline comment
-            age: 30
-            """;
+                   # standalone comment
+                   name: alice # inline comment
+                   age: 30
+                   """;
 
         // When
         var result = YamlConverter.ToJObject(yaml);

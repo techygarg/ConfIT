@@ -62,7 +62,7 @@ services-stop: ## Kill any running User.Api / JustAnotherService processes
 	@lsof -ti :$(SVC_PORT) 2>/dev/null | xargs kill -9 2>/dev/null || true
 
 # ── Pipelines ───────────────────────────────────────────────────────────────────
-ci: build test integration ## Full pipeline: build + unit + component + integration
+ci: build test component.applauncher integration ## Full pipeline: build + unit + component + integration
 
 clean: services-stop ## Stop services, remove build artefacts and SQLite DB
 	@rm -f $(DB)

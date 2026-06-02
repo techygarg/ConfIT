@@ -3,7 +3,6 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using ConfIT.Config;
 using ConfIT.Contract;
 using ConfIT.Extension;
 using ConfIT.Server.Dto;
@@ -21,6 +20,7 @@ public abstract class BaseTest : IDisposable
 {
     private const string HeaderSep = "══════════════════════════════════════════════════════";
     private const string FooterSep = "──────────────────────────────────────────────────────";
+    protected static SuiteConfig Config;
 
     // Console is the single channel for structured test output (header, bodies, matchers).
     // ITestOutputHelper is intentionally NOT used for structured content — both xUnit's
@@ -29,13 +29,12 @@ public abstract class BaseTest : IDisposable
     // one test's console block never interleaves with the next test's.
     private readonly List<string> _consoleBuffer = new();
     private readonly TestResultCollector? _resultCollector;
+    protected readonly ITestProcessorFactory Factory;
+    protected readonly TestFilter Filter;
 
     protected readonly TestHttpClient HttpClient;
-    protected static SuiteConfig Config;
-    protected readonly ITestProcessorFactory Factory;
-    protected readonly ITestOutputLogger TestOutputLogger;
-    protected readonly TestFilter Filter;
     protected readonly HttpMockServer HttpMockServer;
+    protected readonly ITestOutputLogger TestOutputLogger;
 
     protected BaseTest(
         TestHttpClient httpClient,
@@ -54,6 +53,11 @@ public abstract class BaseTest : IDisposable
 
         if (!string.IsNullOrWhiteSpace(Config.MockServerUrl))
             HttpMockServer = new HttpMockServer(Config.MockServerUrl, Config.EnableMockServerLogs);
+    }
+
+    public virtual void Dispose()
+    {
+        HttpMockServer?.Dispose();
     }
 
     protected virtual async Task Execute(string testName, TestCase testCase, string? sourceFile = null)
@@ -116,10 +120,13 @@ public abstract class BaseTest : IDisposable
         _consoleBuffer.Add($"{TestColor.Info("Actual:")}   {actualBody}");
         _consoleBuffer.Add(string.Empty);
         _consoleBuffer.Add($"{TestColor.Expected("Expected:")} {expectedBody}");
-        if (matcher?.Semantic?.Count > 0) _consoleBuffer.Add(TestColor.Subtle($"Semantic: {matcher.Semantic.DictionaryToString()}"));
-        if (matcher?.Pattern?.Count  > 0) _consoleBuffer.Add(TestColor.Subtle($"Pattern:  {matcher.Pattern.DictionaryToString()}"));
-        if (matcher?.Ignore?.Count   > 0) _consoleBuffer.Add(TestColor.Subtle($"Ignore:   {matcher.Ignore.ListToString()}"));
-        if (test.Tags?.Count         > 0) _consoleBuffer.Add(TestColor.Subtle($"Tags:     {test.Tags.ListToString()}"));
+        if (matcher?.Semantic?.Count > 0)
+            _consoleBuffer.Add(TestColor.Subtle($"Semantic: {matcher.Semantic.DictionaryToString()}"));
+        if (matcher?.Pattern?.Count > 0)
+            _consoleBuffer.Add(TestColor.Subtle($"Pattern:  {matcher.Pattern.DictionaryToString()}"));
+        if (matcher?.Ignore?.Count > 0)
+            _consoleBuffer.Add(TestColor.Subtle($"Ignore:   {matcher.Ignore.ListToString()}"));
+        if (test.Tags?.Count > 0) _consoleBuffer.Add(TestColor.Subtle($"Tags:     {test.Tags.ListToString()}"));
         _consoleBuffer.Add(string.Empty);
     }
 
@@ -152,24 +159,22 @@ public abstract class BaseTest : IDisposable
         if (Filter is null) return false;
 
         if (Filter.TestNames?.Count > 0
-            && !Filter.TestNames.Any(n => n.Trim().Equals(testName.Trim(), StringComparison.InvariantCultureIgnoreCase)))
+            && !Filter.TestNames.Any(n =>
+                n.Trim().Equals(testName.Trim(), StringComparison.InvariantCultureIgnoreCase)))
             return true;
 
         if (Filter.Tags?.Count > 0)
-        {
             if (testCase.Tags is not { Count: > 0 }
                 || !testCase.Tags.Select(s => s.Trim())
                     .Intersect(Filter.Tags.Select(s => s.Trim()), StringComparer.InvariantCultureIgnoreCase)
                     .Any())
                 return true;
-        }
 
         return false;
     }
 
-    protected virtual void SaveApiResponse(string apiResponseFolder, string testName, JToken response) =>
+    protected virtual void SaveApiResponse(string apiResponseFolder, string testName, JToken response)
+    {
         File.WriteAllText($"{GetFullPath(apiResponseFolder)}/{testName.ToLower()}.json", response.ToString());
-
-    public virtual void Dispose() =>
-        HttpMockServer?.Dispose();
+    }
 }

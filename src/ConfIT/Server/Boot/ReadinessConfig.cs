@@ -1,4 +1,4 @@
-namespace ConfIT.Server.Launcher;
+namespace ConfIT.Server.Boot;
 
 public sealed class ReadinessConfig
 {

@@ -17,6 +17,11 @@ public class TestHttpClient : IDisposable
         _tokenProvider = tokenProvider;
     }
 
+    public void Dispose()
+    {
+        _client.Dispose();
+    }
+
     public async Task<HttpResponseMessage> Execute(TestApi testApi)
     {
         if (testApi == null) throw new ArgumentNullException(nameof(testApi));
@@ -24,17 +29,19 @@ public class TestHttpClient : IDisposable
         AddRequestHeaders(testApi.Request.Headers);
         return testApi.Request.Method.ToUpper() switch
         {
-            "GET"    => await _client.GetAsync(testApi.Request.Path),
-            "PUT"    => await _client.PutAsync(testApi.Request.Path, RequestBody(testApi.Request.Body)),
-            "PATCH"  => await _client.PatchAsync(testApi.Request.Path, RequestBody(testApi.Request.Body)),
-            "POST"   => await _client.PostAsync(testApi.Request.Path, RequestBody(testApi.Request.Body)),
+            "GET" => await _client.GetAsync(testApi.Request.Path),
+            "PUT" => await _client.PutAsync(testApi.Request.Path, RequestBody(testApi.Request.Body)),
+            "PATCH" => await _client.PatchAsync(testApi.Request.Path, RequestBody(testApi.Request.Body)),
+            "POST" => await _client.PostAsync(testApi.Request.Path, RequestBody(testApi.Request.Body)),
             "DELETE" => await _client.DeleteAsync(testApi.Request.Path),
-            _        => throw new NotSupportedException($"HTTP method '{testApi.Request.Method}' is not supported.")
+            _ => throw new NotSupportedException($"HTTP method '{testApi.Request.Method}' is not supported.")
         };
     }
 
-    private static StringContent RequestBody(JToken body) =>
-        new(body?.ToString() ?? string.Empty, Encoding.UTF8, "application/json");
+    private static StringContent RequestBody(JToken body)
+    {
+        return new StringContent(body?.ToString() ?? string.Empty, Encoding.UTF8, "application/json");
+    }
 
     private void AddRequestHeaders(Dictionary<string, string> headers)
     {
@@ -49,9 +56,6 @@ public class TestHttpClient : IDisposable
         if (!string.IsNullOrWhiteSpace(token))
             _client.DefaultRequestHeaders.Add("Authorization", token);
     }
-
-    public void Dispose() =>
-        _client.Dispose();
 
     public static TestHttpClient Create(string serverUrl, IAuthTokenProvider authTokenProvider)
     {

@@ -3,5 +3,6 @@ global using System.Collections.Generic;
 global using System.Linq;
 global using ConfIT.Config;
 global using Newtonsoft.Json.Linq;
+using System.Runtime.CompilerServices;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ConfIT.UnitTest")]
+[assembly: InternalsVisibleTo("ConfIT.UnitTest")]

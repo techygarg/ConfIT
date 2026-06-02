@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace ConfIT.UnitTest.Util;
 
 public class TestReaderTests : IDisposable
@@ -12,7 +14,10 @@ public class TestReaderTests : IDisposable
         Directory.CreateDirectory(_testFolderPath);
     }
 
-    public void Dispose() => Directory.Delete(_testFolderPath, true);
+    public void Dispose()
+    {
+        Directory.Delete(_testFolderPath, true);
+    }
 
     [Fact]
     public void GetTestsForFile_WithValidJson_ReturnsTestCases()
@@ -35,7 +40,8 @@ public class TestReaderTests : IDisposable
     {
         // Given
         var fileName = "pairs.json";
-        File.WriteAllText(Path.Combine(_testFolderPath, fileName), @"{'test1':{'prop':'val'},'test2':{'prop2':'val2'}}");
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName),
+            @"{'test1':{'prop':'val'},'test2':{'prop2':'val2'}}");
 
         // When
         var result = TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
@@ -103,7 +109,7 @@ public class TestReaderTests : IDisposable
         var act = () => TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
 
         // Then
-        act.Should().Throw<Newtonsoft.Json.JsonReaderException>();
+        act.Should().Throw<JsonReaderException>();
     }
 
     [Fact]
@@ -117,7 +123,7 @@ public class TestReaderTests : IDisposable
         var act = () => TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
 
         // Then
-        act.Should().Throw<Newtonsoft.Json.JsonReaderException>();
+        act.Should().Throw<JsonReaderException>();
     }
 
     [Fact]
@@ -202,7 +208,7 @@ public class TestReaderTests : IDisposable
     {
         // Given
         File.WriteAllText(Path.Combine(_testFolderPath, "a.yaml"), "test1:\n  key: value");
-        File.WriteAllText(Path.Combine(_testFolderPath, "b.yml"),  "test2:\n  key: value");
+        File.WriteAllText(Path.Combine(_testFolderPath, "b.yml"), "test2:\n  key: value");
 
         // When
         var result = TestReader.GetTestsForAFolder(_testFolderPath).ToList();
@@ -226,7 +232,7 @@ public class TestReaderTests : IDisposable
 
         // Then
         act.Should().Throw<InvalidDataException>()
-           .WithMessage($"*{filePath}*");
+            .WithMessage($"*{filePath}*");
     }
 
     [Fact]
@@ -235,11 +241,11 @@ public class TestReaderTests : IDisposable
         // Given — ensures the format adapter preserves types the DSL relies on
         var fileName = "typed.yaml";
         File.WriteAllText(Path.Combine(_testFolderPath, fileName), """
-            TypedTest:
-              statusCode: 201
-              flag: true
-              name: alice
-            """);
+                                                                   TypedTest:
+                                                                     statusCode: 201
+                                                                     flag: true
+                                                                     name: alice
+                                                                   """);
 
         // When
         var result = TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();

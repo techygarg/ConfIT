@@ -4,11 +4,11 @@ using ConfIT;
 using ConfIT.Extension;
 using ConfIT.Util;
 using Newtonsoft.Json.Linq;
-using User.ComponentTests.AppLauncher.SetUp;
+using User.ComponentTests.Launcher.SetUp;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace User.ComponentTests.AppLauncher
+namespace User.ComponentTests.Launcher
 {
     public class UserComponentTests : BaseTest, IClassFixture<TestSuiteFixture>
     {

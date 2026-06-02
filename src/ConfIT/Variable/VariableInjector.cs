@@ -29,21 +29,21 @@ public static class VariableInjector
 
     private static void InjectIntoApi(TestApi api, VariableStore store)
     {
-        api.Request.Path    = InjectIntoString(api.Request.Path, store);
-        api.Request.Params  = InjectIntoDictionary(api.Request.Params, store);
+        api.Request.Path = InjectIntoString(api.Request.Path, store);
+        api.Request.Params = InjectIntoDictionary(api.Request.Params, store);
         api.Request.Headers = InjectIntoDictionary(api.Request.Headers, store);
-        api.Request.Body    = InjectIntoJToken(api.Request.Body, store);
-        api.Response.Body    = InjectIntoJToken(api.Response.Body, store);
+        api.Request.Body = InjectIntoJToken(api.Request.Body, store);
+        api.Response.Body = InjectIntoJToken(api.Response.Body, store);
         api.Response.Headers = InjectIntoDictionary(api.Response.Headers, store);
     }
 
     private static void InjectIntoInteraction(MockInteraction interaction, VariableStore store)
     {
-        interaction.Request.Path    = InjectIntoString(interaction.Request.Path, store);
-        interaction.Request.Params  = InjectIntoDictionary(interaction.Request.Params, store);
+        interaction.Request.Path = InjectIntoString(interaction.Request.Path, store);
+        interaction.Request.Params = InjectIntoDictionary(interaction.Request.Params, store);
         interaction.Request.Headers = InjectIntoDictionary(interaction.Request.Headers, store);
-        interaction.Request.Body    = InjectIntoJToken(interaction.Request.Body, store);
-        interaction.Response.Body    = InjectIntoJToken(interaction.Response.Body, store);
+        interaction.Request.Body = InjectIntoJToken(interaction.Request.Body, store);
+        interaction.Response.Body = InjectIntoJToken(interaction.Response.Body, store);
         interaction.Response.Headers = InjectIntoDictionary(interaction.Response.Headers, store);
     }
 
@@ -96,7 +96,9 @@ public static class VariableInjector
                 prop.Value = new JValue(InjectIntoString(str, store));
         }
         else
+        {
             InjectIntoJTokenInPlace(prop.Value, store);
+        }
     }
 
     private static void ReplaceArrayElement(JArray arr, int index, VariableStore store)
@@ -111,7 +113,9 @@ public static class VariableInjector
                 arr[index] = new JValue(InjectIntoString(str, store));
         }
         else
+        {
             InjectIntoJTokenInPlace(arr[index], store);
+        }
     }
 
     private static JToken ResolveToJToken(string reference, VariableStore store)

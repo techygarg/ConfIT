@@ -1,13 +1,13 @@
-namespace ConfIT.Server.Launcher;
+namespace ConfIT.Server.Boot;
 
 internal interface IReadinessProbe : IDisposable
 {
     bool TryProbe();
 }
 
-
 public sealed class AppLauncherException : Exception
 {
-    public AppLauncherException(string message) : base(message) { }
+    public AppLauncherException(string message) : base(message)
+    {
+    }
 }
-

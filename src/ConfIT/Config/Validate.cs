@@ -26,7 +26,9 @@ internal static class Validate
             .ToList();
         if (set.Count == 1) return;
         var names = string.Join(", ", fields.Select(f => f.Name));
-        var detail = set.Count == 0 ? "None were set." : $"Multiple were set: {string.Join(", ", set.Select(f => f.Name))}.";
+        var detail = set.Count == 0
+            ? "None were set."
+            : $"Multiple were set: {string.Join(", ", set.Select(f => f.Name))}.";
         throw new InvalidDataException(
             $"Exactly one of [{names}] must be set in '{sectionPath}' in {filePath}. {detail}");
     }
@@ -34,11 +36,9 @@ internal static class Validate
     internal static void KnownKeys(JObject obj, IReadOnlySet<string> known, string sectionPath, string filePath)
     {
         foreach (var key in obj.Properties().Select(p => p.Name))
-        {
             if (!known.Contains(key))
                 throw new InvalidDataException(
                     $"Unknown key '{key}' in '{sectionPath}' in {filePath}. " +
                     $"Known keys: [{string.Join(", ", known.OrderBy(k => k))}]");
-        }
     }
 }

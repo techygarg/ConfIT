@@ -7,25 +7,39 @@ public class TestFilter
     public List<string> Tags { get; set; }
     public List<string> TestNames { get; set; }
 
-    public static TestFilter CreateForTags(string tags) => new()
+    public static TestFilter CreateForTags(string tags)
     {
-        Tags = tags?.Split(',').ToList() ?? []
-    };
+        return new TestFilter
+        {
+            Tags = tags?.Split(',').ToList() ?? []
+        };
+    }
 
-    public static TestFilter CreateForTagsFromEnvVariable(string tagKey) => new()
+    public static TestFilter CreateForTagsFromEnvVariable(string tagKey)
     {
-        Tags = string.IsNullOrWhiteSpace(tagKey) ? []
-            : GetEnvironmentVariable(tagKey)?.Split(',').ToList() ?? []
-    };
+        return new TestFilter
+        {
+            Tags = string.IsNullOrWhiteSpace(tagKey)
+                ? []
+                : GetEnvironmentVariable(tagKey)?.Split(',').ToList() ?? []
+        };
+    }
 
-    public static TestFilter CreateForTests(string testNames) => new()
+    public static TestFilter CreateForTests(string testNames)
     {
-        TestNames = testNames?.Split(',').ToList() ?? []
-    };
+        return new TestFilter
+        {
+            TestNames = testNames?.Split(',').ToList() ?? []
+        };
+    }
 
-    public static TestFilter CreateForTestsFromEnvVariable(string testNamesKey) => new()
+    public static TestFilter CreateForTestsFromEnvVariable(string testNamesKey)
     {
-        TestNames = string.IsNullOrWhiteSpace(testNamesKey) ? []
-            : GetEnvironmentVariable(testNamesKey)?.Split(',').ToList() ?? []
-    };
+        return new TestFilter
+        {
+            TestNames = string.IsNullOrWhiteSpace(testNamesKey)
+                ? []
+                : GetEnvironmentVariable(testNamesKey)?.Split(',').ToList() ?? []
+        };
+    }
 }

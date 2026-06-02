@@ -15,22 +15,24 @@ public class VariableInjectorTests
         JToken? requestBody = null,
         JToken? responseBody = null,
         Dictionary<string, string>? requestHeaders = null,
-        Dictionary<string, string>? requestParams = null) =>
-        new()
+        Dictionary<string, string>? requestParams = null)
+    {
+        return new TestCase
         {
             Api = new TestApi
             {
                 Request = new HttpTestRequest
                 {
-                    Method  = method,
-                    Path    = path,
-                    Body    = requestBody,
+                    Method = method,
+                    Path = path,
+                    Body = requestBody,
                     Headers = requestHeaders,
-                    Params  = requestParams
+                    Params = requestParams
                 },
                 Response = new HttpTestResponse { StatusCode = 200, Body = responseBody }
             }
         };
+    }
 
     // ── API injection ──────────────────────────────────────────────────────────
 
@@ -38,8 +40,8 @@ public class VariableInjectorTests
     public void Inject_PathWithVariable_ReplacesWithStringValue()
     {
         // Given
-        var store    = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
-        var testCase = BuildTestCase(path: "/api/users/{{userId}}");
+        var store = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
+        var testCase = BuildTestCase("/api/users/{{userId}}");
 
         // When
         var result = VariableInjector.Inject(testCase, store);
@@ -52,8 +54,8 @@ public class VariableInjectorTests
     public void Inject_PathWithFullPrefix_ResolvesCorrectly()
     {
         // Given
-        var store    = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
-        var testCase = BuildTestCase(path: "/api/users/{{ShouldCreateUser.userId}}");
+        var store = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
+        var testCase = BuildTestCase("/api/users/{{ShouldCreateUser.userId}}");
 
         // When
         var result = VariableInjector.Inject(testCase, store);
@@ -66,7 +68,7 @@ public class VariableInjectorTests
     public void Inject_BodyWithExactVariable_PreservesNumberType()
     {
         // Given
-        var store    = StoreWith("ShouldCreateUser", "score", new JValue(42));
+        var store = StoreWith("ShouldCreateUser", "score", new JValue(42));
         var testCase = BuildTestCase(requestBody: JToken.Parse("""{"score":"{{score}}"}"""));
 
         // When
@@ -81,7 +83,7 @@ public class VariableInjectorTests
     public void Inject_BodyWithEmbeddedVariable_StringifiesValue()
     {
         // Given
-        var store    = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
+        var store = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
         var testCase = BuildTestCase(requestBody: JToken.Parse("""{"ref":"user-{{userId}}-v1"}"""));
 
         // When
@@ -95,7 +97,7 @@ public class VariableInjectorTests
     public void Inject_Params_ReplacesValues()
     {
         // Given
-        var store    = StoreWith("ShouldCreateUser", "userEmail", new JValue("alice@example.com"));
+        var store = StoreWith("ShouldCreateUser", "userEmail", new JValue("alice@example.com"));
         var testCase = BuildTestCase(requestParams: new Dictionary<string, string> { { "filter", "{{userEmail}}" } });
 
         // When
@@ -109,7 +111,7 @@ public class VariableInjectorTests
     public void Inject_Headers_ReplacesValues()
     {
         // Given
-        var store    = StoreWith("ShouldGetToken", "authToken", new JValue("token-xyz"));
+        var store = StoreWith("ShouldGetToken", "authToken", new JValue("token-xyz"));
         var testCase = BuildTestCase(requestHeaders: new Dictionary<string, string>
         {
             { "Authorization", "Bearer {{authToken}}" }
@@ -126,7 +128,7 @@ public class VariableInjectorTests
     public void Inject_ResponseBody_ReplacesVariableInExpectedAssertion()
     {
         // Given
-        var store    = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
+        var store = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
         var testCase = BuildTestCase(responseBody: JToken.Parse("""{"id":"{{userId}}"}"""));
 
         // When
@@ -140,7 +142,7 @@ public class VariableInjectorTests
     public void Inject_NestedBodyObject_ReplacesVariables()
     {
         // Given
-        var store    = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
+        var store = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
         var testCase = BuildTestCase(requestBody: JToken.Parse("""{"user":{"id":"{{userId}}","name":"Alice"}}"""));
 
         // When
@@ -157,7 +159,7 @@ public class VariableInjectorTests
     public void Inject_MockInteractionPath_ReplacesVariable()
     {
         // Given
-        var store    = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
+        var store = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
         var testCase = BuildTestCase();
         testCase.Mock = new TestMock
         {
@@ -165,7 +167,7 @@ public class VariableInjectorTests
             [
                 new MockInteraction
                 {
-                    Request  = new HttpTestRequest { Method = "GET", Path = "/api/users/{{userId}}" },
+                    Request = new HttpTestRequest { Method = "GET", Path = "/api/users/{{userId}}" },
                     Response = new HttpTestResponse { StatusCode = 200 }
                 }
             ]
@@ -182,7 +184,7 @@ public class VariableInjectorTests
     public void Inject_MockInteractionResponseBody_ReplacesVariable()
     {
         // Given
-        var store    = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
+        var store = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
         var testCase = BuildTestCase();
         testCase.Mock = new TestMock
         {
@@ -190,11 +192,11 @@ public class VariableInjectorTests
             [
                 new MockInteraction
                 {
-                    Request  = new HttpTestRequest { Method = "GET", Path = "/api/users" },
+                    Request = new HttpTestRequest { Method = "GET", Path = "/api/users" },
                     Response = new HttpTestResponse
                     {
                         StatusCode = 200,
-                        Body       = JToken.Parse("""{"id":"{{userId}}"}""")
+                        Body = JToken.Parse("""{"id":"{{userId}}"}""")
                     }
                 }
             ]
@@ -214,7 +216,7 @@ public class VariableInjectorTests
     {
         // Given
         Environment.SetEnvironmentVariable("TEST_API_KEY", "secret-key-123");
-        var store    = new VariableStore();
+        var store = new VariableStore();
         var testCase = BuildTestCase(requestHeaders: new Dictionary<string, string>
         {
             { "X-Api-Key", "${TEST_API_KEY}" }
@@ -240,8 +242,8 @@ public class VariableInjectorTests
     public void Inject_UndefinedVariable_ThrowsUndefinedException()
     {
         // Given
-        var store    = new VariableStore();
-        var testCase = BuildTestCase(path: "/api/users/{{userId}}");
+        var store = new VariableStore();
+        var testCase = BuildTestCase("/api/users/{{userId}}");
 
         // When
         var act = () => VariableInjector.Inject(testCase, store);
@@ -254,9 +256,9 @@ public class VariableInjectorTests
     public void Inject_OriginalTestCase_IsNotMutated()
     {
         // Given
-        var store         = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
-        var testCase      = BuildTestCase(path: "/api/users/{{userId}}");
-        var originalPath  = testCase.Api.Request.Path;
+        var store = StoreWith("ShouldCreateUser", "userId", new JValue("abc-123"));
+        var testCase = BuildTestCase("/api/users/{{userId}}");
+        var originalPath = testCase.Api.Request.Path;
 
         // When
         VariableInjector.Inject(testCase, store);
@@ -269,8 +271,8 @@ public class VariableInjectorTests
     public void Inject_NoVariablesInTestCase_ReturnsEquivalentCopy()
     {
         // Given
-        var store    = new VariableStore();
-        var testCase = BuildTestCase(path: "/api/users/123");
+        var store = new VariableStore();
+        var testCase = BuildTestCase("/api/users/123");
 
         // When
         var result = VariableInjector.Inject(testCase, store);

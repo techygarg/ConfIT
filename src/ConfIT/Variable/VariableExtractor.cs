@@ -18,9 +18,9 @@ public static class VariableExtractor
         foreach (var (varName, path) in extractSpec)
         {
             var value = unified.SelectToken(path)
-                ?? throw new InvalidOperationException(
-                    $"Extract path '{path}' for variable '{varName}' matched nothing in the response. " +
-                    $"Check the JSONPath expression against the actual response structure.");
+                        ?? throw new InvalidOperationException(
+                            $"Extract path '{path}' for variable '{varName}' matched nothing in the response. " +
+                            $"Check the JSONPath expression against the actual response structure.");
 
             store.Set(testName, varName, value.DeepClone());
         }
@@ -38,8 +38,8 @@ public static class VariableExtractor
 
         return new JObject
         {
-            ["body"]       = actualBody,
-            ["headers"]    = headers,
+            ["body"] = actualBody,
+            ["headers"] = headers,
             ["statusCode"] = (int)response.StatusCode
         };
     }

@@ -15,7 +15,7 @@ internal static class YamlConverter
     internal static JObject ToJObject(string yaml)
     {
         var graph = Deserializer.Deserialize<object>(yaml);
-        var json  = JsonConvert.SerializeObject(graph);
+        var json = JsonConvert.SerializeObject(graph);
         return JObject.Parse(json);
     }
 
@@ -32,13 +32,23 @@ internal static class YamlConverter
             var v = scalar.Value;
 
             if (v is "true" or "True" or "TRUE" or "false" or "False" or "FALSE")
-            { currentType = typeof(bool); return true; }
+            {
+                currentType = typeof(bool);
+                return true;
+            }
 
             if (long.TryParse(v, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
-            { currentType = typeof(long); return true; }
+            {
+                currentType = typeof(long);
+                return true;
+            }
 
-            if (double.TryParse(v, NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out _))
-            { currentType = typeof(double); return true; }
+            if (double.TryParse(v, NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture,
+                    out _))
+            {
+                currentType = typeof(double);
+                return true;
+            }
 
             return false;
         }

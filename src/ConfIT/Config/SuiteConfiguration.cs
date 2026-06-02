@@ -1,6 +1,6 @@
 using System.IO;
 using System.Text.RegularExpressions;
-using ConfIT.Server.Launcher;
+using ConfIT.Server.Boot;
 using ConfIT.Util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -11,14 +11,17 @@ namespace ConfIT.Config;
 // ── Public API ─────────────────────────────────────────────────────────────
 public static class SuiteConfiguration
 {
-    private static readonly IReadOnlySet<string> RootKeys        = KeySet("component", "integration");
-    private static readonly IReadOnlySet<string> ComponentKeys   = KeySet("startup", "api", "mock", "folders", "filter");
-    private static readonly IReadOnlySet<string> StartupKeys     = KeySet("mode", "settings", "command", "readiness", "env");
-    private static readonly IReadOnlySet<string> ReadinessKeys   = KeySet("url", "port", "timeoutSeconds", "intervalMs");
-    private static readonly IReadOnlySet<string> ApiKeys         = KeySet("url", "authToken");
-    private static readonly IReadOnlySet<string> MockKeys        = KeySet("url");
-    private static readonly IReadOnlySet<string> FolderKeys      = KeySet("response", "requestBody", "responseBody");
-    private static readonly IReadOnlySet<string> FilterKeys      = KeySet("strategy", "envVariable");
+    private static readonly IReadOnlySet<string> RootKeys = KeySet("component", "integration");
+    private static readonly IReadOnlySet<string> ComponentKeys = KeySet("startup", "api", "mock", "folders", "filter");
+
+    private static readonly IReadOnlySet<string>
+        StartupKeys = KeySet("mode", "settings", "command", "readiness", "env");
+
+    private static readonly IReadOnlySet<string> ReadinessKeys = KeySet("url", "port", "timeoutSeconds", "intervalMs");
+    private static readonly IReadOnlySet<string> ApiKeys = KeySet("url", "authToken");
+    private static readonly IReadOnlySet<string> MockKeys = KeySet("url");
+    private static readonly IReadOnlySet<string> FolderKeys = KeySet("response", "requestBody", "responseBody");
+    private static readonly IReadOnlySet<string> FilterKeys = KeySet("strategy", "envVariable");
     private static readonly IReadOnlySet<string> EnvironmentKeys = KeySet("api", "folders", "filter");
 
     public static ComponentConfig LoadComponent(string filePath)
@@ -27,15 +30,16 @@ public static class SuiteConfiguration
         Validate.KnownKeys(root, RootKeys, "root", filePath);
 
         var component = root["component"] as JObject
-            ?? throw new InvalidDataException($"No 'component' section found in {filePath}");
+                        ?? throw new InvalidDataException($"No 'component' section found in {filePath}");
         Validate.KnownKeys(component, ComponentKeys, "component", filePath);
 
         var startup = component["startup"] as JObject
-            ?? throw new InvalidDataException($"'component.startup' is required in {filePath}");
+                      ?? throw new InvalidDataException($"'component.startup' is required in {filePath}");
         Validate.KnownKeys(startup, StartupKeys, "component.startup", filePath);
 
         var mode = startup["mode"]?.Value<string>() ?? "in-process";
-        Validate.OneOf(mode, "component.startup.mode", filePath, StartupConfig.InProcessMode, StartupConfig.CommandMode);
+        Validate.OneOf(mode, "component.startup.mode", filePath, StartupConfig.InProcessMode,
+            StartupConfig.CommandMode);
 
         if (mode == StartupConfig.InProcessMode)
         {
@@ -45,21 +49,22 @@ public static class SuiteConfiguration
         {
             Validate.Required(startup["command"]?.Value<string>(), "component.startup.command", filePath);
             var readiness = startup["readiness"] as JObject
-                ?? throw new InvalidDataException(
-                    $"'component.startup.readiness' is required when mode is 'command' in {filePath}");
+                            ?? throw new InvalidDataException(
+                                $"'component.startup.readiness' is required when mode is 'command' in {filePath}");
             Validate.KnownKeys(readiness, ReadinessKeys, "component.startup.readiness", filePath);
             Validate.ExactlyOneSet("component.startup.readiness", filePath,
-                ("url",  readiness["url"]),
+                ("url", readiness["url"]),
                 ("port", readiness["port"]));
         }
 
         var api = component["api"] as JObject
-            ?? throw new InvalidDataException($"'component.api' is required in {filePath}");
+                  ?? throw new InvalidDataException($"'component.api' is required in {filePath}");
         Validate.KnownKeys(api, ApiKeys, "component.api", filePath);
         Validate.Required(api["url"]?.Value<string>(), "component.api.url", filePath);
 
-        if (component["mock"]    is JObject mock)    Validate.KnownKeys(mock,    MockKeys,   "component.mock",    filePath);
-        if (component["folders"] is JObject folders) Validate.KnownKeys(folders, FolderKeys, "component.folders", filePath);
+        if (component["mock"] is JObject mock) Validate.KnownKeys(mock, MockKeys, "component.mock", filePath);
+        if (component["folders"] is JObject folders)
+            Validate.KnownKeys(folders, FolderKeys, "component.folders", filePath);
 
         ValidateFilter(component["filter"] as JObject, "component", filePath);
 
@@ -75,25 +80,25 @@ public static class SuiteConfiguration
         Validate.KnownKeys(root, RootKeys, "root", filePath);
 
         var integration = root["integration"] as JObject
-            ?? throw new InvalidDataException($"No 'integration' section found in {filePath}");
+                          ?? throw new InvalidDataException($"No 'integration' section found in {filePath}");
 
         var activeEnv = environment
-            ?? Environment.GetEnvironmentVariable("TEST_ENVIRONMENT")
-            ?? integration["default"]?.Value<string>()
-            ?? throw new InvalidDataException(
-                $"Cannot determine active environment in {filePath}. " +
-                "Set TEST_ENVIRONMENT, pass an environment argument, " +
-                "or add 'default: <name>' to the integration section.");
+                        ?? Environment.GetEnvironmentVariable("TEST_ENVIRONMENT")
+                        ?? integration["default"]?.Value<string>()
+                        ?? throw new InvalidDataException(
+                            $"Cannot determine active environment in {filePath}. " +
+                            "Set TEST_ENVIRONMENT, pass an environment argument, " +
+                            "or add 'default: <name>' to the integration section.");
 
         var envBlock = integration[activeEnv] as JObject
-            ?? throw new InvalidDataException(
-                $"No environment '{activeEnv}' found in the integration section of {filePath}");
+                       ?? throw new InvalidDataException(
+                           $"No environment '{activeEnv}' found in the integration section of {filePath}");
 
         Validate.KnownKeys(envBlock, EnvironmentKeys, $"integration.{activeEnv}", filePath);
 
         var api = envBlock["api"] as JObject
-            ?? throw new InvalidDataException(
-                $"'integration.{activeEnv}.api' is required in {filePath}");
+                  ?? throw new InvalidDataException(
+                      $"'integration.{activeEnv}.api' is required in {filePath}");
         Validate.KnownKeys(api, ApiKeys, $"integration.{activeEnv}.api", filePath);
         Validate.Required(api["url"]?.Value<string>(), $"integration.{activeEnv}.api.url", filePath);
 
@@ -133,7 +138,6 @@ public static class SuiteConfiguration
     private static void ResolveEnvVars(JObject obj, string path, string filePath)
     {
         foreach (var prop in obj.Properties().ToList())
-        {
             switch (prop.Value)
             {
                 case JValue { Type: JTokenType.String } jv:
@@ -143,26 +147,32 @@ public static class SuiteConfiguration
                     ResolveEnvVars(nested, $"{path}.{prop.Name}", filePath);
                     break;
             }
-        }
     }
 
-    private static string ResolveEnvVarString(string value, string fieldPath, string filePath) =>
-        Regex.Replace(value, @"\$\{([A-Z_][A-Z0-9_]*)\}", match =>
+    private static string ResolveEnvVarString(string value, string fieldPath, string filePath)
+    {
+        return Regex.Replace(value, @"\$\{([A-Z_][A-Z0-9_]*)\}", match =>
         {
             var name = match.Groups[1].Value;
             return Environment.GetEnvironmentVariable(name)
-                ?? throw new InvalidDataException(
-                    $"Unresolved env var '${{{name}}}' in '{fieldPath}' in {filePath}. " +
-                    $"Set {name} in the environment before running tests.");
+                   ?? throw new InvalidDataException(
+                       $"Unresolved env var '${{{name}}}' in '{fieldPath}' in {filePath}. " +
+                       $"Set {name} in the environment before running tests.");
         });
+    }
 
-    private static T Deserialize<T>(JObject obj) =>
-        JsonConvert.DeserializeObject<T>(obj.ToString(), new JsonSerializerSettings
+    private static T Deserialize<T>(JObject obj)
+    {
+        return JsonConvert.DeserializeObject<T>(obj.ToString(), new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         })!;
+    }
 
-    private static HashSet<string> KeySet(params string[] keys) => new(keys);
+    private static HashSet<string> KeySet(params string[] keys)
+    {
+        return new HashSet<string>(keys);
+    }
 }
 
 // ── Public config DTOs ─────────────────────────────────────────────────────
@@ -179,11 +189,11 @@ public sealed class ComponentConfig
 public sealed class StartupConfig
 {
     public const string InProcessMode = "in-process";
-    public const string CommandMode   = "command";
+    public const string CommandMode = "command";
 
     public string Mode { get; set; } = InProcessMode;
     public bool IsInProcess => Mode == InProcessMode;
-    public bool IsCommand   => Mode == CommandMode;
+    public bool IsCommand => Mode == CommandMode;
     public string? Settings { get; set; }
     public string? Command { get; set; }
     public ReadinessConfig? Readiness { get; set; }
