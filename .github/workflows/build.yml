@@ -16,60 +16,73 @@ env:
   MY_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
+  # ── Library: build + unit tests ─────────────────────────────────────────
   ConfIT-Build-Test:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'skip')"
     steps:
-      - uses: actions/checkout@v6
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET (9 + 10 — library multi-targets both)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            9.0.x
+            10.0.x
+
+      - name: Build library
+        run: dotnet build './src/ConfIT.slnx' --configuration Release -v minimal -nologo
+
+      - name: Run unit tests
+        run: dotnet test './test/ConfIT.UnitTest/ConfIT.UnitTest.csproj' --configuration Release --logger "console;verbosity=minimal" -nologo
+
+  # ── Examples: component tests (in-process + AppLauncher) ────────────────
+  Example-Component-Tests:
+    needs: ConfIT-Build-Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
 
-      - name: Install Dependencies
-        run: dotnet restore './src/ConfIT.slnx'
+      - name: Build examples
+        run: dotnet build './example/User.sln' --configuration Release -v minimal -nologo
 
-      - name: Build
-        run: dotnet build './src/ConfIT.slnx' --configuration Release --no-restore
+      - name: Run component tests (in-process)
+        run: make component
 
-      - name: Run ConfIT Unit Tests
-        run: dotnet test './test/ConfIT.UnitTest/ConfIT.UnitTest.csproj' --configuration Release --logger "console;verbosity=normal"
+      - name: Build User.Api for AppLauncher
+        run: dotnet build example/User.Api --configuration Debug -v minimal -nologo
 
-  Example-Build-Test:
+      - name: Run component tests (AppLauncher)
+        run: make component.applauncher
+
+  # ── Examples: integration tests (full service lifecycle) ─────────────────
+  Example-Integration-Tests:
     needs: ConfIT-Build-Test
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v6
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
-      - name: Install Dependencies
-        run: dotnet restore './example/User.sln'
+      - name: Build examples
+        run: dotnet build './example/User.sln' --configuration Release -v minimal -nologo
 
-      - name: Build
-        run: dotnet build './example/User.sln'  --configuration Release --no-restore
+      - name: Run integration tests
+        # make integration: wipes DB, starts User.Api + JustAnotherService,
+        # waits for both ports to respond, runs tests, stops services.
+        run: make integration
 
-      - name: Run Component Tests
-        working-directory: ./example/User.ComponentTests
-        run: dotnet test
-
-      - name: Run UserApi
-        working-directory: ./example/User.Api
-        run: dotnet run &
-
-      - name: Run JustAnotherService
-        working-directory: ./example/JustAnotherService
-        run: dotnet run &
-
-      - name: Run Integration Tests
-        working-directory: ./example/User.IntegrationTests
-        run: dotnet test
-
+  # ── Release (tag-only) ───────────────────────────────────────────────────
   Release:
-    needs: Example-Build-Test
+    needs: [Example-Component-Tests, Example-Integration-Tests]
     runs-on: ubuntu-latest
     if: "contains(github.ref, '/tags/v')"
     steps:
@@ -78,24 +91,26 @@ jobs:
         with:
           token: ${{ env.MY_GIT_TOKEN }}
 
+  # ── NuGet publish (tag-only) ─────────────────────────────────────────────
   Publish-Nuget:
     needs: Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
 
-      - name: Get Release Version From Tag
+      - name: Get version from tag
         run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
 
       - name: Pack
         working-directory: ./src/ConfIT
         run: dotnet pack --configuration Release /p:Version=${VERSION} --output .
 
-      - name: Push To Nuget
+      - name: Push to NuGet
         working-directory: ./tools
         run: ./push_nuget.sh ${VERSION} "$NUGET_API_TOKEN"
         env:
