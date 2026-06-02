@@ -4,7 +4,9 @@ using ConfIT;
 using ConfIT.Config;
 using ConfIT.Extension;
 using ConfIT.Server.Http;
-using ConfIT.Server.Launcher;
+// 'Launcher' alias is required: the project namespace is 'User.ComponentTests.AppLauncher',
+// which means the bare name 'AppLauncher' resolves to that namespace, not the class.
+using Launcher = ConfIT.Server.Launcher.AppLauncher;
 
 namespace User.ComponentTests.AppLauncher.SetUp
 {
@@ -16,17 +18,17 @@ namespace User.ComponentTests.AppLauncher.SetUp
     ///   - No InitializeDb — the app seeds its own database on startup
     ///   - No User.Api project reference — the test project knows nothing about
     ///     the app's internals; it only speaks HTTP
-    ///   - AppLauncher starts the process, waits for readiness, and stops it on dispose
+    ///   - Launcher starts the process, waits for TCP readiness, and stops it on Dispose
     /// </summary>
     public class TestSuiteFixture : IDisposable
     {
-        private readonly AppLauncher _launcher;
+        private readonly Launcher _launcher;
 
         public TestSuiteFixture()
         {
             var cfg = SuiteConfiguration.LoadComponent("suite.config.yaml");
 
-            _launcher       = AppLauncher.Start(cfg.ToAppLauncherConfig());
+            _launcher       = Launcher.Start(cfg.ToAppLauncherConfig());
             TestHttpClient  = TestHttpClient.Create(cfg.Api.Url!, null);
             SuiteConfig     = cfg.ToSuiteConfig();
             SuiteConfig.ApiResponseFolder = EnsureDirectory(cfg.Folders?.Response ?? "responses");
