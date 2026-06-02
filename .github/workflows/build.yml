@@ -16,8 +16,8 @@ env:
   MY_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  # ── Library: build + unit tests ─────────────────────────────────────────
-  ConfIT-Build-Test:
+  # ── Full CI pipeline ─────────────────────────────────────────────────────
+  CI:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'skip')"
     steps:
@@ -30,59 +30,15 @@ jobs:
             9.0.x
             10.0.x
 
-      - name: Build library
-        run: dotnet build './src/ConfIT.slnx' --configuration Release -v minimal -nologo
-
-      - name: Run unit tests
-        run: dotnet test './test/ConfIT.UnitTest/ConfIT.UnitTest.csproj' --configuration Release --logger "console;verbosity=minimal" -nologo
-
-  # ── Examples: component tests (in-process + AppLauncher) ────────────────
-  Example-Component-Tests:
-    needs: ConfIT-Build-Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 10.0.x
-
-      - name: Build examples
-        run: dotnet build './example/User.sln' --configuration Release -v minimal -nologo
-
-      - name: Run component tests (in-process)
-        run: make component
-
-      - name: Build User.Api for AppLauncher
-        run: dotnet build example/User.Api --configuration Debug -v minimal -nologo
-
-      - name: Run component tests (AppLauncher)
-        run: make component.applauncher
-
-  # ── Examples: integration tests (full service lifecycle) ─────────────────
-  Example-Integration-Tests:
-    needs: ConfIT-Build-Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 10.0.x
-
-      - name: Build examples
-        run: dotnet build './example/User.sln' --configuration Release -v minimal -nologo
-
-      - name: Run integration tests
-        # make integration: wipes DB, starts User.Api + JustAnotherService,
-        # waits for both ports to respond, runs tests, stops services.
-        run: make integration
+      - name: Run full pipeline
+        # build → unit → component → component.applauncher → integration
+        # make integration handles: DB wipe, service startup + readiness,
+        # test run, service teardown. All lifecycle managed by the Makefile.
+        run: make ci
 
   # ── Release (tag-only) ───────────────────────────────────────────────────
   Release:
-    needs: [Example-Component-Tests, Example-Integration-Tests]
+    needs: CI
     runs-on: ubuntu-latest
     if: "contains(github.ref, '/tags/v')"
     steps:
