@@ -3,7 +3,7 @@
 
 DOTNET     := $(shell [ -x "$(HOME)/.dotnet/dotnet" ] && echo "$(HOME)/.dotnet/dotnet" || echo "dotnet")
 BUILD_OPTS := --configuration Release --verbosity quiet -nologo -p:WarningLevel=0 -p:NoWarn=NU1510
-TEST_OPTS  := --logger "console;verbosity=minimal" -nologo -p:WarningLevel=0 -p:NoWarn=NU1510
+TEST_OPTS  ?= --logger "console;verbosity=minimal" -nologo -p:WarningLevel=0 -p:NoWarn=NU1510
 API_PORT  := 5170
 SVC_PORT  := 9999
 DB        := example/User.Api/User.db
