@@ -16,6 +16,7 @@ public sealed class TestResultCollector : IDisposable
     private readonly object _lock = new();
 
     private readonly List<Result> _results = new();
+    private bool _summaryPrinted;
 
     public void Dispose()
     {
@@ -32,7 +33,8 @@ public sealed class TestResultCollector : IDisposable
 
     private void PrintSummary()
     {
-        if (_results.Count == 0) return;
+        if (_results.Count == 0 || _summaryPrinted) return;
+        _summaryPrinted = true;
 
         var passed = _results.Count(r => r.Status == TestStatus.Passed);
         var failed = _results.Count(r => r.Status == TestStatus.Failed);

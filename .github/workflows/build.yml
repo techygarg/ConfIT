@@ -34,7 +34,13 @@ jobs:
         # build → unit → component → component.applauncher → integration
         # make integration handles: DB wipe, service startup + readiness,
         # test run, service teardown. All lifecycle managed by the Makefile.
+        # TEST_OPTS overrides the Makefile default (verbosity=minimal) with
+        # verbosity=normal so the TestResultCollector suite summary appears in
+        # CI logs — newer dotnet SDK versions filter all test host stdout at
+        # minimal verbosity, which hides the summary.
         run: make ci
+        env:
+          TEST_OPTS: --logger "console;verbosity=normal" -nologo -p:WarningLevel=0 -p:NoWarn=NU1510
 
   # ── Release (tag-only) ───────────────────────────────────────────────────
   Release:
