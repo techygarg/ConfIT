@@ -1,8 +1,11 @@
 using System;
 using System.IO;
 using ConfIT;
+using ConfIT.Config;
+using ConfIT.Extension;
 using ConfIT.Server.Http;
 using Microsoft.Extensions.DependencyInjection;
+using User.Api;
 using User.Api.Persistence;
 
 namespace User.ComponentTests.SetUp
@@ -11,41 +14,32 @@ namespace User.ComponentTests.SetUp
     {
         public TestSuiteFixture()
         {
-            var server = InitializeServer();
-            InitializeDb(server);
+            var cfg = SuiteConfiguration.LoadComponent("suite.config.yaml");
+            var initializer = new TestSuiteInitializer<Startup>(cfg.Startup.Settings!);
+            InitializeDb(initializer);
+            TestHttpClient  = initializer.TestHttpClient;
+            SuiteConfig     = cfg.ToSuiteConfig();
+            SuiteConfig.ApiResponseFolder = EnsureDirectory(cfg.Folders?.Response ?? "responses");
+            Filter          = cfg.ToTestFilter();
+            ResultCollector = new TestResultCollector();
         }
 
         public TestHttpClient TestHttpClient { get; private set; }
         public SuiteConfig SuiteConfig { get; private set; }
         public TestFilter Filter { get; private set; }
-        public TestResultCollector ResultCollector { get; } = new TestResultCollector();
+        public TestResultCollector ResultCollector { get; }
 
-        private TestSuiteInitializer<TestServerStartup> InitializeServer()
+        private static void InitializeDb(TestSuiteInitializer<Startup> initializer)
         {
-            var initializer = new TestSuiteInitializer<TestServerStartup>("appsettings.Tests.json");
-            TestHttpClient = initializer.TestHttpClient;
-            SuiteConfig = new SuiteConfig
-            {
-                MockServerUrl = "http://localhost:8888",
-                ApiResponseFolder = CreateDirectoryForResponse()
-            };
-            // Filter by tags via RUN_POOLS env var, or by test names via RUN_TESTS env var
-            // Filter = TestFilter.CreateForTagsFromEnvVariable("RUN_POOLS");
-            return initializer;
-        }
-
-        private static void InitializeDb(TestSuiteInitializer<TestServerStartup> suite)
-        {
-            var dbContext = suite.TestServer.Services.GetService<UserDbContext>();
+            using var scope = initializer.Services.CreateScope();
+            var dbContext     = scope.ServiceProvider.GetRequiredService<UserDbContext>();
             var dbInitializer = new UserDbInitializer(dbContext);
             dbInitializer.Seed();
         }
 
-        private string CreateDirectoryForResponse()
-        {
-            var directoryInfo = Directory.CreateDirectory(Environment.CurrentDirectory + "/responses");
-            return directoryInfo.FullName;
-        }
+        private static string EnsureDirectory(string relativePath) =>
+            Directory.CreateDirectory(
+                Path.Combine(Environment.CurrentDirectory, relativePath)).FullName;
 
         public void Dispose() => ResultCollector.Dispose();
     }

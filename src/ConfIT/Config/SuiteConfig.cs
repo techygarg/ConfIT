@@ -1,4 +1,4 @@
-namespace ConfIT;
+namespace ConfIT.Config;
 
 public class SuiteConfig
 {

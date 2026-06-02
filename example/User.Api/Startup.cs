@@ -41,10 +41,13 @@ namespace User.Api
         /// in component tests if required to change default db context  
         /// </summary>
         /// <param name="services"></param>
-        protected virtual void AddDbContexts(IServiceCollection services) =>
-            services
-                .AddDbContext<UserDbContext>(opt =>
-                    opt.UseSqlite(@"Data Source=User.db"));
+        protected virtual void AddDbContexts(IServiceCollection services)
+        {
+            if (IsLocalComponentTestsRunning(Configuration))
+                services.AddDbContext<UserDbContext>(opt => opt.UseInMemoryDatabase("UserDb"));
+            else
+                services.AddDbContext<UserDbContext>(opt => opt.UseSqlite(@"Data Source=User.db"));
+        }
 
         /// <summary>
         /// This method is defined as virtual so that we can override default behaviour

@@ -1,0 +1,25 @@
+integration:
+  default: local
+
+  local:
+    api:
+      url: http://localhost:5170
+    folders:
+      response: ApiResponses
+      requestBody: TestCase/Request
+      responseBody: TestCase/Response
+    filter:
+      strategy: tags
+      envVariable: RUN_POOLS
+
+  qa:
+    api:
+      url: "https://api.qa.example.com"
+      authToken: ${QA_API_TOKEN}
+    folders:
+      response: ApiResponses
+      requestBody: TestCase/Request
+      responseBody: TestCase/Response
+    filter:
+      strategy: tags
+      envVariable: RUN_POOLS
