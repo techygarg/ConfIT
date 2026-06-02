@@ -9,7 +9,7 @@
 component:
   startup:
     mode: command
-    command: dotnet run --project ../../../../User.Api --launch-profile ComponentTest
+    command: dotnet run --no-build --project ../../../../User.Api --launch-profile ComponentTest
     readiness:
       port: 5170          # TCP probe — app is ready when port 5170 responds
       timeoutSeconds: 60  # allow time for dotnet build on first run

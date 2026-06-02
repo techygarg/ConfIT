@@ -35,6 +35,7 @@ component: ## Run component tests (in-process, no live services needed)
 
 component.applauncher: ## Run AppLauncher component tests (starts User.Api as a real process on port 5170)
 	@lsof -ti :$(API_PORT) 2>/dev/null | xargs kill -9 2>/dev/null || true
+	@dotnet build example/User.Api --configuration Debug -v minimal -nologo
 	@$(DOTNET) test example/User.ComponentTests.AppLauncher $(TEST_OPTS)
 
 test: unit component ## Run unit + component tests (default test suite, no live services)

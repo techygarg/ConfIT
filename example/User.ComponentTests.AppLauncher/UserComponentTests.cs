@@ -17,7 +17,7 @@ namespace User.ComponentTests.AppLauncher
                 fixture.TestHttpClient,
                 fixture.SuiteConfig,
                 null,
-                new TestOutputLogger(output),
+                null,
                 fixture.Filter,
                 fixture.ResultCollector)
         {
