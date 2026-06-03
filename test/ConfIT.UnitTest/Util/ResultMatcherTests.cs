@@ -2,212 +2,190 @@ namespace ConfIT.UnitTest.Util;
 
 public class ResultMatcherTests
 {
+    #region Basic matching
+
     [Fact]
-    public void MatchResponseBody_ShouldPassForIdenticalJson()
+    public void MatchResponseBody_IdenticalJson_Passes()
     {
         // Given
-        var actual = JToken.Parse("{'name': 'test', 'value': 123}");
+        var actual   = JToken.Parse("{'name': 'test', 'value': 123}");
         var expected = JToken.Parse("{'name': 'test', 'value': 123}");
-        var matcher = new Matcher();
 
-        // When
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
+        // When / Then
+        var action = () => ResultMatcher.MatchResponseBody(actual, expected, new Matcher());
         action.Should().NotThrow();
     }
 
     [Fact]
-    public void MatchResponseBody_ShouldMatchWhenPatternMatchesFieldValue()
+    public void MatchResponseBody_PatternMatchesFieldValue_Passes()
     {
         // Given
-        var actual = JToken.Parse("{'id': 'abc-123', 'name': 'test'}");
+        var actual   = JToken.Parse("{'id': 'abc-123', 'name': 'test'}");
         var expected = JToken.Parse("{'name': 'test'}");
-        var matcher = new Matcher { Pattern = new Dictionary<string, string> { ["id"] = "[a-z]+-\\d+" } };
+        var matcher  = new Matcher { Pattern = new Dictionary<string, string> { ["id"] = "[a-z]+-\\d+" } };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
         action.Should().NotThrow();
     }
 
     [Fact]
-    public void MatchResponseBody_ShouldIgnoreSpecifiedFields()
+    public void MatchResponseBody_IgnoreFields_ExcludesFromComparison()
     {
         // Given
-        var actual = JToken.Parse("{'id': '123', 'name': 'test', 'timestamp': '2023-01-01'}");
+        var actual   = JToken.Parse("{'id': '123', 'name': 'test', 'timestamp': '2023-01-01'}");
         var expected = JToken.Parse("{'name': 'test'}");
-        var matcher = new Matcher { Ignore = ["id", "timestamp"] };
+        var matcher  = new Matcher { Ignore = ["id", "timestamp"] };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
         action.Should().NotThrow();
     }
 
     [Fact]
-    public void MatchResponseBody_ShouldHandleNestedJsonStructures()
+    public void MatchResponseBody_NestedIgnoreField_Passes()
     {
         // Given
-        var actual = JToken.Parse("{'user': {'id': '123', 'details': {'age': 30}}}");
+        var actual   = JToken.Parse("{'user': {'id': '123', 'details': {'age': 30}}}");
         var expected = JToken.Parse("{'user': {'details': {'age': 30}}}");
-        var matcher = new Matcher { Ignore = ["user__id"] };
+        var matcher  = new Matcher { Ignore = ["user__id"] };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
         action.Should().NotThrow();
     }
 
     [Fact]
-    public void MatchResponseBody_ShouldRemoveFieldsWithSpecificParentPath()
+    public void MatchResponseBody_PathScopedIgnore_OnlyRemovesMatchingField()
     {
         // Given
-        var actual = JToken.Parse("{'data': {'id': '123'}, 'metadata': {'id': '456'}}");
+        var actual   = JToken.Parse("{'data': {'id': '123'}, 'metadata': {'id': '456'}}");
         var expected = JToken.Parse("{'data': {}, 'metadata': {'id': '456'}}");
-        var matcher = new Matcher { Ignore = ["data__id"] };
+        var matcher  = new Matcher { Ignore = ["data__id"] };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
         action.Should().NotThrow();
     }
 
     [Fact]
-    public void MatchResponseBody_ShouldHandleMultipleParentLevels()
+    public void MatchResponseBody_DeepNestedIgnore_Passes()
     {
         // Given
-        var actual = JToken.Parse("{'level1': {'level2': {'level3': {'id': '123'}}}}");
+        var actual   = JToken.Parse("{'level1': {'level2': {'level3': {'id': '123'}}}}");
         var expected = JToken.Parse("{'level1': {'level2': {'level3': {}}}}");
-        var matcher = new Matcher { Ignore = ["level1__level2__level3__id"] };
+        var matcher  = new Matcher { Ignore = ["level1__level2__level3__id"] };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
         action.Should().NotThrow();
     }
 
     [Fact]
-    public void MatchResponseBody_ShouldThrowOnNullActualResponse()
+    public void MatchResponseBody_NullMatcher_Passes()
     {
         // Given
-        JToken actual = null;
-        var expected = JToken.Parse("{}");
-        var matcher = new Matcher();
-
-        // When
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
-        action.Should().Throw<Exception>();
-    }
-
-    [Fact]
-    public void MatchResponseBody_ShouldThrowOnNullExpectedResponse()
-    {
-        // Given
-        var actual = JToken.Parse("{}");
-        JToken expected = null;
-        var matcher = new Matcher();
-
-        // When
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
-        action.Should().Throw<Exception>();
-    }
-
-    [Fact]
-    public void MatchResponseBody_ShouldHandleNullMatcher()
-    {
-        // Given
-        var actual = JToken.Parse("{'id': '123', 'name': 'test'}");
+        var actual   = JToken.Parse("{'id': '123', 'name': 'test'}");
         var expected = JToken.Parse("{'id': '123', 'name': 'test'}");
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, null);
-
-        // Then
         action.Should().NotThrow();
     }
 
     [Fact]
-    public void MatchResponseBody_ShouldHandleEmptyPatternDictionary()
+    public void MatchResponseBody_EmptyPatternDictionary_Passes()
     {
         // Given
-        var actual = JToken.Parse("{'id': '123', 'name': 'test'}");
+        var actual   = JToken.Parse("{'id': '123', 'name': 'test'}");
         var expected = JToken.Parse("{'id': '123', 'name': 'test'}");
-        var matcher = new Matcher { Pattern = new Dictionary<string, string>() };
+        var matcher  = new Matcher { Pattern = new Dictionary<string, string>() };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
         action.Should().NotThrow();
     }
 
     [Fact]
-    public void MatchResponseBody_ShouldHandleEmptyIgnoreList()
+    public void MatchResponseBody_EmptyIgnoreList_Passes()
     {
         // Given
-        var actual = JToken.Parse("{'id': '123', 'name': 'test'}");
+        var actual   = JToken.Parse("{'id': '123', 'name': 'test'}");
         var expected = JToken.Parse("{'id': '123', 'name': 'test'}");
-        var matcher = new Matcher { Ignore = [] };
+        var matcher  = new Matcher { Ignore = [] };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
         action.Should().NotThrow();
     }
 
+    #endregion
+
+    #region Error cases
+
     [Fact]
-    public void MatchResponseBody_ShouldThrowOnInvalidRegexPattern()
+    public void MatchResponseBody_NullActual_ThrowsException()
     {
         // Given
-        var actual = JToken.Parse("{'id': '123', 'name': 'test'}");
+        JToken actual   = null;
+        var expected    = JToken.Parse("{}");
+
+        // When / Then
+        var action = () => ResultMatcher.MatchResponseBody(actual, expected, new Matcher());
+        action.Should().Throw<Exception>().Which.Message.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void MatchResponseBody_NullExpected_ThrowsException()
+    {
+        // Given
+        var actual      = JToken.Parse("{}");
+        JToken expected = null;
+
+        // When / Then
+        var action = () => ResultMatcher.MatchResponseBody(actual, expected, new Matcher());
+        action.Should().Throw<Exception>().Which.Message.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void MatchResponseBody_InvalidRegexPattern_ThrowsArgumentException()
+    {
+        // Given
+        var actual   = JToken.Parse("{'id': '123', 'name': 'test'}");
         var expected = JToken.Parse("{'name': 'test'}");
-        var matcher = new Matcher { Pattern = new Dictionary<string, string> { ["id"] = "[" } };
+        var matcher  = new Matcher { Pattern = new Dictionary<string, string> { ["id"] = "[" } };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
         action.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void MatchResponseBody_ShouldFailWhenExpectedHasFieldMissingFromActual()
+    public void MatchResponseBody_ExpectedFieldMissingFromActual_Throws()
     {
         // Given
-        var actual = JToken.Parse("{'name': 'John', 'age': 30}");
+        var actual   = JToken.Parse("{'name': 'John', 'age': 30}");
         var expected = JToken.Parse("{'name': 'John', 'age': 30, 'extra': 'field'}");
-        var matcher = new Matcher();
 
-        // When
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
+        // When / Then
+        var action = () => ResultMatcher.MatchResponseBody(actual, expected, new Matcher());
         action.Should().Throw<XunitException>();
     }
 
-    // ── Field-level failure output ────────────────────────────────────────────
+    #endregion
+
+    #region Failure output
 
     [Fact]
-    public void MatchResponseBody_WhenFieldsDiffer_FailureMessageNamesField()
+    public void MatchResponseBody_FieldsDiffer_FailureMessageNamesField()
     {
         // Given
-        var actual = JToken.Parse("{'name': 'alice'}");
+        var actual   = JToken.Parse("{'name': 'alice'}");
         var expected = JToken.Parse("{'name': 'bob'}");
 
         // When
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, null);
-        var ex = action.Should().Throw<Exception>().Which;
+        var ex     = action.Should().Throw<Exception>().Which;
 
         // Then
         ex.Message.Should().Contain("name");
@@ -218,15 +196,15 @@ public class ResultMatcherTests
     }
 
     [Fact]
-    public void MatchResponseBody_WhenMultipleFieldsDiffer_FailureMessageIncludesAllFields()
+    public void MatchResponseBody_MultipleFieldsDiffer_FailureMessageIncludesAllFields()
     {
         // Given
-        var actual = JToken.Parse("{'name': 'alice', 'age': 30}");
+        var actual   = JToken.Parse("{'name': 'alice', 'age': 30}");
         var expected = JToken.Parse("{'name': 'bob',   'age': 31}");
 
         // When
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, null);
-        var ex = action.Should().Throw<Exception>().Which;
+        var ex     = action.Should().Throw<Exception>().Which;
 
         // Then
         ex.Message.Should().Contain("name");
@@ -234,91 +212,86 @@ public class ResultMatcherTests
     }
 
     [Fact]
-    public void MatchResponseBody_WhenBodyDiffers_FailureMessageContainsHeader()
+    public void MatchResponseBody_BodyDiffers_FailureMessageContainsHeader()
     {
         // Given
-        var actual = JToken.Parse("{'x': 1}");
+        var actual   = JToken.Parse("{'x': 1}");
         var expected = JToken.Parse("{'x': 2}");
 
         // When
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, null);
-        var ex = action.Should().Throw<Exception>().Which;
+        var ex     = action.Should().Throw<Exception>().Which;
 
         // Then
         ex.Message.Should().Contain("Response body mismatch:");
     }
 
-    // ── Semantic integration ───────────────────────────────────────────────────
+    #endregion
+
+    #region Semantic matchers
 
     [Fact]
-    public void MatchResponseBody_WithSemanticMatcher_ValidatesAndRemovesField()
+    public void MatchResponseBody_SemanticMatcherValid_PassesAndRemovesField()
     {
         // Given
-        var actual = JToken.Parse("{'id': 5, 'name': 'test'}");
+        var actual   = JToken.Parse("{'id': 5, 'name': 'test'}");
         var expected = JToken.Parse("{'name': 'test'}");
-        var matcher = new Matcher { Semantic = new Dictionary<string, string> { ["id"] = "greaterThan(0)" } };
+        var matcher  = new Matcher { Semantic = new Dictionary<string, string> { ["id"] = "greaterThan(0)" } };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
         action.Should().NotThrow();
     }
 
     [Fact]
-    public void MatchResponseBody_WithFailingSemanticMatcher_ThrowsWithFieldName()
+    public void MatchResponseBody_SemanticMatcherFails_ThrowsWithFieldName()
     {
         // Given
-        var actual = JToken.Parse("{'id': -1, 'name': 'test'}");
+        var actual   = JToken.Parse("{'id': -1, 'name': 'test'}");
         var expected = JToken.Parse("{'name': 'test'}");
-        var matcher = new Matcher { Semantic = new Dictionary<string, string> { ["id"] = "greaterThan(0)" } };
+        var matcher  = new Matcher { Semantic = new Dictionary<string, string> { ["id"] = "greaterThan(0)" } };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
         action.Should().Throw<Exception>().WithMessage("*id*greaterThan(0)*");
     }
 
     [Fact]
-    public void MatchResponseBody_WithCustomMatcher_AppliesItCorrectly()
+    public void MatchResponseBody_CustomMatcher_PassesForValidValue()
     {
         // Given
-        var actual = JToken.Parse("{'code': 'DOM-42', 'name': 'test'}");
+        var actual   = JToken.Parse("{'code': 'DOM-42', 'name': 'test'}");
         var expected = JToken.Parse("{'name': 'test'}");
-        var matcher = new Matcher { Semantic = new Dictionary<string, string> { ["code"] = "isDomainId" } };
-        var custom = new Dictionary<string, SemanticMatcherFunc>
+        var matcher  = new Matcher { Semantic = new Dictionary<string, string> { ["code"] = "isDomainId" } };
+        var custom   = new Dictionary<string, SemanticMatcherFunc>
         {
             ["isDomainId"] = (token, _) =>
                 token.Value<string>()?.StartsWith("DOM-") == true ? null : "Expected DOM-{n} format"
         };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher, custom);
-
-        // Then
         action.Should().NotThrow();
     }
 
     [Fact]
-    public void MatchResponseBody_WithAllThreeMatcherTypes_AppliesEachCorrectly()
+    public void MatchResponseBody_AllThreeMatcherTypes_EachApplied()
     {
         // Given
-        var actual =
-            JToken.Parse(
-                "{'id': 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'code': 'ABC-123', 'createdAt': '2026-05-31', 'name': 'test'}");
+        var actual = JToken.Parse(
+            "{'id': 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'code': 'ABC-123', 'createdAt': '2026-05-31', 'name': 'test'}");
         var expected = JToken.Parse("{'name': 'test'}");
-        var matcher = new Matcher
+        var matcher  = new Matcher
         {
-            Semantic = new Dictionary<string, string> { ["id"] = "isUuid" },
-            Pattern = new Dictionary<string, string> { ["code"] = "[A-Z]+-\\d+" },
-            Ignore = ["createdAt"]
+            Semantic = new Dictionary<string, string> { ["id"]        = "isUuid" },
+            Pattern  = new Dictionary<string, string> { ["code"]      = "[A-Z]+-\\d+" },
+            Ignore   = ["createdAt"]
         };
 
-        // When
+        // When / Then
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-
-        // Then
         action.Should().NotThrow();
     }
+
+    #endregion
 }

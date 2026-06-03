@@ -2,36 +2,37 @@ namespace ConfIT.UnitTest.Server.Http;
 
 public class HttpClientTests
 {
-    private const string BaseUrl = "http://test.com";
-    private const string DefaultPath = "/api/test";
+    private const string BaseUrl          = "http://test.com";
+    private const string DefaultPath      = "/api/test";
     private const string DefaultAuthToken = "Bearer test-token";
-    private static readonly JToken DefaultRequestBody = JToken.Parse("{ \"key\": \"value\" }");
-    private readonly Mock<IAuthTokenProvider> _mockAuthTokenProvider;
 
-    private readonly Mock<HttpMessageHandler> _mockHttpMessageHandler;
-    private readonly TestHttpClient _testHttpClient;
+    private static readonly JToken DefaultRequestBody = JToken.Parse("{ \"key\": \"value\" }");
+
+    private readonly Mock<IAuthTokenProvider>  _mockAuthTokenProvider;
+    private readonly Mock<HttpMessageHandler>  _mockHttpMessageHandler;
+    private readonly TestHttpClient            _testHttpClient;
 
     public HttpClientTests()
     {
         _mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-        _mockAuthTokenProvider = new Mock<IAuthTokenProvider>();
-        var client = new HttpClient(_mockHttpMessageHandler.Object) { BaseAddress = new Uri(BaseUrl) };
-        _testHttpClient = new TestHttpClient(client, _mockAuthTokenProvider.Object);
+        _mockAuthTokenProvider  = new Mock<IAuthTokenProvider>();
+        var client              = new HttpClient(_mockHttpMessageHandler.Object) { BaseAddress = new Uri(BaseUrl) };
+        _testHttpClient         = new TestHttpClient(client, _mockAuthTokenProvider.Object);
     }
 
     private static TestApi CreateTestApi(
         string method,
-        string path = DefaultPath,
-        JToken? body = null,
+        string path                        = DefaultPath,
+        JToken? body                       = null,
         Dictionary<string, string>? headers = null)
     {
         return new TestApi
         {
             Request = new HttpTestRequest
             {
-                Method = method,
-                Path = path,
-                Body = body,
+                Method  = method,
+                Path    = path,
+                Body    = body,
                 Headers = headers
             }
         };
@@ -105,76 +106,76 @@ public class HttpClientTests
     public class HttpMethodTests : HttpClientTests
     {
         [Fact]
-        public async Task Get_ShouldSendGetRequest()
+        public async Task Execute_GetMethod_SendsGetRequest()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("GET");
             SetupMockHandler(HttpStatusCode.OK);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             VerifyHttpCall(HttpMethod.Get, DefaultPath, Times.Once());
         }
 
         [Fact]
-        public async Task Post_WithBody_ShouldSendPostRequest()
+        public async Task Execute_PostWithBody_SendsPostRequest()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("POST", body: DefaultRequestBody);
             SetupMockHandler(HttpStatusCode.Created);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.Created);
             VerifyHttpCall(HttpMethod.Post, DefaultPath, Times.Once());
         }
 
         [Fact]
-        public async Task Put_WithBody_ShouldSendPutRequest()
+        public async Task Execute_PutWithBody_SendsPutRequest()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("PUT", body: DefaultRequestBody);
             SetupMockHandler(HttpStatusCode.OK);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             VerifyHttpCall(HttpMethod.Put, DefaultPath, Times.Once());
         }
 
         [Fact]
-        public async Task Patch_WithBody_ShouldSendPatchRequest()
+        public async Task Execute_PatchWithBody_SendsPatchRequest()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("PATCH", body: DefaultRequestBody);
             SetupMockHandler(HttpStatusCode.OK);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             VerifyHttpCall(HttpMethod.Patch, DefaultPath, Times.Once());
         }
 
         [Fact]
-        public async Task Delete_ShouldSendDeleteRequest()
+        public async Task Execute_DeleteMethod_SendsDeleteRequest()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("DELETE");
             SetupMockHandler(HttpStatusCode.NoContent);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
             VerifyHttpCall(HttpMethod.Delete, DefaultPath, Times.Once());
         }
@@ -183,41 +184,41 @@ public class HttpClientTests
     public class HeaderTests : HttpClientTests
     {
         [Fact]
-        public async Task WithCustomHeaders_ShouldIncludeHeaders()
+        public async Task Execute_WithCustomHeaders_IncludesHeadersInRequest()
         {
-            // Arrange
+            // Given
             var headers = new Dictionary<string, string> { { "Custom-Header", "TestValue" } };
             var testApi = CreateTestApi("GET", headers: headers);
             SetupMockHandler(HttpStatusCode.OK);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             VerifyHttpCallWithHeaders(headers);
         }
 
         [Fact]
-        public async Task WithAuthToken_ShouldIncludeAuthorizationHeader()
+        public async Task Execute_WithAuthToken_IncludesAuthorizationHeader()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("GET");
             _mockAuthTokenProvider.Setup(x => x.Token()).Returns(DefaultAuthToken);
             SetupMockHandler(HttpStatusCode.OK);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             VerifyAuthorizationHeader(DefaultAuthToken);
         }
 
         [Fact]
-        public async Task WithMultipleHeaders_ShouldIncludeAllHeaders()
+        public async Task Execute_WithMultipleHeaders_IncludesAllInRequest()
         {
-            // Arrange
+            // Given
             var headers = new Dictionary<string, string>
             {
                 { "Header1", "Value1" },
@@ -227,25 +228,25 @@ public class HttpClientTests
             var testApi = CreateTestApi("GET", headers: headers);
             SetupMockHandler(HttpStatusCode.OK);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             VerifyHttpCallWithHeaders(headers);
         }
 
         [Fact]
-        public async Task WithNullHeaders_ShouldNotThrowException()
+        public async Task Execute_NullHeaders_DoesNotThrow()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("GET", headers: null);
             SetupMockHandler(HttpStatusCode.OK);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             VerifyHttpCall(HttpMethod.Get, DefaultPath, Times.Once());
         }
@@ -254,61 +255,61 @@ public class HttpClientTests
     public class EdgeCaseTests : HttpClientTests
     {
         [Fact]
-        public async Task WithEmptyPath_ShouldSendRequestToBaseUrl()
+        public async Task Execute_EmptyPath_SendsToBaseUrl()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("GET", "");
             SetupMockHandler(HttpStatusCode.OK);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             VerifyHttpCallToBaseUrl();
         }
 
         [Fact]
-        public async Task WithNullBody_ShouldSendEmptyContent()
+        public async Task Execute_NullBody_SendsEmptyContent()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("POST", body: null);
             SetupMockHandler(HttpStatusCode.OK);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             VerifyEmptyRequestContent();
         }
 
         [Fact]
-        public async Task WithLowercaseMethod_ShouldHandleCorrectly()
+        public async Task Execute_LowercaseMethod_SendsNormalizedRequest()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("get");
             SetupMockHandler(HttpStatusCode.OK);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             VerifyHttpCall(HttpMethod.Get, DefaultPath, Times.Once());
         }
 
         [Fact]
-        public async Task WithErrorResponse_ShouldReturnErrorStatusCode()
+        public async Task Execute_ServerReturnsError_ReturnsErrorStatusCode()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("GET");
             SetupMockHandler(HttpStatusCode.InternalServerError);
 
-            // Act
+            // When
             var response = await _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         }
     }
@@ -319,57 +320,57 @@ public class HttpClientTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void Create_WithInvalidServerUrl_ShouldThrowArgumentException(string serverUrl)
+        public void Create_InvalidServerUrl_ThrowsArgumentException(string serverUrl)
         {
-            // Act
+            // When
             var action = () => TestHttpClient.Create(serverUrl, _mockAuthTokenProvider.Object);
 
-            // Assert
+            // Then
             action.Should().Throw<ArgumentException>()
                 .WithMessage("Server URL cannot be null or empty*")
                 .WithParameterName(nameof(serverUrl));
         }
 
         [Fact]
-        public void Create_WithValidServerUrl_ShouldReturnInstance()
+        public void Create_ValidServerUrl_ReturnsInstance()
         {
-            // Act
+            // When
             var client = TestHttpClient.Create(BaseUrl, _mockAuthTokenProvider.Object);
 
-            // Assert
+            // Then
             client.Should().NotBeNull();
         }
 
         [Fact]
-        public void Constructor_WithNullHttpClient_ShouldThrowArgumentNullException()
+        public void Constructor_NullHttpClient_ThrowsArgumentNullException()
         {
-            // Act
+            // When
             var action = () => new TestHttpClient(null);
 
-            // Assert
+            // Then
             action.Should().Throw<ArgumentNullException>().WithParameterName("client");
         }
 
         [Fact]
-        public async Task Execute_WithNullTestApi_ShouldThrowArgumentNullException()
+        public async Task Execute_NullTestApi_ThrowsArgumentNullException()
         {
-            // Act
+            // When
             var action = () => _testHttpClient.Execute(null);
 
-            // Assert
+            // Then
             await action.Should().ThrowAsync<ArgumentNullException>().WithParameterName("testApi");
         }
 
         [Fact]
-        public async Task Execute_WithUnsupportedMethod_ShouldThrowNotSupportedException()
+        public async Task Execute_UnsupportedMethod_ThrowsNotSupportedException()
         {
-            // Arrange
+            // Given
             var testApi = CreateTestApi("HEAD");
 
-            // Act
+            // When
             var action = () => _testHttpClient.Execute(testApi);
 
-            // Assert
+            // Then
             await action.Should().ThrowAsync<NotSupportedException>()
                 .WithMessage("HTTP method 'HEAD' is not supported.");
         }
@@ -378,17 +379,17 @@ public class HttpClientTests
     public class DisposalTests : HttpClientTests
     {
         [Fact]
-        public void Dispose_ShouldDisposeHttpClient()
+        public void Dispose_Called_DisposesUnderlyingHttpClient()
         {
-            // Arrange
-            var handler = new DisposeTrackingHandler();
-            var client = new HttpClient(handler);
+            // Given
+            var handler       = new DisposeTrackingHandler();
+            var client        = new HttpClient(handler);
             var testHttpClient = new TestHttpClient(client);
 
-            // Act
+            // When
             testHttpClient.Dispose();
 
-            // Assert
+            // Then
             handler.WasDisposed.Should().BeTrue();
         }
     }

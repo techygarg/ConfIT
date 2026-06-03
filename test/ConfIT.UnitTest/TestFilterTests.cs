@@ -143,7 +143,7 @@ public class TestFilterTests
     }
 
     [Fact]
-    public void CreateForTags_DoesNotSetTestNames()
+    public void CreateForTags_TagsProvided_DoesNotPopulateTestNames()
     {
         // When
         var filter = TestFilter.CreateForTags("tag1");
@@ -153,7 +153,7 @@ public class TestFilterTests
     }
 
     [Fact]
-    public void CreateForTests_DoesNotSetTags()
+    public void CreateForTests_TestNamesProvided_DoesNotPopulateTags()
     {
         // When
         var filter = TestFilter.CreateForTests("test1");

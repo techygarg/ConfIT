@@ -293,6 +293,12 @@ When adding matchers: `ResultMatcher.cs` is the single point of change for match
 - All new code must compile and behave consistently across net9.0 and net10.0
 - NuGet release is triggered by a git tag — no manual publish steps
 - Use `#region` / `#endregion` for logical sections within a class — never comment banners (`// ── Section ───`)
+- Test method naming: `Method_Condition_ExpectedOutcome` — e.g. `LoadComponent_MissingApiUrl_Throws`, `Apply_IsUuidWithValidUuid_Passes`
+  - No noise prefixes: no `Should`, `When`, `With`, `Given`
+  - Condition must be concrete: `_MissingApiUrl_`, `_EmptyString_`, `_PortAlreadyInUse_` — never vague like `_Invalid_`, `_BadValue_`, `_WhenThingsGoWrong_`
+  - BDD flat naming (`Given_X_When_Y_Then_Z`) and nested class BDD were explicitly considered and rejected — this library tests parsing/validation/matching logic, not a business domain; BDD ceremony has no payoff here
+- Test structure: Given / When / Then with blank line separation; `// Given`, `// When`, `// Then` inline comments on non-trivial tests
+- Shared test helpers (builders, port allocation, file helpers) extracted to file-level static helpers — never duplicated across classes in the same file
 
 ## Keeping Examples in Sync
 

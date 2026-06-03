@@ -150,7 +150,7 @@ public class TestReaderTests : IDisposable
         result.Should().HaveCount(1);
     }
 
-    // ── YAML support ──────────────────────────────────────────────────────────
+    #region YAML support
 
     [Fact]
     public void GetTestsForFile_WithYamlExtension_ReturnsTestCases()
@@ -256,4 +256,6 @@ public class TestReaderTests : IDisposable
         body["flag"]!.Type.Should().Be(JTokenType.Boolean);
         body["name"]!.Type.Should().Be(JTokenType.String);
     }
+
+    #endregion
 }

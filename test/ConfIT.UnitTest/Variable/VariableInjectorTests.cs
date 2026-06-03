@@ -34,7 +34,7 @@ public class VariableInjectorTests
         };
     }
 
-    // ── API injection ──────────────────────────────────────────────────────────
+    #region API injection
 
     [Fact]
     public void Inject_PathWithVariable_ReplacesWithStringValue()
@@ -153,7 +153,9 @@ public class VariableInjectorTests
         result.Api.Request.Body!["user"]!["name"]!.Value<string>().Should().Be("Alice");
     }
 
-    // ── Mock interaction injection ─────────────────────────────────────────────
+    #endregion
+
+    #region Mock interaction injection
 
     [Fact]
     public void Inject_MockInteractionPath_ReplacesVariable()
@@ -209,7 +211,9 @@ public class VariableInjectorTests
         result.Mock!.Interactions[0].Response.Body!["id"]!.Value<string>().Should().Be("abc-123");
     }
 
-    // ── Environment variables ──────────────────────────────────────────────────
+    #endregion
+
+    #region Environment variables
 
     [Fact]
     public void Inject_EnvVariable_ResolvesFromEnvironment()
@@ -236,7 +240,9 @@ public class VariableInjectorTests
         }
     }
 
-    // ── Isolation and error cases ──────────────────────────────────────────────
+    #endregion
+
+    #region Isolation and error cases
 
     [Fact]
     public void Inject_UndefinedVariable_ThrowsUndefinedException()
@@ -268,7 +274,7 @@ public class VariableInjectorTests
     }
 
     [Fact]
-    public void Inject_NoVariablesInTestCase_ReturnsEquivalentCopy()
+    public void Inject_NoVariables_ReturnsEquivalentCopy()
     {
         // Given
         var store = new VariableStore();
@@ -280,4 +286,6 @@ public class VariableInjectorTests
         // Then
         result.Api.Request.Path.Should().Be("/api/users/123");
     }
+
+    #endregion
 }

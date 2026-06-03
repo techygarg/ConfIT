@@ -2,7 +2,7 @@ namespace ConfIT.UnitTest.Util;
 
 public class DeltaFormatterTests
 {
-    // ── Change types ───────────────────────────────────────────────────────────
+    #region Change types
 
     [Fact]
     public void Format_SingleModification_ShowsExpectedAndActualValues()
@@ -72,7 +72,9 @@ public class DeltaFormatterTests
         result.Should().Contain("<missing>");
     }
 
-    // ── Path formats ──────────────────────────────────────────────────────────
+    #endregion
+
+    #region Path formats
 
     [Fact]
     public void Format_NestedModification_UsesDotNotationPath()
@@ -104,7 +106,9 @@ public class DeltaFormatterTests
         result.Should().Contain("99");
     }
 
-    // ── Output structure ──────────────────────────────────────────────────────
+    #endregion
+
+    #region Output structure
 
     [Fact]
     public void Format_AnyDelta_ContainsHeader()
@@ -128,4 +132,6 @@ public class DeltaFormatterTests
         // When / Then
         DeltaFormatter.Format(delta).Should().BeEmpty();
     }
+
+    #endregion
 }

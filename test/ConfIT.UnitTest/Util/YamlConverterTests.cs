@@ -4,7 +4,7 @@ namespace ConfIT.UnitTest.Util;
 
 public class YamlConverterTests
 {
-    // ── Type mapping ───────────────────────────────────────────────────────────
+    #region Type mapping
 
     [Fact]
     public void ToJObject_BasicScalars_MapToCorrectJsonTypes()
@@ -68,7 +68,9 @@ public class YamlConverterTests
         result["tags"]![1]!.Value<string>().Should().Be("smoke");
     }
 
-    // ── YAML-specific features ─────────────────────────────────────────────────
+    #endregion
+
+    #region YAML-specific features
 
     [Fact]
     public void ToJObject_YamlAnchorsAndAliases_ExpandToSameContentAsInline()
@@ -115,7 +117,9 @@ public class YamlConverterTests
         result["age"]!.Value<int>().Should().Be(30);
     }
 
-    // ── Error handling ─────────────────────────────────────────────────────────
+    #endregion
+
+    #region Error handling
 
     [Fact]
     public void ToJObject_InvalidYaml_ThrowsYamlException()
@@ -129,4 +133,6 @@ public class YamlConverterTests
         // Then
         act.Should().Throw<YamlException>();
     }
+
+    #endregion
 }

@@ -427,8 +427,6 @@ public class SuiteConfigurationExtensionTests
     }
 }
 
-// ── File-level test helper ─────────────────────────────────────────────────
-
 internal static class ConfigTestHelper
 {
     internal static string Write(string yaml)
