@@ -50,6 +50,7 @@ Component and integration tests share a large common surface — how tests are d
 |---|---|
 | [Matchers and Patterns](doc/matchers-and-patterns.md) | `ignore`, `pattern` regex, `semantic` named matchers (`isUuid`, `greaterThan`, `isEmail`, …), custom matchers |
 | [Variable Extraction + Injection](doc/variable-extraction-and-injection.md) | `extract` from responses, `{{varName}}` injection into later tests, `${ENV}` for environment values |
+| [Test Dependency Graph](doc/test-dependency-graph.md) | `depends:` field — skip dependents when a prerequisite fails, cascading skip propagation, load-time validation |
 
 ### Suite Startup Modes
 
@@ -75,6 +76,7 @@ The `example/` directory contains a working reference implementation:
 | [`User.Api`](example/User.Api) | Sample ASP.NET Core service — user creation and retrieval |
 | [`JustAnotherService`](example/JustAnotherService) | Sample dependency service — email validation |
 | [`User.ComponentTests`](example/User.ComponentTests) | Component test suite — in-process server, WireMock dependencies |
+| [`User.ComponentTests.AppLauncher`](example/User.ComponentTests.AppLauncher) | Component test suite — AppLauncher (command) mode; app starts as external process, no project reference |
 | [`User.IntegrationTests`](example/User.IntegrationTests) | Integration test suite — real services, SQLite database |
 
 ---
