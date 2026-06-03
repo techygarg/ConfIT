@@ -1,10 +1,12 @@
-# FLOW-002 demonstration: declarative test dependencies.
+# FLOW-002: Test Dependency Graph
+# depends: declares which tests must have passed before this one runs.
+# If any prerequisite failed or was skipped, this test is skipped — not failed.
 #
-# ShouldGetUser_WhenDependsOnCreate declares depends: [ShouldCreateUser_ForDependsDemo].
-# If the prerequisite fails, the dependent is skipped — not failed — and the Suite Summary shows:
+# Suite Summary shows:
+#   ⏭  TestName
+#        └─ prerequisite 'X' failed
 #
-#   ⏭  ShouldGetUser_WhenDependsOnCreate
-#        └─ prerequisite 'ShouldCreateUser_ForDependsDemo' failed
+# Cascading: if A fails → B (depends on A) skips → C (depends on B) also skips.
 
 ShouldCreateUser_ForDependsDemo:
   tags:
@@ -51,15 +53,37 @@ ShouldCreateUser_ForDependsDemo:
         semantic:
           id: greaterThan(0)
 
-ShouldGetUser_WhenDependsOnCreate:
+ShouldGetUserById_WhenDependsOnCreate:
+  # Direct dependency — skipped if ShouldCreateUser_ForDependsDemo fails.
   tags:
     - depends
   depends:
-    - ShouldCreateUser_ForDependsDemo  # skipped when above test fails
+    - ShouldCreateUser_ForDependsDemo
   api:
     request:
       method: GET
       path: "/api/user/{{demoUserId}}"
+    response:
+      statusCode: 200
+      body:
+        name: depends-demo
+        email: depends@test.com
+        age: 25
+      matcher:
+        ignore:
+          - id
+
+ShouldGetUserByEmail_CascadingDependency:
+  # Cascading dependency — if ShouldGetUserById_WhenDependsOnCreate is skipped,
+  # this test is also skipped automatically without any extra configuration.
+  tags:
+    - depends
+  depends:
+    - ShouldGetUserById_WhenDependsOnCreate
+  api:
+    request:
+      method: GET
+      path: /api/user/depends@test.com
     response:
       statusCode: 200
       body:

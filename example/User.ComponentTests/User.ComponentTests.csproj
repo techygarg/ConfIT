@@ -28,16 +28,20 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="TestCase\depends.yaml">
+      <!-- Test case files — numbered for explicit execution order -->
+      <None Update="TestCase\01-user-lifecycle.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\user.json">
+      <None Update="TestCase\02-user-errors.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\errors.json">
+      <None Update="TestCase\03-response-matchers.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\yaml-support.yaml">
+      <None Update="TestCase\04-depends.yaml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestCase\json-format-reference.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
 

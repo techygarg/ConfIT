@@ -13,6 +13,7 @@ internal static class DependencyValidator
         for (var i = 0; i < tests.Count; i++)
         {
             var (name, token) = tests[i];
+            if (token is not JObject) continue;
             var depends = token["depends"];
             if (depends is null) continue;
 

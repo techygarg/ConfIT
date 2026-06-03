@@ -28,31 +28,46 @@
       <None Update="suite.config.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\depends.yaml">
+
+      <!-- Test case files — numbered for explicit execution order -->
+      <None Update="TestCase\01-user-lifecycle.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\user.json">
+      <None Update="TestCase\02-user-errors.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\Request\should_create_a_user_v1.json">
+      <None Update="TestCase\03-response-matchers.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\Response\return_user_for_given_id.json">
+      <None Update="TestCase\04-body-fixtures.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\arrayScenarios.json">
+      <None Update="TestCase\05-array-responses.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\Response\users.json">
+      <None Update="TestCase\06-nested-structures.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\multiLevel.json">
+      <None Update="TestCase\07-depends.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\Response\multiLevel.json">
+      <None Update="TestCase\json-format-reference.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="TestCase\yaml-support.yaml">
+
+      <!-- Request body fixtures -->
+      <None Update="TestCase\Request\create-user.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+
+      <!-- Response body fixtures -->
+      <None Update="TestCase\Response\user.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestCase\Response\users-array.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestCase\Response\multi-level.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

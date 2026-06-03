@@ -1,0 +1,86 @@
+# Response matcher showcase — all three matcher types on the same endpoint, side by side.
+# Each test isolates one matcher to make its behaviour immediately clear.
+# Requires test@test.com to exist (created by 01-user-lifecycle.yaml).
+
+GetUser_IgnoreMatcher:
+  # ignore: removes listed fields from both sides before structural comparison.
+  # Use for dynamic values that change on every run (auto-generated IDs, timestamps).
+  tags:
+    - matchers
+    - ignore
+  api:
+    request:
+      method: GET
+      path: /api/user/test@test.com
+    response:
+      statusCode: 200
+      body:
+        name: test
+        email: test@test.com
+        age: 10
+      matcher:
+        ignore:
+          - id
+
+GetUser_PatternMatcher:
+  # pattern: validates a field against a regex, then removes it from the structural diff.
+  # Use when you know the shape but not the exact value.
+  tags:
+    - matchers
+    - pattern
+  api:
+    request:
+      method: GET
+      path: /api/user/test@test.com
+    response:
+      statusCode: 200
+      body:
+        name: test
+        email: test@test.com
+      matcher:
+        pattern:
+          id: "^[1-9][0-9]*$"
+          age: "^[1-9][0-9]*$"
+
+GetUser_SemanticMatcher:
+  # semantic: validates using a named assertion — more expressive than regex.
+  # Built-in: greaterThan, isEmail, hasLength, isUuid, isIsoDate, isNull, and more.
+  tags:
+    - matchers
+    - semantic
+  api:
+    request:
+      method: GET
+      path: /api/user/test@test.com
+    response:
+      statusCode: 200
+      body:
+        name: test
+      matcher:
+        semantic:
+          id: greaterThan(0)
+          email: isEmail
+          age: greaterThan(0)
+          name: hasLength(1, 100)
+
+GetUser_CombinedMatchers:
+  # ignore, pattern, and semantic can all appear in one test.
+  # Each handles the fields it is best suited for — they do not conflict.
+  tags:
+    - matchers
+  api:
+    request:
+      method: GET
+      path: /api/user/test@test.com
+    response:
+      statusCode: 200
+      body:
+        name: test
+        email: test@test.com
+      matcher:
+        ignore:
+          - age
+        pattern:
+          id: "^[1-9][0-9]*$"
+        semantic:
+          email: isEmail

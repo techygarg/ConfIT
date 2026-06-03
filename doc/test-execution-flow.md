@@ -143,6 +143,11 @@ Every suite type runs the same loop regardless of startup mode. One iteration pe
 test case (name + body)
         │
         ▼
+   Dependency check ── prereq failed/skipped ──→ ⏭ Skip (reason recorded in summary)
+   TestDependencyStore.CheckPrerequisites()
+   skips if any entry in depends: did not pass
+        │
+        ▼
    Filter check ──── filtered out ──→ ⏭ Skip (logged, not failed)
         │
         ▼
@@ -194,17 +199,23 @@ After all tests run, the fixture's `Dispose()` is called. `TestResultCollector` 
   Suite Summary
 ══════════════════════════════════════════════════════
 
-  errors.json
-    ✓  ShouldReturnErrorIfUserNotExist              43ms
-    ✗  ShouldNotCreateAUser_WhenValidationFails      89ms
+  01-user-lifecycle.yaml
+    ✗  CreateUser                                  580ms
+    ⏭  GetUserById
+         └─ prerequisite 'CreateUser' failed
+    ⏭  GetUserByEmail
+         └─ prerequisite 'CreateUser' failed
 
-  user.json
-    ✓  ShouldCreateAUser                           118ms
-    ✓  ShouldGetUserById                            38ms
+  02-user-errors.yaml
+    ✓  GetUser_NotFoundByEmail                      43ms
+    ✓  CreateUser_ValidationFailure                 89ms
+    ✓  GetUser_NotFoundById                         31ms
 
 ──────────────────────────────────────────────────────
-  Total: 4   ✓ 3 passed   ✗ 1 failed   ⏭ 0 skipped
+  Total: 6   ✓ 3 passed   ✗ 1 failed   ⏭ 2 skipped
 ──────────────────────────────────────────────────────
 ```
+
+Skipped tests show a `└─` line naming the direct prerequisite that did not pass. See [Test Dependency Graph](./test-dependency-graph.md) for skip semantics and cascading behavior.
 
 See [Reading Failure Output](./failure-output.md) for how to interpret per-field failure messages.

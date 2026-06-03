@@ -4,31 +4,39 @@ ConfIT test definitions live in `.json` or `.yaml` files — no C# required. Eac
 
 ```
 TestCase/
-  user.json          ← JSON format
-  errors.json
-  yaml-support.yaml  ← YAML format — identical capabilities, different syntax
+  01-user-lifecycle.yaml  ← numbered prefix makes execution order explicit
+  02-user-errors.yaml
+  json-format-reference.json  ← JSON format reference
 ```
 
 ---
 
 ## File Structure
 
-A test file at the top level is a mapping of test names to test case objects. Each test case has up to three sections: `tags`, `mock`, and `api`.
+A test file at the top level is a mapping of test names to test case objects. Each test case can have four sections:
+
+| Field | Required | Description |
+|---|---|---|
+| `api` | ✅ | The HTTP request to send and the response to assert against |
+| `tags` | — | Strings used to filter which tests run — see [Test Filtering](./test-filtering.md) |
+| `mock` | — | WireMock stubs registered before the request fires — component tests only |
+| `depends` | — | Prerequisite test names — test is skipped if any prerequisite did not pass |
 
 ```json
 {
-  "ShouldCreateAUser": {
+  "CreateUser": {
     "tags": ["user", "smoke"],
     "mock": { ... },
     "api":  { ... }
   },
-  "ShouldReturnNotFound": {
+  "GetUserById": {
+    "depends": ["CreateUser"],
     "api": { ... }
   }
 }
 ```
 
-Only `api` is required. `tags` and `mock` are optional.
+Only `api` is required. All other fields are optional.
 
 ---
 
@@ -144,6 +152,33 @@ Tag a test with one or more labels. At runtime, `RUN_POOLS` env var filters test
 
 Tests without tags run regardless of `RUN_POOLS`. Tests with tags are skipped if none of their tags appear in `RUN_POOLS`.
 
+See [Test Filtering](./test-filtering.md) for the full reference.
+
+---
+
+## `depends`
+
+Declare prerequisite tests. When any named prerequisite did not pass (failed or was itself skipped), this test is **skipped** — not failed — and the suite summary shows the reason.
+
+```yaml
+GetUserById:
+  depends:
+    - CreateUser
+  api:
+    # ...
+```
+
+```json
+"GetUserById": {
+  "depends": ["CreateUser"],
+  "api": { ... }
+}
+```
+
+All entries in `depends:` must name tests that exist in the **same file** and appear **earlier** in definition order — forward references are rejected at load time.
+
+See [Test Dependency Graph](./test-dependency-graph.md) for the full reference including cascading skips, load-time validation, and interaction with `extract:`.
+
 ---
 
 ## JSON Format
@@ -244,13 +279,17 @@ YAML scalars map to the same JSON types the DSL expects: unquoted integers becom
 
 ## Multi-File Suites
 
-When using `TestReader.GetTestsForAFolder`, all `.json`, `.yaml`, and `.yml` files in the folder are loaded in filesystem order (typically alphabetical). Tests that depend on state from another file (e.g., a GET that needs an ID created by a previous POST) must live in the **same file** as their prerequisite — cross-file ordering is not guaranteed.
+When using `TestReader.GetTestsForAFolder`, all `.json`, `.yaml`, and `.yml` files in the folder are loaded in **alphabetical order**. Use numeric filename prefixes to make execution order explicit and readable:
 
 ```
 TestCase/
-  errors.json       ← runs first (e < u < y)
-  user.json         ← runs second — creates users, extracts IDs
-  yaml-support.yaml ← runs third — can reference IDs extracted by user.json
+  01-user-lifecycle.yaml  ← runs first — creates users, extracts IDs
+  02-user-errors.yaml     ← runs second — can reference state from 01
+  03-response-matchers.yaml
 ```
 
-Tests that depend on each other belong in the same file.
+**Variable store is shared across files.** Values extracted with `extract:` in file `01` are available for `{{inject}}` in file `02`.
+
+**`depends:` is file-scoped.** The `depends:` field only references tests within the same file. Use alphabetical/numeric ordering to express cross-file sequencing. See [Test Dependency Graph](./test-dependency-graph.md) for the full `depends:` reference.
+
+Tests that form a dependency chain belong in the same file.

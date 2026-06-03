@@ -10,7 +10,8 @@ This file tracks which documents exist, which are missing, and the conventions t
 |---|---|---|
 | `matchers-and-patterns.md` | ✅ complete | `ignore`, `pattern`, `semantic`, nested paths, custom matchers |
 | `variable-extraction-and-injection.md` | ✅ complete | `extract`, `{{inject}}`, `${ENV}`, error cases, migration from `ITestProcessor` |
-| `test-file-format.md` | ✅ complete | DSL structure, all fields, JSON and YAML format |
+| `test-dependency-graph.md` | ✅ complete | `depends:` field, skip-not-fail semantics, cascading, load-time validation |
+| `test-file-format.md` | ✅ complete | DSL structure, all fields including `depends:`, JSON and YAML format |
 | `suite-setup.md` | ⚠️ major update needed | Manual fixture wiring only — pre-dates config-driven setup and AppLauncher |
 | `mock-interactions.md` | ✅ complete | WireMock stubs, request matching, YAML anchor reuse |
 | `test-filtering.md` | ✅ complete | RUN_POOLS, RUN_TESTS, CI patterns |
@@ -75,6 +76,7 @@ Impact on docs: `suite-setup.md` must be substantially rewritten. The config-dri
 |---|---|---|
 | `mock-interactions.md` | ✅ no change | Declaring WireMock stubs inline, `bodyFromFile`, request/response matching |
 | `test-filtering.md` | ✅ no change | `RUN_TESTS`, `RUN_POOLS`, `TestFilter` factory methods, CI usage |
+| `test-dependency-graph.md` | ✅ complete | `depends:` field, skip-not-fail, cascading, load-time validation |
 
 ### Tier 3 — Reference (for advanced use or extension)
 

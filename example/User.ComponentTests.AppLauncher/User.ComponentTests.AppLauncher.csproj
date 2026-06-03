@@ -30,10 +30,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="TestCase\errors.json">
+        <None Update="TestCase\01-user-lifecycle.yaml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="TestCase\user.json">
+        <None Update="TestCase\02-user-errors.yaml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="suite.config.yaml">

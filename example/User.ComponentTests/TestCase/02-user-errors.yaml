@@ -1,0 +1,85 @@
+# Error response scenarios.
+# GetUser_NotFoundByEmail and GetUser_NotFoundById require no prior state.
+# CreateUser_ValidationFailure uses a mock that returns isValid:false — the API rejects the
+# request with 400 before any database write, so the email used here is intentionally
+# the same as the lifecycle tests to prove the mock-driven path, not a duplicate-email guard.
+
+GetUser_NotFoundByEmail:
+  tags:
+    - errors
+    - user
+  api:
+    request:
+      method: GET
+      path: /api/user/notexist@test.com
+    response:
+      statusCode: 404
+      body:
+        error:
+          status: 404
+          code: NotFound
+          description: "User doesn't exist with email : notexist@test.com"
+
+CreateUser_ValidationFailure:
+  # The validation service (JustAnotherService mock) returns isValid:false.
+  # The API should reject the create request with 400 and an error body.
+  tags:
+    - errors
+    - user
+    - mock
+  mock:
+    interactions:
+      - request:
+          method: GET
+          path: /api/demo/test@test.com
+        response:
+          statusCode: 200
+          body: &invalid_body
+            isValid: false
+      - request:
+          method: GET
+          path: /api/demo
+          params:
+            email: test@test.com
+        response:
+          statusCode: 200
+          body: *invalid_body
+      - request:
+          method: POST
+          path: /api/demo
+          body:
+            email: test@test.com
+        response:
+          statusCode: 200
+          body: *invalid_body
+  api:
+    request:
+      method: POST
+      path: /api/user
+      body:
+        name: test
+        email: test@test.com
+        age: 10
+    response:
+      statusCode: 400
+      body:
+        error:
+          status: 400
+          code: BadRequest
+          description: Invalid Email.
+
+GetUser_NotFoundById:
+  tags:
+    - errors
+    - user
+  api:
+    request:
+      method: GET
+      path: /api/user/99999
+    response:
+      statusCode: 404
+      body:
+        error:
+          status: 404
+          code: NotFound
+          description: "User doesn't exist with Id : 99999"

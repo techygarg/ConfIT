@@ -1,0 +1,64 @@
+# Core user CRUD — the canonical happy path.
+# Creates test@test.com and extracts {{userId}} for downstream tests in this file.
+# Other files that query test@test.com rely on this file running first (01- prefix guarantees it).
+
+CreateUser:
+  tags:
+    - lifecycle
+    - user
+  api:
+    request:
+      method: POST
+      path: /api/user
+      body:
+        name: test
+        email: test@test.com
+        age: 10
+    response:
+      statusCode: 201
+      body: {}
+      extract:
+        userId: $.body.id
+      matcher:
+        semantic:
+          id: greaterThan(0)
+
+GetUserById:
+  tags:
+    - lifecycle
+    - user
+  depends:
+    - CreateUser
+  api:
+    request:
+      method: GET
+      path: "/api/user/{{userId}}"
+    response:
+      statusCode: 200
+      body:
+        name: test
+        email: test@test.com
+        age: 10
+      matcher:
+        ignore:
+          - id
+
+GetUserByEmail:
+  tags:
+    - lifecycle
+    - user
+  depends:
+    - CreateUser
+  api:
+    request:
+      method: GET
+      path: /api/user/test@test.com
+    response:
+      statusCode: 200
+      body:
+        name: test
+        email: test@test.com
+        age: 10
+      matcher:
+        ignore:
+          - id

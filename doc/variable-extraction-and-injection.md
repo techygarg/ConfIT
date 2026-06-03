@@ -126,43 +126,48 @@ Use `${VAR_NAME}` (dollar-brace syntax) to inject static values from the process
 
 ### Component tests
 
-`example/User.ComponentTests/TestCase/user.json` demonstrates a three-test chain:
+`example/User.ComponentTests/TestCase/01-user-lifecycle.yaml` demonstrates a three-test chain:
 
-1. **`ShouldCreateAUser`** — creates a user, extracts `userId` from the `201` response body.
-2. **`ShouldReturnUserForGivenEmailId`** — independent GET by email; no injection needed.
-3. **`ShouldGetUserById`** — injects `{{userId}}` into the path, hitting the `GET /api/user/{id}` endpoint without any hardcoded ID.
+1. **`CreateUser`** — creates a user, extracts `userId` from the `201` response body.
+2. **`GetUserById`** — injects `{{userId}}` into the path; declares `depends: [CreateUser]` so it skips cleanly when the create fails rather than erroring on the missing variable.
+3. **`GetUserByEmail`** — independent GET by email; no injection needed.
 
-```json
-"ShouldCreateAUser": {
-  "api": {
-    "response": {
-      "statusCode": 201,
-      "body": { "id": 1 },
-      "extract": {
-        "userId": "$.body.id"
-      }
-    }
-  }
-},
+```yaml
+CreateUser:
+  api:
+    response:
+      statusCode: 201
+      extract:
+        userId: $.body.id
+      matcher:
+        semantic:
+          id: greaterThan(0)
 
-"ShouldGetUserById": {
-  "api": {
-    "request": {
-      "method": "GET",
-      "path": "/api/user/{{userId}}"
-    },
-    "response": {
-      "statusCode": 200,
-      "body": { "name": "test", "email": "test@test.com", "age": 10 },
-      "matcher": { "ignore": ["id"] }
-    }
-  }
-}
+GetUserById:
+  depends:
+    - CreateUser
+  api:
+    request:
+      method: GET
+      path: "/api/user/{{userId}}"
+    response:
+      statusCode: 200
+      body:
+        name: test
+        email: test@test.com
+        age: 10
+      matcher:
+        ignore:
+          - id
 ```
+
+📄 Live example: [`User.ComponentTests/TestCase/01-user-lifecycle.yaml`](../example/User.ComponentTests/TestCase/01-user-lifecycle.yaml)
 
 ### Integration tests
 
-`example/User.IntegrationTests/TestCase/user.json` uses the same pattern against a real running service. `ShouldReturnUserForGivenId_V1` and `_V2` both inject `{{userId}}` extracted from the create response, without any C# processor code.
+`example/User.IntegrationTests/TestCase/01-user-lifecycle.yaml` uses the same pattern against a real running service. `GetUserById` and `GetUserByEmail` both declare `depends: [CreateUser]` and inject `{{userId}}`, without any C# processor code.
+
+📄 Live example: [`User.IntegrationTests/TestCase/01-user-lifecycle.yaml`](../example/User.IntegrationTests/TestCase/01-user-lifecycle.yaml)
 
 ---
 
@@ -205,3 +210,13 @@ This required:
 - Wiring through `TestSuiteFixture`
 
 **`ITestProcessor` is still available** for scenarios that genuinely need code — computing request signatures, side effects, complex conditional logic. For straightforward data flow between tests, the declarative `extract` + `{{inject}}` approach replaces it entirely.
+
+---
+
+## Related: Test Dependency Graph
+
+`extract:` and `depends:` are designed to work together. When `CreateUser` fails, its `extract` block never runs — meaning `{{userId}}` is never set. Without `depends:`, `GetUserById` then fails with `UndefinedVariableException`, which obscures the actual root cause.
+
+Declaring `depends: [CreateUser]` on `GetUserById` short-circuits this: the test is skipped with a clear reason rather than failing confusingly.
+
+See [Test Dependency Graph](./test-dependency-graph.md) for the full reference.
