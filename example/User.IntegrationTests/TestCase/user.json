@@ -71,16 +71,22 @@
     "api": {
       "request": {
         "method": "GET",
-        "path": "/api/user/1"
+        "path": "/api/user/{{userId}}"
       },
       "response": {
         "statusCode": 200,
         "headers": {},
-        "bodyFromFile": "return_user_for_given_id.json"
-      }
+        "bodyFromFile": "return_user_for_given_id.json",
+        "matcher": {
+          "ignore": [
+            "id"
+          ]
+        }
+      } 
     }
   },
   "ShouldReturnUserForGivenId_V1": {
+    "depends": ["ShouldCreateAUser"],
     "api": {
       "request": {
         "method": "GET",
@@ -103,6 +109,7 @@
     }
   },
   "ShouldReturnUserForGivenId_V2": {
+    "depends": ["ShouldCreateAUser"],
     "api": {
       "request": {
         "method": "GET",
@@ -134,10 +141,14 @@
         "statusCode": 200,
         "headers": {},
         "body": {
-          "id": 1,
           "name": "test",
           "email": "test@test.com",
           "age": 10
+        },
+        "matcher": {
+          "ignore": [
+            "id"
+          ]
         }
       }
     }

@@ -4,13 +4,6 @@ namespace ConfIT;
 
 public sealed class TestResultCollector : IDisposable
 {
-    public enum TestStatus
-    {
-        Passed,
-        Failed,
-        Skipped
-    }
-
     private const string Sep = "══════════════════════════════════════════════════════";
     private const string Div = "──────────────────────────────────────────────────────";
     private readonly object _lock = new();
@@ -23,11 +16,11 @@ public sealed class TestResultCollector : IDisposable
         PrintSummary();
     }
 
-    public void Record(string name, TestStatus status, TimeSpan? duration = null, string? sourceFile = null)
+    public void Record(string name, TestRunStatus status, TimeSpan? duration = null, string? sourceFile = null, string? reason = null)
     {
         lock (_lock)
         {
-            _results.Add(new Result(name, status, duration, sourceFile));
+            _results.Add(new Result(name, status, duration, sourceFile, reason));
         }
     }
 
@@ -36,9 +29,9 @@ public sealed class TestResultCollector : IDisposable
         if (_results.Count == 0 || _summaryPrinted) return;
         _summaryPrinted = true;
 
-        var passed = _results.Count(r => r.Status == TestStatus.Passed);
-        var failed = _results.Count(r => r.Status == TestStatus.Failed);
-        var skipped = _results.Count(r => r.Status == TestStatus.Skipped);
+        var passed    = _results.Count(r => r.Status == TestRunStatus.Passed);
+        var failed    = _results.Count(r => r.Status == TestRunStatus.Failed);
+        var skipped   = _results.Count(r => r.Status == TestRunStatus.Skipped);
         var nameWidth = _results.Max(r => r.Name.Length);
 
         Console.WriteLine();
@@ -47,7 +40,6 @@ public sealed class TestResultCollector : IDisposable
         Console.WriteLine(TestColor.Structure(Sep));
         Console.WriteLine();
 
-        // Group by source file, preserving first-seen order
         var groups = _results
             .GroupBy(r => r.SourceFile ?? string.Empty)
             .ToList();
@@ -61,14 +53,18 @@ public sealed class TestResultCollector : IDisposable
             {
                 var (icon, label) = r.Status switch
                 {
-                    TestStatus.Passed => (TestColor.Expected("✓"), TestColor.Emphasis(r.Name.PadRight(nameWidth))),
-                    TestStatus.Failed => (TestColor.Error("✗"), TestColor.Error(r.Name.PadRight(nameWidth))),
-                    _ => (TestColor.Subtle("⏭"), TestColor.Subtle(r.Name.PadRight(nameWidth)))
+                    TestRunStatus.Passed => (TestColor.Expected("✓"), TestColor.Emphasis(r.Name.PadRight(nameWidth))),
+                    TestRunStatus.Failed => (TestColor.Error("✗"), TestColor.Error(r.Name.PadRight(nameWidth))),
+                    _                   => (TestColor.Subtle("⏭"), TestColor.Subtle(r.Name.PadRight(nameWidth)))
                 };
                 var duration = r.Duration.HasValue
                     ? TestColor.Subtle(FormatDuration(r.Duration.Value).PadLeft(8))
                     : new string(' ', 8);
+
                 Console.WriteLine($"    {icon}  {label}  {duration}");
+
+                if (r.Reason is not null)
+                    Console.WriteLine($"         {TestColor.Subtle($"└─ {r.Reason}")}");
             }
 
             Console.WriteLine();
@@ -76,10 +72,10 @@ public sealed class TestResultCollector : IDisposable
 
         Console.WriteLine(TestColor.Subtle(Div));
 
-        var passedLabel = passed > 0
+        var passedLabel  = passed > 0
             ? TestColor.Expected($"✓ {passed} passed")
             : TestColor.Subtle($"✓ {passed} passed");
-        var failedLabel = failed > 0
+        var failedLabel  = failed > 0
             ? TestColor.Error($"✗ {failed} failed")
             : TestColor.Subtle($"✗ {failed} failed");
         var skippedLabel = TestColor.Subtle($"⏭ {skipped} skipped");
@@ -96,5 +92,5 @@ public sealed class TestResultCollector : IDisposable
         return $"{d.TotalSeconds:F1}s";
     }
 
-    private sealed record Result(string Name, TestStatus Status, TimeSpan? Duration, string? SourceFile);
+    private sealed record Result(string Name, TestRunStatus Status, TimeSpan? Duration, string? SourceFile, string? Reason);
 }

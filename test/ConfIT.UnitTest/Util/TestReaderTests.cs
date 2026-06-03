@@ -150,6 +150,55 @@ public class TestReaderTests : IDisposable
         result.Should().HaveCount(1);
     }
 
+    #region Dependency validation
+
+    [Fact]
+    public void GetTestsForFile_ValidDependsField_DoesNotThrow()
+    {
+        // Given
+        var fileName = "depends-valid.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName),
+            """{"TestA":{},"TestB":{"depends":["TestA"]}}""");
+
+        // When
+        var act = () => TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        act.Should().NotThrow();
+    }
+
+    [Fact]
+    public void GetTestsForFile_UnknownDepName_ThrowsInvalidDataException()
+    {
+        // Given
+        var fileName = "depends-unknown.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName),
+            """{"TestA":{"depends":["NonExistent"]}}""");
+
+        // When
+        var act = () => TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        act.Should().Throw<InvalidDataException>().WithMessage("*NonExistent*");
+    }
+
+    [Fact]
+    public void GetTestsForFile_ForwardReference_ThrowsInvalidDataException()
+    {
+        // Given — TestA references TestB which is defined after it
+        var fileName = "depends-forward.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName),
+            """{"TestA":{"depends":["TestB"]},"TestB":{}}""");
+
+        // When
+        var act = () => TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        act.Should().Throw<InvalidDataException>().WithMessage("*TestB*");
+    }
+
+    #endregion
+
     #region YAML support
 
     [Fact]

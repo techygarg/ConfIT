@@ -8,11 +8,7 @@ public static class TestReader
     public static IEnumerable<object[]> GetTestsForAFile(string testFolderName, string fileName)
     {
         var filePath = Path.GetFullPath($"{testFolderName}/{fileName}");
-        var content = File.ReadAllText(filePath);
-        var fileContent = IsYaml(filePath) ? LoadYaml(content, filePath) : JObject.Parse(content);
-
-        foreach (var scenario in fileContent.Properties())
-            yield return [scenario.Name, scenario.Value, fileName];
+        return GetTestsFromParsedFile(filePath);
     }
 
     public static IEnumerable<object[]> GetTestsForAFolder(string testFolderName)
@@ -25,14 +21,23 @@ public static class TestReader
                         || IsYaml(f))
             .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase);
 
-        foreach (var filePath in files)
-        {
-            var content = File.ReadAllText(filePath);
-            var fileContent = IsYaml(filePath) ? LoadYaml(content, filePath) : JObject.Parse(content);
-            var fileName = Path.GetFileName(filePath);
-            foreach (var scenario in fileContent.Properties())
-                yield return [scenario.Name, scenario.Value, fileName];
-        }
+        return files.SelectMany(GetTestsFromParsedFile);
+    }
+
+    private static IEnumerable<object[]> GetTestsFromParsedFile(string filePath)
+    {
+        var content     = File.ReadAllText(filePath);
+        var fileContent = IsYaml(filePath) ? LoadYaml(content, filePath) : JObject.Parse(content);
+        var fileName    = Path.GetFileName(filePath);
+
+        var tests = fileContent.Properties()
+            .Select(p => (Name: p.Name, Token: p.Value))
+            .ToList();
+
+        DependencyValidator.Validate(tests, filePath);
+
+        foreach (var (name, token) in tests)
+            yield return [name, token, fileName];
     }
 
     private static JObject LoadYaml(string content, string filePath)

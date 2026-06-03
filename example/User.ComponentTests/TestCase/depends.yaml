@@ -1,0 +1,71 @@
+# FLOW-002 demonstration: declarative test dependencies.
+#
+# ShouldGetUser_WhenDependsOnCreate declares depends: [ShouldCreateUser_ForDependsDemo].
+# If the prerequisite fails, the dependent is skipped — not failed — and the Suite Summary shows:
+#
+#   ⏭  ShouldGetUser_WhenDependsOnCreate
+#        └─ prerequisite 'ShouldCreateUser_ForDependsDemo' failed
+
+ShouldCreateUser_ForDependsDemo:
+  tags:
+    - depends
+  mock:
+    interactions:
+      - request:
+          method: GET
+          path: /api/demo/depends@test.com
+        response:
+          statusCode: 200
+          body: &valid_body
+            isValid: true
+      - request:
+          method: GET
+          path: /api/demo
+          params:
+            email: depends@test.com
+        response:
+          statusCode: 200
+          body: *valid_body
+      - request:
+          method: POST
+          path: /api/demo
+          body:
+            email: depends@test.com
+        response:
+          statusCode: 200
+          body: *valid_body
+  api:
+    request:
+      method: POST
+      path: /api/user
+      body:
+        name: depends-demo
+        email: depends@test.com
+        age: 25
+    response:
+      statusCode: 201
+      body: {}
+      extract:
+        demoUserId: $.body.id
+      matcher:
+        semantic:
+          id: greaterThan(0)
+
+ShouldGetUser_WhenDependsOnCreate:
+  tags:
+    - depends
+  depends:
+    - ShouldCreateUser_ForDependsDemo  # skipped when above test fails
+  api:
+    request:
+      method: GET
+      path: "/api/user/{{demoUserId}}"
+    response:
+      statusCode: 200
+      body:
+        name: depends-demo
+        email: depends@test.com
+        age: 25
+      matcher:
+        ignore:
+          - id

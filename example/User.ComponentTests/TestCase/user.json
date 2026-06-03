@@ -78,6 +78,7 @@
   },
 
   "ShouldGetUserById": {
+    "depends": ["ShouldCreateAUser"],
     "api": {
       "request": {
         "method": "GET",

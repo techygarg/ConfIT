@@ -36,7 +36,7 @@ Features that make ConfIT faster and easier for teams beyond the happy path.
 | [ENV-004] | [Declarative Suite Configuration](features/env-004-declarative-suite-bootstrap.md) | `suite.config.yaml` drives full fixture setup — two sections (component + integration), two startup modes, multi-environment integration targets. | ✅ implemented  |
 | [ENV-005] | [AppLauncher](features/env-005-app-launcher.md) | Start an external process before component tests run — readiness probing, env injection, graceful teardown. Powers ENV-004 command mode. | ✅ implemented  |
 | [MOCK-001] | Mock Sequencing + Call Assertions | Sequential mock responses per call order; assert mock was called exactly N times. | — |
-| [FLOW-002] | Test Dependency Graph | Declare `depends:` between tests; skip dependents when a prerequisite fails instead of erroring. | — |
+| [FLOW-002] | [Test Dependency Graph](features/flow-002-test-dependency-graph.md) | Declare `depends:` between tests; skip dependents when a prerequisite fails instead of erroring. | draft |
 
 ---
 

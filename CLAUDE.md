@@ -306,7 +306,8 @@ The `example/` projects are not just demos — they run in CI as regression gate
 
 **When adding a new DSL feature** (new JSON/YAML fields, new matcher types, extraction, etc.):
 - Add test cases in **both** `example/User.IntegrationTests/TestCase/` and `example/User.ComponentTests/TestCase/`. Component + integration coverage together is the primary confidence gate beyond unit tests — not optional.
-- New JSON files in `User.ComponentTests/TestCase/` must be registered in `User.ComponentTests.csproj` under `<None Update>` with `<CopyToOutputDirectory>Always</CopyToOutputDirectory>` or they will not be discovered at runtime.
+- **New test definition files must be written in YAML (`.yaml`), not JSON.** JSON remains supported for existing files and backward compatibility; all new example test files use YAML.
+- New YAML/JSON files in `User.ComponentTests/TestCase/` must be registered in `User.ComponentTests.csproj` under `<None Update>` with `<CopyToOutputDirectory>Always</CopyToOutputDirectory>` or they will not be discovered at runtime.
 - Component tests run JSON files alphabetically via `GetTestCasesForFolder`. Tests that depend on prior state (e.g., a created user) must live in the same file as their prerequisite — not a separate file.
 
 **When changing existing behaviour** (response matching, request execution, filter logic):

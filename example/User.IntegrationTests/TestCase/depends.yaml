@@ -1,0 +1,42 @@
+# FLOW-002 demonstration: declarative test dependencies.
+# depends: causes a test to be skipped (not failed) when any named prerequisite
+# did not pass — including cascading skips from transitive failures.
+
+ShouldCreateUser_ForDependsDemo:
+  tags:
+    - depends
+  api:
+    request:
+      method: POST
+      path: /api/user
+      body:
+        name: depends-demo
+        email: depends@test.com
+        age: 25
+    response:
+      statusCode: 201
+      body: {}
+      extract:
+        demoUserId: $.body.id
+      matcher:
+        pattern:
+          id: "^(0|[1-9][0-9]?|100)$"
+
+ShouldGetUser_WhenDependsOnCreate:
+  tags:
+    - depends
+  depends:
+    - ShouldCreateUser_ForDependsDemo
+  api:
+    request:
+      method: GET
+      path: "/api/user/{{demoUserId}}"
+    response:
+      statusCode: 200
+      body:
+        name: depends-demo
+        email: depends@test.com
+        age: 25
+      matcher:
+        ignore:
+          - id

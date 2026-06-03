@@ -28,6 +28,9 @@
       <None Update="suite.config.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="TestCase\depends.yaml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="TestCase\user.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
