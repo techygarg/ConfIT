@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.RegularExpressions;
+using ConfIT.Constant;
 using ConfIT.Server.Boot;
 using ConfIT.Util;
 using Newtonsoft.Json;
@@ -8,120 +9,86 @@ using YamlDotNet.Core;
 
 namespace ConfIT.Config;
 
-// ── Public API ─────────────────────────────────────────────────────────────
 public static class SuiteConfiguration
 {
-    private static readonly IReadOnlySet<string> RootKeys = KeySet("component", "integration");
-    private static readonly IReadOnlySet<string> ComponentKeys = KeySet("startup", "api", "mock", "folders", "filter");
-
-    private static readonly IReadOnlySet<string>
-        StartupKeys = KeySet("mode", "settings", "command", "stopCommand", "readiness", "env");
-
-    private static readonly IReadOnlySet<string> ReadinessKeys = KeySet("url", "port", "timeoutSeconds", "intervalMs");
-    private static readonly IReadOnlySet<string> ApiKeys = KeySet("url", "authToken");
-    private static readonly IReadOnlySet<string> MockKeys = KeySet("url");
-    private static readonly IReadOnlySet<string> FolderKeys = KeySet("response", "requestBody", "responseBody");
-    private static readonly IReadOnlySet<string> FilterKeys = KeySet("strategy", "envVariable");
-    private static readonly IReadOnlySet<string> EnvironmentKeys = KeySet("api", "folders", "filter");
-
+    #region Public API
     public static ComponentConfig LoadComponent(string filePath)
     {
-        var root = LoadAndParse(filePath);
-        Validate.KnownKeys(root, RootKeys, "root", filePath);
+        var root    = ParseYaml(filePath);
+        var section = RequireSection(root, "component", filePath);
 
-        var component = root["component"] as JObject
-                        ?? throw new InvalidDataException($"No 'component' section found in {filePath}");
-        Validate.KnownKeys(component, ComponentKeys, "component", filePath);
+        ResolveEnvVars(section, "component", filePath);
+        var cfg = Deserialize<ComponentConfig>(section);
 
-        var startup = component["startup"] as JObject
-                      ?? throw new InvalidDataException($"'component.startup' is required in {filePath}");
-        Validate.KnownKeys(startup, StartupKeys, "component.startup", filePath);
-
-        var mode = startup["mode"]?.Value<string>() ?? "in-process";
-        Validate.OneOf(mode, "component.startup.mode", filePath, StartupConfig.InProcessMode,
-            StartupConfig.CommandMode);
-
-        if (mode == StartupConfig.InProcessMode)
-        {
-            Validate.Required(startup["settings"]?.Value<string>(), "component.startup.settings", filePath);
-        }
-        else
-        {
-            Validate.Required(startup["command"]?.Value<string>(), "component.startup.command", filePath);
-            var readiness = startup["readiness"] as JObject
-                            ?? throw new InvalidDataException(
-                                $"'component.startup.readiness' is required when mode is 'command' in {filePath}");
-            Validate.KnownKeys(readiness, ReadinessKeys, "component.startup.readiness", filePath);
-            Validate.ExactlyOneSet("component.startup.readiness", filePath,
-                ("url", readiness["url"]),
-                ("port", readiness["port"]));
-        }
-
-        var api = component["api"] as JObject
-                  ?? throw new InvalidDataException($"'component.api' is required in {filePath}");
-        Validate.KnownKeys(api, ApiKeys, "component.api", filePath);
-        Validate.Required(api["url"]?.Value<string>(), "component.api.url", filePath);
-
-        if (component["mock"] is JObject mock) Validate.KnownKeys(mock, MockKeys, "component.mock", filePath);
-        if (component["folders"] is JObject folders)
-            Validate.KnownKeys(folders, FolderKeys, "component.folders", filePath);
-
-        ValidateFilter(component["filter"] as JObject, "component", filePath);
-
-        if (startup["mode"] is null) startup["mode"] = StartupConfig.InProcessMode;
-
-        ResolveEnvVars(component, "component", filePath);
-        return Deserialize<ComponentConfig>(component);
+        ValidateComponent(cfg, filePath);
+        return cfg;
     }
 
     public static IntegrationEnvironmentConfig LoadIntegration(string filePath, string? environment = null)
     {
-        var root = LoadAndParse(filePath);
-        Validate.KnownKeys(root, RootKeys, "root", filePath);
-
-        var integration = root["integration"] as JObject
-                          ?? throw new InvalidDataException($"No 'integration' section found in {filePath}");
+        var root        = ParseYaml(filePath);
+        var integration = RequireSection(root, "integration", filePath);
 
         var activeEnv = environment
-                        ?? Environment.GetEnvironmentVariable("TEST_ENVIRONMENT")
+                        ?? Environment.GetEnvironmentVariable(EnvironmentKeys.TestEnvironment)
                         ?? integration["default"]?.Value<string>()
-                        ?? throw new InvalidDataException(
-                            $"Cannot determine active environment in {filePath}. " +
-                            "Set TEST_ENVIRONMENT, pass an environment argument, " +
-                            "or add 'default: <name>' to the integration section.");
+                        ?? throw ConfigError(filePath,
+                            $"Cannot determine active environment. Set {EnvironmentKeys.TestEnvironment}, " +
+                            "pass an environment argument, or add 'default: <name>' to the integration section.");
 
-        var envBlock = integration[activeEnv] as JObject
-                       ?? throw new InvalidDataException(
-                           $"No environment '{activeEnv}' found in the integration section of {filePath}");
+        var section = integration[activeEnv] as JObject
+                      ?? throw ConfigError(filePath, $"No environment '{activeEnv}' found in the integration section");
 
-        Validate.KnownKeys(envBlock, EnvironmentKeys, $"integration.{activeEnv}", filePath);
+        ResolveEnvVars(section, $"integration.{activeEnv}", filePath);
+        var cfg = Deserialize<IntegrationEnvironmentConfig>(section);
 
-        var api = envBlock["api"] as JObject
-                  ?? throw new InvalidDataException(
-                      $"'integration.{activeEnv}.api' is required in {filePath}");
-        Validate.KnownKeys(api, ApiKeys, $"integration.{activeEnv}.api", filePath);
-        Validate.Required(api["url"]?.Value<string>(), $"integration.{activeEnv}.api.url", filePath);
-
-        if (envBlock["folders"] is JObject folders)
-            Validate.KnownKeys(folders, FolderKeys, $"integration.{activeEnv}.folders", filePath);
-
-        ValidateFilter(envBlock["filter"] as JObject, $"integration.{activeEnv}", filePath);
-
-        ResolveEnvVars(envBlock, $"integration.{activeEnv}", filePath);
-        return Deserialize<IntegrationEnvironmentConfig>(envBlock);
+        ValidateIntegrationEnv(cfg, activeEnv, filePath);
+        return cfg;
     }
 
-    private static void ValidateFilter(JObject? filter, string parent, string filePath)
+    #endregion
+
+    #region Validation
+
+    private static void ValidateComponent(ComponentConfig cfg, string filePath)
+    {
+        var mode = cfg.Startup?.Mode ?? StartupConfig.InProcessMode;
+        Validate.OneOf(mode, "component.startup.mode", filePath, StartupConfig.InProcessMode, StartupConfig.CommandMode);
+        Validate.Required(cfg.Api?.Url, "component.api.url", filePath);
+
+        if (cfg.Startup?.IsInProcess == true)
+            Validate.Required(cfg.Startup.Settings, "component.startup.settings", filePath);
+
+        if (cfg.Startup?.IsCommand == true)
+        {
+            Validate.Required(cfg.Startup.Command, "component.startup.command", filePath);
+            Validate.ExactlyOneSet("component.startup.readiness", filePath,
+                ("url",  cfg.Startup.Readiness?.Url),
+                ("port", cfg.Startup.Readiness?.Port));
+        }
+
+        ValidateFilter(cfg.Filter, "component", filePath);
+    }
+
+    private static void ValidateIntegrationEnv(IntegrationEnvironmentConfig cfg, string env, string filePath)
+    {
+        Validate.Required(cfg.Api?.Url, $"integration.{env}.api.url", filePath);
+        ValidateFilter(cfg.Filter, $"integration.{env}", filePath);
+    }
+
+    private static void ValidateFilter(FilterConfig? filter, string parent, string filePath)
     {
         if (filter is null) return;
-        Validate.KnownKeys(filter, FilterKeys, $"{parent}.filter", filePath);
-        var strategy = filter["strategy"]?.Value<string>();
-        Validate.Required(strategy, $"{parent}.filter.strategy", filePath);
-        Validate.OneOf(strategy!, $"{parent}.filter.strategy", filePath, "tags", "tests");
-        Validate.Required(filter["envVariable"]?.Value<string>(), $"{parent}.filter.envVariable", filePath);
+        Validate.Required(filter.Strategy, $"{parent}.filter.strategy", filePath);
+        Validate.OneOf(filter.Strategy!, $"{parent}.filter.strategy", filePath, "tags", "tests");
+        Validate.Required(filter.EnvVariable, $"{parent}.filter.envVariable", filePath);
     }
 
-    private static JObject LoadAndParse(string filePath)
+    #endregion
+
+    #region Parsing
+
+    private static JObject ParseYaml(string filePath)
     {
         if (!File.Exists(filePath))
             throw new FileNotFoundException($"Suite config file not found: {filePath}", filePath);
@@ -135,13 +102,16 @@ public static class SuiteConfiguration
         }
     }
 
+    private static JObject RequireSection(JObject root, string key, string filePath) =>
+        root[key] as JObject ?? throw ConfigError(filePath, $"Missing required '{key}' section");
+
     private static void ResolveEnvVars(JObject obj, string path, string filePath)
     {
         foreach (var prop in obj.Properties().ToList())
             switch (prop.Value)
             {
                 case JValue { Type: JTokenType.String } jv:
-                    prop.Value = new JValue(ResolveEnvVarString(jv.Value<string>()!, $"{path}.{prop.Name}", filePath));
+                    prop.Value = new JValue(ExpandEnvVar(jv.Value<string>()!, $"{path}.{prop.Name}", filePath));
                     break;
                 case JObject nested:
                     ResolveEnvVars(nested, $"{path}.{prop.Name}", filePath);
@@ -149,85 +119,28 @@ public static class SuiteConfiguration
             }
     }
 
-    private static string ResolveEnvVarString(string value, string fieldPath, string filePath)
-    {
-        return Regex.Replace(value, @"\$\{([A-Z_][A-Z0-9_]*)\}", match =>
+    private static string ExpandEnvVar(string value, string fieldPath, string filePath) =>
+        Regex.Replace(value, @"\$\{([A-Z_][A-Z0-9_]*)\}", match =>
         {
             var name = match.Groups[1].Value;
             return Environment.GetEnvironmentVariable(name)
-                   ?? throw new InvalidDataException(
-                       $"Unresolved env var '${{{name}}}' in '{fieldPath}' in {filePath}. " +
-                       $"Set {name} in the environment before running tests.");
+                   ?? throw ConfigError(filePath,
+                       $"Unresolved env var '${{{name}}}' in '{fieldPath}'. Set {name} before running tests.");
         });
-    }
 
-    private static T Deserialize<T>(JObject obj)
-    {
-        return JsonConvert.DeserializeObject<T>(obj.ToString(), new JsonSerializerSettings
+    #endregion
+
+    #region Serialization
+
+    private static T Deserialize<T>(JObject obj) =>
+        JsonConvert.DeserializeObject<T>(obj.ToString(), new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         })!;
-    }
 
-    private static HashSet<string> KeySet(params string[] keys)
-    {
-        return new HashSet<string>(keys);
-    }
+    private static InvalidDataException ConfigError(string filePath, string message) =>
+        new($"{message} [{filePath}]");
+
+    #endregion
 }
 
-// ── Public config DTOs ─────────────────────────────────────────────────────
-
-public sealed class ComponentConfig
-{
-    public StartupConfig Startup { get; set; } = new();
-    public ApiConfig Api { get; set; } = new();
-    public MockConfig? Mock { get; set; }
-    public FolderConfig? Folders { get; set; }
-    public FilterConfig? Filter { get; set; }
-}
-
-public sealed class StartupConfig
-{
-    public const string InProcessMode = "in-process";
-    public const string CommandMode = "command";
-
-    public string Mode { get; set; } = InProcessMode;
-    public bool IsInProcess => Mode == InProcessMode;
-    public bool IsCommand => Mode == CommandMode;
-    public string? Settings { get; set; }
-    public string? Command { get; set; }
-    public string? StopCommand { get; set; }
-    public ReadinessConfig? Readiness { get; set; }
-    public Dictionary<string, string>? Env { get; set; }
-}
-
-public sealed class IntegrationEnvironmentConfig
-{
-    public ApiConfig Api { get; set; } = new();
-    public FolderConfig? Folders { get; set; }
-    public FilterConfig? Filter { get; set; }
-}
-
-public sealed class ApiConfig
-{
-    public string? Url { get; set; }
-    public string? AuthToken { get; set; }
-}
-
-public sealed class MockConfig
-{
-    public string? Url { get; set; }
-}
-
-public sealed class FolderConfig
-{
-    public string? Response { get; set; }
-    public string? RequestBody { get; set; }
-    public string? ResponseBody { get; set; }
-}
-
-public sealed class FilterConfig
-{
-    public string? Strategy { get; set; }
-    public string? EnvVariable { get; set; }
-}

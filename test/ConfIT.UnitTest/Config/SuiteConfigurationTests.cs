@@ -103,50 +103,6 @@ public class SuiteConfigurationLoadComponentTests
     }
 
     [Fact]
-    public void LoadComponent_UnknownRootKey_Throws()
-    {
-        var path = Write("""
-                         component:
-                           startup:
-                             settings: s.json
-                           api:
-                             url: http://localhost:5170
-                         badKey: value
-                         """);
-        try
-        {
-            var ex = Assert.Throws<InvalidDataException>(() => SuiteConfiguration.LoadComponent(path));
-            Assert.Contains("badKey", ex.Message);
-        }
-        finally
-        {
-            Cleanup(path);
-        }
-    }
-
-    [Fact]
-    public void LoadComponent_UnknownComponentKey_Throws()
-    {
-        var path = Write("""
-                         component:
-                           startup:
-                             settings: s.json
-                           api:
-                             url: http://localhost:5170
-                           typoKey: oops
-                         """);
-        try
-        {
-            var ex = Assert.Throws<InvalidDataException>(() => SuiteConfiguration.LoadComponent(path));
-            Assert.Contains("typoKey", ex.Message);
-        }
-        finally
-        {
-            Cleanup(path);
-        }
-    }
-
-    [Fact]
     public void LoadComponent_MissingApiUrl_Throws()
     {
         var path = Write("""

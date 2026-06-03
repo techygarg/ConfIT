@@ -292,6 +292,7 @@ When adding matchers: `ResultMatcher.cs` is the single point of change for match
 - `example/` projects are reference implementations — validate any library changes against them before shipping
 - All new code must compile and behave consistently across net9.0 and net10.0
 - NuGet release is triggered by a git tag — no manual publish steps
+- Use `#region` / `#endregion` for logical sections within a class — never comment banners (`// ── Section ───`)
 
 ## Keeping Examples in Sync
 
