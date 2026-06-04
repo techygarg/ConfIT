@@ -1,0 +1,28 @@
+# OAuth2 client credentials demo.
+#
+# suite.config.yaml declares auth: type: oauth2-client-credentials pointing at a WireMock
+# stub on port 8887. TestSuiteFixture fetches the token once at startup; every request
+# sent by TestHttpClient carries:
+#
+#   Authorization: Bearer component-test-token
+#
+# If the token fetch fails (stub not ready, bad config, non-2xx), the entire suite fails
+# at startup before this test runs — proving the feature works end-to-end.
+#
+# The JustAnotherService mock interactions below are the same as in 01-user-lifecycle.yaml
+# because User.Api still validates email via JustAnotherService regardless of the caller's
+# auth token.
+
+VerifyAuthorizationHeader:
+  # Calls GET /api/auth/verify — User.Api echoes the incoming Authorization header back.
+  # This is the definitive YAML proof that TestHttpClient is injecting the token.
+  tags:
+    - oauth2
+  api:
+    request:
+      method: GET
+      path: /api/auth/verify
+    response:
+      statusCode: 200
+      body:
+        authorization: "Bearer component-test-token"

@@ -1,0 +1,89 @@
+# Core user lifecycle — the canonical happy path for component tests.
+# All GET tests that query test@test.com rely on this file running first (01- prefix guarantees it).
+# The YAML anchor &valid_body defines the mock validation response once; *valid_body reuses it.
+
+CreateUser:
+  tags:
+    - lifecycle
+    - user
+  mock:
+    interactions:
+      - request:
+          method: GET
+          path: /api/demo/test@test.com
+        response:
+          statusCode: 200
+          body: &valid_body
+            isValid: true
+      - request:
+          method: GET
+          path: /api/demo
+          params:
+            email: test@test.com
+        response:
+          statusCode: 200
+          body: *valid_body
+      - request:
+          method: POST
+          path: /api/demo
+          body:
+            email: test@test.com
+        response:
+          statusCode: 200
+          body: *valid_body
+  api:
+    request:
+      method: POST
+      path: /api/user
+      body:
+        name: test
+        email: test@test.com
+        age: 10
+    response:
+      statusCode: 201
+      body: {}
+      extract:
+        userId: $.body.id
+      matcher:
+        semantic:
+          id: greaterThan(0)
+
+GetUserById:
+  tags:
+    - lifecycle
+    - user
+  depends:
+    - CreateUser
+  api:
+    request:
+      method: GET
+      path: "/api/user/{{userId}}"
+    response:
+      statusCode: 200
+      body:
+        name: test
+        email: test@test.com
+        age: 10
+      matcher:
+        ignore:
+          - id
+
+GetUserByEmail:
+  tags:
+    - lifecycle
+    - user
+  depends:
+    - CreateUser
+  api:
+    request:
+      method: GET
+      path: /api/user/test@test.com
+    response:
+      statusCode: 200
+      body:
+        name: test
+        email: test@test.com
+        age: 10
+      matcher:
+        ignore:
+          - id

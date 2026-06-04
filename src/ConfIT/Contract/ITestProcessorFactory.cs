@@ -1,7 +1,6 @@
-namespace ConfIT.Contract
+namespace ConfIT.Contract;
+
+public interface ITestProcessorFactory
 {
-    public interface ITestProcessorFactory
-    {
-        ITestProcessor GetTestProcessor(string testName);
-    }
+    ITestProcessor GetTestProcessor(string testName);
 }

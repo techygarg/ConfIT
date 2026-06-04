@@ -1,48 +1,60 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using Newtonsoft.Json.Linq;
+using YamlDotNet.Core;
 
-namespace ConfIT.Util
+namespace ConfIT.Util;
+
+public static class TestReader
 {
-    public static class TestReader
+    public static IEnumerable<object[]> GetTestsForAFile(string testFolderName, string fileName)
     {
-        public static IEnumerable<object[]> GetTestsForAFile(string testFolderName, string fileName)
+        var filePath = Path.GetFullPath($"{testFolderName}/{fileName}");
+        return GetTestsFromParsedFile(filePath);
+    }
+
+    public static IEnumerable<object[]> GetTestsForAFolder(string testFolderName)
+    {
+        // Sort alphabetically — Directory.GetFiles returns inode order on Linux,
+        // which is non-deterministic. Tests that depend on prior state (e.g. create
+        // then retrieve) must run in consistent file order across all platforms.
+        var files = Directory.GetFiles(Path.GetFullPath(testFolderName))
+            .Where(f => Path.GetExtension(f).Equals(".json", StringComparison.OrdinalIgnoreCase)
+                        || IsYaml(f))
+            .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase);
+
+        return files.SelectMany(GetTestsFromParsedFile);
+    }
+
+    private static IEnumerable<object[]> GetTestsFromParsedFile(string filePath)
+    {
+        var content     = File.ReadAllText(filePath);
+        var fileContent = IsYaml(filePath) ? LoadYaml(content, filePath) : JObject.Parse(content);
+        var fileName    = Path.GetFileName(filePath);
+
+        var tests = fileContent.Properties()
+            .Select(p => (Name: p.Name, Token: p.Value))
+            .ToList();
+
+        DependencyValidator.Validate(tests, filePath);
+
+        foreach (var (name, token) in tests)
+            yield return [name, token, fileName];
+    }
+
+    private static JObject LoadYaml(string content, string filePath)
+    {
+        try
         {
-            var fileContent = JObject.Parse(File.ReadAllText(Path.GetFullPath($"{testFolderName}/" + fileName)));
-            if (fileContent == null) yield break;
-
-            foreach (var testCaseScenario in fileContent.Properties())
-            {
-                if (testCaseScenario == null) continue;
-                yield return new object[]
-                {
-                    testCaseScenario.Name,
-                    testCaseScenario.Value
-                };
-            }
+            return YamlConverter.ToJObject(content);
         }
-
-        public static IEnumerable<object[]> GetTestsForAFolder(string testFolderName)
+        catch (YamlException ex)
         {
-            var result = new List<object[]>();
-            var filesPath = Directory.GetFiles(Path.GetFullPath(testFolderName))
-                .Where(f => Path.GetExtension(f).Equals(".json", StringComparison.OrdinalIgnoreCase));
-            foreach (var filePath in filesPath)
-            {
-                var fileContent = JObject.Parse(File.ReadAllText(filePath));
-                if (fileContent == null) continue;
-
-                result.AddRange(fileContent.Properties().Select(testCaseScenario =>
-                    new object[]
-                    {
-                        testCaseScenario.Name,
-                        testCaseScenario.Value
-                    }).ToList());
-            }
-
-            return result;
+            throw new InvalidDataException($"YAML parse error in '{filePath}': {ex.Message}", ex);
         }
+    }
+
+    private static bool IsYaml(string path)
+    {
+        return Path.GetExtension(path).Equals(".yaml", StringComparison.OrdinalIgnoreCase) ||
+               Path.GetExtension(path).Equals(".yml", StringComparison.OrdinalIgnoreCase);
     }
 }

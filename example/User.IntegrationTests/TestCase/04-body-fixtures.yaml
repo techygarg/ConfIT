@@ -1,0 +1,88 @@
+# bodyFromFile and override — externalise shared request and response bodies into fixture files.
+# override: deep-merges on top of the file content, allowing per-test variation without duplication.
+#
+# Request bodies  → TestCase/Request/
+# Response bodies → TestCase/Response/
+
+CreateUser_WithRequestBodyFromFile:
+  # Request body loaded from Request/create-user.json — no inline body needed.
+  tags:
+    - fixtures
+    - bodyFromFile
+  api:
+    request:
+      method: POST
+      path: /api/user
+      bodyFromFile: create-user.json
+    response:
+      statusCode: 201
+      body: {}
+      extract:
+        v1UserId: $.body.id
+      matcher:
+        semantic:
+          id: greaterThan(0)
+
+CreateUser_WithRequestBodyOverride:
+  # Same base file; override: changes just the email and age for this variation.
+  # Avoids duplicating the full body when only a few fields differ.
+  tags:
+    - fixtures
+    - bodyFromFile
+    - override
+  api:
+    request:
+      method: POST
+      path: /api/user
+      bodyFromFile: create-user.json
+      override:
+        email: testv2@test.com
+        age: 30
+    response:
+      statusCode: 201
+      body: {}
+      matcher:
+        semantic:
+          id: greaterThan(0)
+
+GetUser_WithResponseBodyFromFile:
+  # Expected response loaded from Response/user.json.
+  # A shared fixture keeps the assertion body in one place for reuse across tests.
+  tags:
+    - fixtures
+    - bodyFromFile
+  depends:
+    - CreateUser_WithRequestBodyFromFile
+  api:
+    request:
+      method: GET
+      path: "/api/user/{{v1UserId}}"
+    response:
+      statusCode: 200
+      bodyFromFile: user.json
+      matcher:
+        ignore:
+          - id
+
+GetUser_WithResponseBodyOverride:
+  # Same base response file; override: adjusts the expected fields for the v2 user.
+  # The name field is unchanged (inherited from the base file).
+  tags:
+    - fixtures
+    - bodyFromFile
+    - override
+  depends:
+    - CreateUser_WithRequestBodyOverride
+  api:
+    request:
+      method: GET
+      path: /api/user/testv2@test.com
+    response:
+      statusCode: 200
+      bodyFromFile: user.json
+      override:
+        email: testv2@test.com
+        age: 30
+      matcher:
+        ignore:
+          - id

@@ -16,60 +16,35 @@ env:
   MY_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  ConfIT-Build-Test:
+  # ── Full CI pipeline ─────────────────────────────────────────────────────
+  CI:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'skip')"
     steps:
-      - uses: actions/checkout@v6
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET (9 + 10 — library multi-targets both)
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: |
+            9.0.x
+            10.0.x
 
-      - name: Install Dependencies
-        run: dotnet restore './src/ConfIT.slnx'
+      - name: Run full pipeline
+        # build → unit → component → component.applauncher → integration
+        # make integration handles: DB wipe, service startup + readiness,
+        # test run, service teardown. All lifecycle managed by the Makefile.
+        # TEST_OPTS overrides the Makefile default (verbosity=minimal) with
+        # verbosity=normal so the TestResultCollector suite summary appears in
+        # CI logs — newer dotnet SDK versions filter all test host stdout at
+        # minimal verbosity, which hides the summary.
+        run: make ci
+        env:
+          TEST_OPTS: --logger "console;verbosity=normal" -nologo -p:WarningLevel=0 -p:NoWarn=NU1510
 
-      - name: Build
-        run: dotnet build './src/ConfIT.slnx' --configuration Release --no-restore
-
-      - name: Run ConfIT Unit Tests
-        run: dotnet test './test/ConfIT.UnitTest/ConfIT.UnitTest.csproj' --configuration Release --logger "console;verbosity=normal"
-
-  Example-Build-Test:
-    needs: ConfIT-Build-Test
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 8.0.x
-
-      - name: Install Dependencies
-        run: dotnet restore './example/User.sln'
-
-      - name: Build
-        run: dotnet build './example/User.sln'  --configuration Release --no-restore
-
-      - name: Run Component Tests
-        working-directory: ./example/User.ComponentTests
-        run: dotnet test
-
-      - name: Run UserApi
-        working-directory: ./example/User.Api
-        run: dotnet run &
-
-      - name: Run JustAnotherService
-        working-directory: ./example/JustAnotherService
-        run: dotnet run &
-
-      - name: Run Integration Tests
-        working-directory: ./example/User.IntegrationTests
-        run: dotnet test
-
+  # ── Release (tag-only) ───────────────────────────────────────────────────
   Release:
-    needs: Example-Build-Test
+    needs: CI
     runs-on: ubuntu-latest
     if: "contains(github.ref, '/tags/v')"
     steps:
@@ -78,24 +53,26 @@ jobs:
         with:
           token: ${{ env.MY_GIT_TOKEN }}
 
+  # ── NuGet publish (tag-only) ─────────────────────────────────────────────
   Publish-Nuget:
     needs: Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
 
-      - name: Get Release Version From Tag
+      - name: Get version from tag
         run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
 
       - name: Pack
         working-directory: ./src/ConfIT
         run: dotnet pack --configuration Release /p:Version=${VERSION} --output .
 
-      - name: Push To Nuget
+      - name: Push to NuGet
         working-directory: ./tools
         run: ./push_nuget.sh ${VERSION} "$NUGET_API_TOKEN"
         env:

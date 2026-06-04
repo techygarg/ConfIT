@@ -1,5 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4D1BA30A-0F4A-4340-B78D-058F016BA148}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A9AB4C84-1196-42AF-9408-0A8E7D272FC3}"
@@ -13,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Api", "User.Api\User.Api.csproj", "{A439C278-BC80-4229-9970-5F7F35C42CD9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JustAnotherService", "JustAnotherService\JustAnotherService.csproj", "{99E1A461-22BA-47DA-9EB0-641D768A5AE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.ComponentTests.AppLauncher", "User.ComponentTests.AppLauncher\User.ComponentTests.AppLauncher.csproj", "{9837BD5E-0151-4847-998D-16613A2E41B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +43,10 @@ Global
 		{99E1A461-22BA-47DA-9EB0-641D768A5AE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99E1A461-22BA-47DA-9EB0-641D768A5AE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99E1A461-22BA-47DA-9EB0-641D768A5AE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9837BD5E-0151-4847-998D-16613A2E41B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9837BD5E-0151-4847-998D-16613A2E41B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9837BD5E-0151-4847-998D-16613A2E41B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9837BD5E-0151-4847-998D-16613A2E41B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E3E930D5-7163-4A3E-B663-FA2834848954} = {A9AB4C84-1196-42AF-9408-0A8E7D272FC3}

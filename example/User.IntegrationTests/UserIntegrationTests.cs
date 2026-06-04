@@ -14,16 +14,17 @@ namespace User.IntegrationTests
         public UserIntegrationTests(TestSuiteFixture fixture, ITestOutputHelper output)
             : base(fixture.TestHttpClient,
                 fixture.SuiteConfig,
-                fixture.TestProcessFactory,
+                null,
                 new TestOutputLogger(output),
-                fixture.Filter)
+                fixture.Filter,
+                fixture.ResultCollector)
         {
         }
 
         [Theory]
         [MemberData(nameof(GetTestCasesForFolder), "TestCase")]
-        public async Task ExecuteTest(string testName, JContainer test) =>
-            await Execute(testName, test.ToTestCase(Config.RequestBodyFolder, Config.ResponseBodyFolder));
+        public async Task ExecuteTest(string testName, JContainer test, string sourceFile) =>
+            await Execute(testName, test.ToTestCase(Config.RequestBodyFolder, Config.ResponseBodyFolder), sourceFile);
 
 
         /// <summary>

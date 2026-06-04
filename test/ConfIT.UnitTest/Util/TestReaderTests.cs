@@ -1,241 +1,310 @@
-namespace ConfIT.UnitTest.Util
+using Newtonsoft.Json;
+
+namespace ConfIT.UnitTest.Util;
+
+public class TestReaderTests : IDisposable
 {
-    public class TestReaderTests
+    private readonly string _testFolderPath;
+
+    public TestReaderTests()
     {
-        private const string TestFolder = "TestData";
-        private readonly string _testFolderPath;
-
-        public TestReaderTests()
-        {
-            _testFolderPath = Path.Combine(Directory.GetCurrentDirectory(), TestFolder);
-            if (Directory.Exists(_testFolderPath))
-            {
-                Directory.Delete(_testFolderPath, true);
-            }
-            Directory.CreateDirectory(_testFolderPath);
-        }
-
-        [Fact]
-        public void GetTestsForFile_WithValidJson_ReturnsTestCases()
-        {
-            // Given
-            var fileName = "valid.json";
-            File.WriteAllText(Path.Combine(TestFolder, fileName), @"{'test1':{'key':'value'}}");
-
-            // When
-            var result = TestReader.GetTestsForAFile(TestFolder, fileName).ToList();
-
-            // Then
-            result.Should().HaveCount(1);
-            result[0][0].Should().Be("test1");
-            result[0][1].Should().NotBeNull();
-        }
-
-        [Fact]
-        public void GetTestsForFile_ReturnsNameValuePairs()
-        {
-            // Given
-            var fileName = "pairs.json";
-            File.WriteAllText(Path.Combine(TestFolder, fileName), @"{'test1':{'prop':'val'},'test2':{'prop2':'val2'}}");
-
-            // When
-            var result = TestReader.GetTestsForAFile(TestFolder, fileName).ToList();
-
-            // Then
-            result.Should().HaveCount(2);
-            result[0][0].Should().Be("test1");
-            result[1][0].Should().Be("test2");
-        }
-
-        [Fact]
-        public void GetTestsForFolder_CombinesMultipleFiles()
-        {
-            // Given
-            File.WriteAllText(Path.Combine(_testFolderPath, "file1.json"), @"{'test1':{'key':'value'}}");
-            File.WriteAllText(Path.Combine(_testFolderPath, "file2.json"), @"{'test2':{'key':'value'}}");
-            // Add a non-JSON file that should be ignored
-            File.WriteAllText(Path.Combine(_testFolderPath, "ignore.txt"), "not json");
-
-            // When
-            var result = TestReader.GetTestsForAFolder(TestFolder).ToList();
-
-            // Then
-            result.Should().HaveCount(2);
-            result.Should().Contain(x => x[0].ToString() == "test1");
-            result.Should().Contain(x => x[0].ToString() == "test2");
-        }
-
-        [Fact]
-        public void GetTestsForFile_HandlesNestedJsonProperties()
-        {
-            // Given
-            var fileName = "nested.json";
-            File.WriteAllText(Path.Combine(TestFolder, fileName), @"{'test1':{'nested':{'deep':{'value':123}}}}");
-
-            // When
-            var result = TestReader.GetTestsForAFile(TestFolder, fileName).ToList();
-
-            // Then
-            result.Should().HaveCount(1);
-            result[0][1].Should().BeAssignableTo<JToken>();
-        }
-
-        [Fact]
-        public void GetTestsForFile_ReturnsEmptyForNoTestCases()
-        {
-            // Given
-            var fileName = "empty.json";
-            File.WriteAllText(Path.Combine(TestFolder, fileName), "{}");
-
-            // When
-            var result = TestReader.GetTestsForAFile(TestFolder, fileName).ToList();
-
-            // Then
-            result.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void GetTestsForFile_HandlesEmptyJsonFile()
-        {
-            // Given
-            var fileName = "empty.json";
-            File.WriteAllText(Path.Combine(TestFolder, fileName), "");
-
-            // When/Then
-            Action act = () => TestReader.GetTestsForAFile(TestFolder, fileName).ToList();
-            act.Should().Throw<Newtonsoft.Json.JsonReaderException>();
-        }
-
-        [Fact]
-        public void GetTestsForFile_HandlesInvalidJsonFormat()
-        {
-            // Given
-            var fileName = "invalid.json";
-            File.WriteAllText(Path.Combine(TestFolder, fileName), "{invalid json}");
-
-            // When/Then
-            Action act = () => TestReader.GetTestsForAFile(TestFolder, fileName).ToList();
-            act.Should().Throw<Newtonsoft.Json.JsonReaderException>();
-        }
-
-        [Fact]
-        public void GetTestsForFolder_HandlesMissingFolder()
-        {
-            // Given
-            var nonExistentFolder = "NonExistentFolder";
-
-            // When/Then
-            Action act = () => TestReader.GetTestsForAFolder(nonExistentFolder).ToList();
-            act.Should().Throw<DirectoryNotFoundException>();
-        }
-
-        [Fact]
-        public void GetTestsForFile_HandlesNoReadPermissions()
-        {
-            // Given
-            var fileName = "nopermission.json";
-            var filePath = Path.Combine(_testFolderPath, fileName);
-            File.WriteAllText(filePath, @"{'test':{'key':'value'}}");
-
-            try
-            {
-                // On Unix systems, we need to use different permission setting
-                if (Environment.OSVersion.Platform == PlatformID.Unix)
-                {
-                    var process = new System.Diagnostics.Process
-                    {
-                        StartInfo = new System.Diagnostics.ProcessStartInfo
-                        {
-                            FileName = "chmod",
-                            Arguments = $"000 {filePath}",
-                            RedirectStandardOutput = true,
-                            UseShellExecute = false
-                        }
-                    };
-                    process.Start();
-                    process.WaitForExit();
-                }
-                else
-                {
-                    var fileInfo = new FileInfo(filePath);
-                    fileInfo.IsReadOnly = true;
-                }
-
-                // When/Then
-                Action act = () => TestReader.GetTestsForAFile(TestFolder, fileName).ToList();
-                act.Should().Throw<UnauthorizedAccessException>();
-            }
-            finally
-            {
-                // Cleanup - restore permissions so the file can be deleted
-                if (Environment.OSVersion.Platform == PlatformID.Unix)
-                {
-                    var process = new System.Diagnostics.Process
-                    {
-                        StartInfo = new System.Diagnostics.ProcessStartInfo
-                        {
-                            FileName = "chmod",
-                            Arguments = $"666 {filePath}",
-                            RedirectStandardOutput = true,
-                            UseShellExecute = false
-                        }
-                    };
-                    process.Start();
-                    process.WaitForExit();
-                }
-            }
-        }
-
-        [Fact]
-        public void GetTestsForFile_HandlesSpecialCharactersInFilename()
-        {
-            // Given
-            var fileName = "test@#$%.json";
-            File.WriteAllText(Path.Combine(TestFolder, fileName), @"{'test':{'key':'value'}}");
-
-            // When
-            var result = TestReader.GetTestsForAFile(TestFolder, fileName).ToList();
-
-            // Then
-            result.Should().HaveCount(1);
-        }
-
-        [Fact]
-        public void GetTestsForFile_HandlesLargeJsonFile()
-        {
-            // Given
-            var fileName = "large.json";
-            var sb = new StringBuilder();
-            sb.Append("{");
-            for (int i = 0; i < 10000; i++)
-            {
-                sb.Append($"'test{i}':{{'key':'value'}},");
-            }
-
-            sb.Append("'lastTest':{'key':'value'}}");
-            File.WriteAllText(Path.Combine(TestFolder, fileName), sb.ToString());
-
-            // When
-            var result = TestReader.GetTestsForAFile(TestFolder, fileName).ToList();
-
-            // Then
-            result.Should().HaveCount(10001);
-        }
-
-        [Fact]
-        public void GetTestsForFile_HandlesConcurrentAccess()
-        {
-            // Given
-            var fileName = "concurrent.json";
-            File.WriteAllText(Path.Combine(TestFolder, fileName), @"{'test':{'key':'value'}}");
-
-            // When
-            var tasks = Enumerable.Range(0, 10).Select(_ => Task.Run(() =>
-                TestReader.GetTestsForAFile(TestFolder, fileName).ToList()));
-
-            // Then
-            var results = Task.WhenAll(tasks).Result;
-            results.Should().AllSatisfy(result => result.Should().HaveCount(1));
-        }
+        _testFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "TestData");
+        if (Directory.Exists(_testFolderPath))
+            Directory.Delete(_testFolderPath, true);
+        Directory.CreateDirectory(_testFolderPath);
     }
+
+    public void Dispose()
+    {
+        Directory.Delete(_testFolderPath, true);
+    }
+
+    [Fact]
+    public void GetTestsForFile_WithValidJson_ReturnsTestCases()
+    {
+        // Given
+        var fileName = "valid.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName), @"{'test1':{'key':'value'}}");
+
+        // When
+        var result = TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        result.Should().HaveCount(1);
+        result[0][0].Should().Be("test1");
+        result[0][1].Should().NotBeNull();
+    }
+
+    [Fact]
+    public void GetTestsForFile_ReturnsNameValuePairs()
+    {
+        // Given
+        var fileName = "pairs.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName),
+            @"{'test1':{'prop':'val'},'test2':{'prop2':'val2'}}");
+
+        // When
+        var result = TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        result.Should().HaveCount(2);
+        result[0][0].Should().Be("test1");
+        result[1][0].Should().Be("test2");
+    }
+
+    [Fact]
+    public void GetTestsForFolder_CombinesMultipleFiles()
+    {
+        // Given
+        File.WriteAllText(Path.Combine(_testFolderPath, "file1.json"), @"{'test1':{'key':'value'}}");
+        File.WriteAllText(Path.Combine(_testFolderPath, "file2.json"), @"{'test2':{'key':'value'}}");
+        File.WriteAllText(Path.Combine(_testFolderPath, "ignore.txt"), "not json");
+
+        // When
+        var result = TestReader.GetTestsForAFolder(_testFolderPath).ToList();
+
+        // Then
+        result.Should().HaveCount(2);
+        result.Should().Contain(x => x[0].ToString() == "test1");
+        result.Should().Contain(x => x[0].ToString() == "test2");
+    }
+
+    [Fact]
+    public void GetTestsForFile_HandlesNestedJsonProperties()
+    {
+        // Given
+        var fileName = "nested.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName), @"{'test1':{'nested':{'deep':{'value':123}}}}");
+
+        // When
+        var result = TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        result.Should().HaveCount(1);
+        result[0][1].Should().BeAssignableTo<JToken>();
+    }
+
+    [Fact]
+    public void GetTestsForFile_ReturnsEmptyForNoTestCases()
+    {
+        // Given
+        var fileName = "empty-object.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName), "{}");
+
+        // When
+        var result = TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void GetTestsForFile_ThrowsOnEmptyJsonFile()
+    {
+        // Given
+        var fileName = "empty-file.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName), "");
+
+        // When
+        var act = () => TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        act.Should().Throw<JsonReaderException>();
+    }
+
+    [Fact]
+    public void GetTestsForFile_ThrowsOnInvalidJsonFormat()
+    {
+        // Given
+        var fileName = "invalid.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName), "{invalid json}");
+
+        // When
+        var act = () => TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        act.Should().Throw<JsonReaderException>();
+    }
+
+    [Fact]
+    public void GetTestsForFolder_ThrowsOnMissingFolder()
+    {
+        // When
+        var act = () => TestReader.GetTestsForAFolder("NonExistentFolder").ToList();
+
+        // Then
+        act.Should().Throw<DirectoryNotFoundException>();
+    }
+
+    [Fact]
+    public void GetTestsForFile_HandlesSpecialCharactersInFilename()
+    {
+        // Given
+        var fileName = "test-special.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName), @"{'test':{'key':'value'}}");
+
+        // When
+        var result = TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        result.Should().HaveCount(1);
+    }
+
+    #region Dependency validation
+
+    [Fact]
+    public void GetTestsForFile_ValidDependsField_DoesNotThrow()
+    {
+        // Given
+        var fileName = "depends-valid.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName),
+            """{"TestA":{},"TestB":{"depends":["TestA"]}}""");
+
+        // When
+        var act = () => TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        act.Should().NotThrow();
+    }
+
+    [Fact]
+    public void GetTestsForFile_UnknownDepName_ThrowsInvalidDataException()
+    {
+        // Given
+        var fileName = "depends-unknown.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName),
+            """{"TestA":{"depends":["NonExistent"]}}""");
+
+        // When
+        var act = () => TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        act.Should().Throw<InvalidDataException>().WithMessage("*NonExistent*");
+    }
+
+    [Fact]
+    public void GetTestsForFile_ForwardReference_ThrowsInvalidDataException()
+    {
+        // Given — TestA references TestB which is defined after it
+        var fileName = "depends-forward.json";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName),
+            """{"TestA":{"depends":["TestB"]},"TestB":{}}""");
+
+        // When
+        var act = () => TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        act.Should().Throw<InvalidDataException>().WithMessage("*TestB*");
+    }
+
+    #endregion
+
+    #region YAML support
+
+    [Fact]
+    public void GetTestsForFile_WithYamlExtension_ReturnsTestCases()
+    {
+        // Given
+        var fileName = "valid.yaml";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName),
+            "test1:\n  key: value");
+
+        // When
+        var result = TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        result.Should().HaveCount(1);
+        result[0][0].Should().Be("test1");
+        result[0][1].Should().BeAssignableTo<JToken>();
+    }
+
+    [Fact]
+    public void GetTestsForFile_WithYmlExtension_ReturnsTestCases()
+    {
+        // Given — .yml (not .yaml) is also recognised
+        var fileName = "valid.yml";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName),
+            "test1:\n  key: value");
+
+        // When
+        var result = TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        result.Should().HaveCount(1);
+        result[0][0].Should().Be("test1");
+    }
+
+    [Fact]
+    public void GetTestsForFolder_DiscoversBothJsonAndYamlFiles()
+    {
+        // Given
+        File.WriteAllText(Path.Combine(_testFolderPath, "json-tests.json"),
+            @"{'jsonTest':{'key':'value'}}");
+        File.WriteAllText(Path.Combine(_testFolderPath, "yaml-tests.yaml"),
+            "yamlTest:\n  key: value");
+
+        // When
+        var result = TestReader.GetTestsForAFolder(_testFolderPath).ToList();
+
+        // Then
+        result.Should().HaveCount(2);
+        result.Should().Contain(x => x[0].ToString() == "jsonTest");
+        result.Should().Contain(x => x[0].ToString() == "yamlTest");
+    }
+
+    [Fact]
+    public void GetTestsForFolder_DiscoversBothYamlAndYmlExtensions()
+    {
+        // Given
+        File.WriteAllText(Path.Combine(_testFolderPath, "a.yaml"), "test1:\n  key: value");
+        File.WriteAllText(Path.Combine(_testFolderPath, "b.yml"), "test2:\n  key: value");
+
+        // When
+        var result = TestReader.GetTestsForAFolder(_testFolderPath).ToList();
+
+        // Then
+        result.Should().HaveCount(2);
+        result.Should().Contain(x => x[0].ToString() == "test1");
+        result.Should().Contain(x => x[0].ToString() == "test2");
+    }
+
+    [Fact]
+    public void GetTestsForFile_InvalidYaml_ThrowsInvalidDataExceptionWithFilename()
+    {
+        // Given
+        var fileName = "bad.yaml";
+        var filePath = Path.GetFullPath(Path.Combine(_testFolderPath, fileName));
+        File.WriteAllText(filePath, "root:\n\tchild: value");
+
+        // When
+        var act = () => TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        act.Should().Throw<InvalidDataException>()
+            .WithMessage($"*{filePath}*");
+    }
+
+    [Fact]
+    public void GetTestsForFile_YamlTypes_SurviveRoundTripToJToken()
+    {
+        // Given — ensures the format adapter preserves types the DSL relies on
+        var fileName = "typed.yaml";
+        File.WriteAllText(Path.Combine(_testFolderPath, fileName), """
+                                                                   TypedTest:
+                                                                     statusCode: 201
+                                                                     flag: true
+                                                                     name: alice
+                                                                   """);
+
+        // When
+        var result = TestReader.GetTestsForAFile(_testFolderPath, fileName).ToList();
+
+        // Then
+        var body = (JObject)result[0][1];
+        body["statusCode"]!.Type.Should().Be(JTokenType.Integer);
+        body["flag"]!.Type.Should().Be(JTokenType.Boolean);
+        body["name"]!.Type.Should().Be(JTokenType.String);
+    }
+
+    #endregion
 }

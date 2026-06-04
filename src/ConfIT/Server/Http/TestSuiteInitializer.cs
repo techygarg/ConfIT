@@ -1,54 +1,67 @@
-﻿using System;
-using Microsoft.AspNetCore;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 
-namespace ConfIT.Server.Http
+namespace ConfIT.Server.Http;
+
+public class TestSuiteInitializer<TProgram> : IDisposable where TProgram : class
 {
-    public class TestSuiteInitializer<TStartUp> where TStartUp : class, IDisposable
+    private readonly InternalFactory _factory;
+
+    public TestSuiteInitializer(string settingsFile, Action<IServiceCollection>? configureServices = null)
     {
-        public TestServer TestServer { get; private set; }
-        public TestHttpClient TestHttpClient { get; private set; }
+        if (string.IsNullOrWhiteSpace(settingsFile))
+            throw new ArgumentException("Please provide app settings file name", nameof(settingsFile));
 
-        public TestSuiteInitializer(string appSettingFileName)
+        _factory = new InternalFactory(settingsFile, configureServices);
+        TestHttpClient = new TestHttpClient(_factory.CreateClient());
+    }
+
+    public TestHttpClient TestHttpClient { get; }
+
+    public IServiceProvider Services => _factory.Services;
+
+    [Obsolete(
+        "Use Services (IServiceProvider) instead. TestServer is an implementation detail of the legacy hosting model.")]
+    public TestServer TestServer => _factory.Server;
+
+    public void Dispose()
+    {
+        _factory.Dispose();
+    }
+
+    private sealed class InternalFactory : WebApplicationFactory<TProgram>
+    {
+        private readonly Action<IServiceCollection>? _configureServices;
+        private readonly string _settingsFilePath;
+
+        internal InternalFactory(string settingsFile, Action<IServiceCollection>? configureServices)
         {
-            if (string.IsNullOrWhiteSpace(appSettingFileName))
-                throw new ArgumentException("Please provide app settings file name");
-
-            var config = ConfigurationRoot(appSettingFileName);
-            InitializeHttpServer(config);
-            InitializeHttpClient();
+            // Resolve to absolute path immediately — WebApplicationFactory sets content root
+            // to the app's source directory, so relative paths must be anchored here while
+            // the working directory is still the test output directory.
+            _settingsFilePath = Path.GetFullPath(settingsFile);
+            _configureServices = configureServices;
         }
 
-        private void InitializeHttpClient() =>
-            TestHttpClient = new TestHttpClient(TestServer.CreateClient());
-
-        private void InitializeHttpServer(IConfiguration config)
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            var builder = WebHost.CreateDefaultBuilder()
-                .UseConfiguration(config)
-                .ConfigureLogging(factory =>
-                {
-                    factory.SetMinimumLevel(LogLevel.Information);
-                    factory.AddConsole();
-                })
-                .UseTestServer()
-                .UseStartup<TStartUp>();
+            builder.ConfigureAppConfiguration((_, config) =>
+            {
+                config.Sources.Clear();
+                config.AddJsonFile(
+                    new PhysicalFileProvider(Path.GetDirectoryName(_settingsFilePath)!),
+                    Path.GetFileName(_settingsFilePath),
+                    false,
+                    false);
+            });
 
-            TestServer = new TestServer(builder);
-        }
-
-        private static IConfigurationRoot ConfigurationRoot(string appSettingFileName) =>
-            new ConfigurationBuilder()
-                .AddJsonFile(appSettingFileName)
-                .Build();
-
-        public void Dispose()
-        {
-            TestServer?.Dispose();
-            TestHttpClient?.Dispose();
+            if (_configureServices is not null)
+                builder.ConfigureServices(_configureServices);
         }
     }
 }

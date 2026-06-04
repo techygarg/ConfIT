@@ -1,0 +1,13 @@
+component:
+  startup:
+    mode: in-process
+    settings: appsettings.Tests.json
+  api:
+    url: http://localhost:5170
+  mock:
+    url: http://localhost:8888
+  folders:
+    response: responses
+  filter:
+    strategy: tags
+    envVariable: RUN_POOLS

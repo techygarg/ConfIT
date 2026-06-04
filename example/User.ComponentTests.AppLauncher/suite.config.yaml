@@ -1,0 +1,36 @@
+# AppLauncher component test configuration.
+#
+# startup.mode: command — AppLauncher starts User.Api as an external process before
+# tests run and stops it after. The app seeds its own database on startup (see
+# User.Api/Startup.cs:SeedDatabase and appsettings.ComponentTest.json).
+#
+# The command path is relative to the test output directory (bin/Debug/net9.0/).
+# Adjust if your project layout differs.
+component:
+  startup:
+    mode: command
+    command: dotnet run --no-build --project ../../../../User.Api --launch-profile ComponentTest
+    # stopCommand: explicitly kills the process by port on dispose.
+    # Without this, AppLauncher kills the process tree and waits for port release automatically.
+    # Provide this when the default kill does not release the port reliably on your OS.
+    # Unix/macOS: lsof -ti :5170 | xargs kill -9
+    # Windows:    taskkill /F /IM User.Api.exe
+    stopCommand: lsof -ti :5170 -sTCP:LISTEN | xargs kill -9
+    readiness:
+      port: 5170          # TCP probe — app is ready when port 5170 responds
+      timeoutSeconds: 60  # allow time for dotnet build on first run
+      intervalMs: 500
+  api:
+    url: http://localhost:5170
+  auth:
+    type: oauth2-client-credentials
+    tokenUrl: http://localhost:8887/oauth/token
+    clientId: component-test-client
+    clientSecret: component-test-secret
+  mock:
+    url: http://localhost:8888
+  folders:
+    response: responses
+  filter:
+    strategy: tags
+    envVariable: RUN_POOLS

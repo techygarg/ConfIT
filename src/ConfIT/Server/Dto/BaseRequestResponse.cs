@@ -1,39 +1,32 @@
-using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json.Linq;
 using static System.IO.Path;
-using ConfIT.Extension;
 
-namespace ConfIT.Server.Dto
+namespace ConfIT.Server.Dto;
+
+public abstract class BaseRequestResponse
 {
-    public abstract class BaseRequestResponse
+    public string BodyFromFile { get; set; }
+    public JToken Body { get; set; }
+    public JToken Override { get; set; }
+    public Dictionary<string, string> Headers { get; set; }
+
+    public virtual void Initialize(string folder)
     {
-        public string BodyFromFile { get; set; }
-        public JToken Body { get; set; }
-        public JToken Override { get; set; }
-        public Dictionary<string, string> Headers { get; set; }
+        if (string.IsNullOrWhiteSpace(BodyFromFile)) return;
 
-        public virtual void Initialize(string folder)
-        {
-            if (!BodyFromFile.IsNullOrWhiteSpace())
-            {
-                var payload = JToken.Parse(File.ReadAllText(GetFullPath($"{folder}/{BodyFromFile}")));
-                if (Override != null)
-                {
-                    if (payload.Type == JTokenType.Array)
-                    {
-                        foreach (var item in payload)
-                            if (item.Type == JTokenType.Object)
-                                (item as JObject)?.Merge(Override);
-                    }
-                    else if (payload.Type == JTokenType.Object)
-                        (payload as JObject)?.Merge(Override);
+        var payload = JToken.Parse(File.ReadAllText(GetFullPath($"{folder}/{BodyFromFile}")));
+        ApplyOverride(payload);
+        Body = payload;
+    }
 
-                    Body = payload;
-                }
-                else
-                    Body = payload;
-            }
-        }
+    private void ApplyOverride(JToken payload)
+    {
+        if (Override is null) return;
+
+        if (payload is JArray array)
+            foreach (var item in array.OfType<JObject>())
+                item.Merge(Override);
+        else if (payload is JObject obj)
+            obj.Merge(Override);
     }
 }

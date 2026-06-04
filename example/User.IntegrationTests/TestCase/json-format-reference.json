@@ -1,0 +1,50 @@
+{
+  "CreateUser_JsonFormat": {
+    "tags": ["json-reference"],
+    "api": {
+      "request": {
+        "method": "POST",
+        "path": "/api/user",
+        "body": { "name": "json-ref", "email": "json-ref@test.com", "age": 35 }
+      },
+      "response": {
+        "statusCode": 201,
+        "body": {},
+        "extract": { "jsonRefUserId": "$.body.id" },
+        "matcher": { "semantic": { "id": "greaterThan(0)" } }
+      }
+    }
+  },
+
+  "GetUserById_JsonFormat": {
+    "tags": ["json-reference"],
+    "depends": ["CreateUser_JsonFormat"],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/{{jsonRefUserId}}"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": { "name": "json-ref", "email": "json-ref@test.com", "age": 35 },
+        "matcher": { "ignore": ["id"] }
+      }
+    }
+  },
+
+  "GetUserByEmail_JsonFormat": {
+    "tags": ["json-reference"],
+    "depends": ["CreateUser_JsonFormat"],
+    "api": {
+      "request": {
+        "method": "GET",
+        "path": "/api/user/json-ref@test.com"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": { "name": "json-ref", "email": "json-ref@test.com", "age": 35 },
+        "matcher": { "ignore": ["id"] }
+      }
+    }
+  }
+}

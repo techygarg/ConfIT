@@ -1,55 +1,45 @@
-using System.Collections.Generic;
-using System.Linq;
-using ConfIT.Extension;
 using static System.Environment;
 
-namespace ConfIT
+namespace ConfIT;
+
+public class TestFilter
 {
-    public class TestFilter
+    public List<string> Tags { get; set; }
+    public List<string> TestNames { get; set; }
+
+    public static TestFilter CreateForTags(string tags)
     {
-        public List<string> Tags { get; set; }
-        public List<string> TestNames { get; set; }
-
-        public static TestFilter CreateForTags(string tags)
+        return new TestFilter
         {
-            return new TestFilter
-            {
-                Tags = tags?.Split(",").ToList() ?? new List<string>(),
-            };
-        }
+            Tags = tags?.Split(',').ToList() ?? []
+        };
+    }
 
-        public static TestFilter CreateForTagsFromEnvVariable(string tagKey)
+    public static TestFilter CreateForTagsFromEnvVariable(string tagKey)
+    {
+        return new TestFilter
         {
-            List<string> tags = null;
+            Tags = string.IsNullOrWhiteSpace(tagKey)
+                ? []
+                : GetEnvironmentVariable(tagKey)?.Split(',').ToList() ?? []
+        };
+    }
 
-            if (!tagKey.IsNullOrWhiteSpace())
-                tags = GetEnvironmentVariable(tagKey)?.Split(",").ToList() ?? new List<string>();
-
-            return new TestFilter
-            {
-                Tags = tags ?? new List<string>()
-            };
-        }
-
-        public static TestFilter CreateForTests(string testNames)
+    public static TestFilter CreateForTests(string testNames)
+    {
+        return new TestFilter
         {
-            return new TestFilter
-            {
-                TestNames = testNames?.Split(",").ToList() ?? new List<string>(),
-            };
-        }
-        
-        public static TestFilter CreateForTestsFromEnvVariable(string testNamesKey)
+            TestNames = testNames?.Split(',').ToList() ?? []
+        };
+    }
+
+    public static TestFilter CreateForTestsFromEnvVariable(string testNamesKey)
+    {
+        return new TestFilter
         {
-            List<string> tests = null;
-
-            if (!testNamesKey.IsNullOrWhiteSpace())
-                tests = GetEnvironmentVariable(testNamesKey)?.Split(",").ToList() ?? new List<string>();
-
-            return new TestFilter
-            {
-                TestNames = tests ?? new List<string>()
-            };
-        }
+            TestNames = string.IsNullOrWhiteSpace(testNamesKey)
+                ? []
+                : GetEnvironmentVariable(testNamesKey)?.Split(',').ToList() ?? []
+        };
     }
 }
