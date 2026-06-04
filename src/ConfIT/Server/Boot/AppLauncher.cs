@@ -38,6 +38,8 @@ public sealed class AppLauncher : IDisposable
             KillProcess();
 
         try { _process.WaitForExit(_gracePeriodMs); } catch { /* ignore */ }
+        if (!_process.HasExited)
+            KillProcess();
         _process.Dispose();
 
         // Ensure the port is actually free before returning — the OS may hold it
@@ -81,7 +83,7 @@ public sealed class AppLauncher : IDisposable
         });
     }
 
-    // ── Private helpers ────────────────────────────────────────────────────
+    #region Private helpers
 
     private void KillProcess()
     {
@@ -222,6 +224,10 @@ public sealed class AppLauncher : IDisposable
         return psi;
     }
 
+    #endregion
+
+    #region OutputBuffer
+
     private sealed class OutputBuffer
     {
         private const int MaxLines = 50;
@@ -244,4 +250,6 @@ public sealed class AppLauncher : IDisposable
             lock (_lock) { return _lines.ToList(); }
         }
     }
+
+    #endregion
 }

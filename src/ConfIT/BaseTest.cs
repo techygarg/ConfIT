@@ -127,10 +127,6 @@ public abstract class BaseTest : IDisposable
             _consoleBuffer.Add(string.Empty);
             RecordStatus(testName, TestRunStatus.Passed, sw.Elapsed, sourceFile);
         }
-        catch (InvalidOperationException)
-        {
-            throw;
-        }
         catch (Exception)
         {
             RecordStatus(testName, TestRunStatus.Failed, sw.Elapsed, sourceFile);

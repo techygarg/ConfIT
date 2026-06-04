@@ -28,7 +28,6 @@ internal sealed class OAuth2ClientCredentialsProvider : IAuthTokenProvider
         try
         {
             var response = PostToTokenEndpoint(client, auth);
-            Console.WriteLine("response: {0}", response);
             return ExtractAccessToken(response, auth.TokenUrl!);
         }
         finally
@@ -69,7 +68,6 @@ internal sealed class OAuth2ClientCredentialsProvider : IAuthTokenProvider
             throw new InvalidOperationException(
                 $"OAuth2 token response from '{tokenUrl}' did not contain an 'access_token' field.");
 
-        Console.WriteLine($"token recieved: {token}");
         return token;
     }
 }
