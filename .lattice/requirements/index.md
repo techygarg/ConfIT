@@ -30,13 +30,13 @@ Features that make ConfIT faster and easier for teams beyond the happy path.
 |----|---------|-----------|--------|
 | [DSL-002] | [YAML Support](features/dsl-002-yaml-support.md) | Full DSL support in `.yaml` / `.yml` files alongside existing JSON. | ✅ implemented  |
 | [DSL-003] | VCR / Cassette Mode | Record real inter-service HTTP traffic; replay as WireMock stubs. No hand-crafted mocks needed. | — |
-| [ENV-001] | Declarative Auth Profiles | Bearer, OAuth2, API key auth via config — no `IAuthTokenProvider` C# needed for common cases. | — |
+| [ENV-001] | [Declarative Auth Profiles](features/env-001-declarative-auth-profiles.md) | Bearer, OAuth2, API key auth via config — no `IAuthTokenProvider` C# needed for common cases. | approved |
 | [ENV-002] | Environment Profiles | Named environments (local/staging/prod) with per-env URLs and headers. Switch via `TEST_ENV`. | — |
 | [ENV-003] | [Modern Test Host Initialization](features/env-003-modern-test-host-initialization.md) | Replace legacy `WebHost.CreateDefaultBuilder` + `TestServer` with `WebApplicationFactory<TProgram>`; eliminate Startup subclass boilerplate. | ✅ implemented  |
 | [ENV-004] | [Declarative Suite Configuration](features/env-004-declarative-suite-bootstrap.md) | `suite.config.yaml` drives full fixture setup — two sections (component + integration), two startup modes, multi-environment integration targets. | ✅ implemented  |
 | [ENV-005] | [AppLauncher](features/env-005-app-launcher.md) | Start an external process before component tests run — readiness probing, env injection, graceful teardown. Powers ENV-004 command mode. | ✅ implemented  |
 | [MOCK-001] | Mock Sequencing + Call Assertions | Sequential mock responses per call order; assert mock was called exactly N times. | — |
-| [FLOW-002] | [Test Dependency Graph](features/flow-002-test-dependency-graph.md) | Declare `depends:` between tests; skip dependents when a prerequisite fails instead of erroring. | draft |
+| [FLOW-002] | [Test Dependency Graph](features/flow-002-test-dependency-graph.md) | Declare `depends:` between tests; skip dependents when a prerequisite fails instead of erroring. | ✅ implemented |
 
 ---
 
@@ -49,7 +49,7 @@ Features that open ConfIT to new categories of testing work.
 | [TOOL-001] | OpenAPI → Test Stub Generation | Generate skeleton test files from an OpenAPI spec. Primary onboarding path for existing APIs. | — |
 | [ASSERT-004] | JSON Schema Response Validation | Validate response structure against a JSON Schema file instead of exact body matching. | — |
 | [FLOW-003] | Declarative Setup / Teardown | Define suite-level HTTP setup and teardown calls in config — no C# fixture needed. | — |
-| [FLOW-004] | Data-Driven Parameterization | Run the same test with multiple input rows defined inline in the DSL. | — |
+| [FLOW-004] | Data-Driven Parameterization | Run the same test with multiple input rows defined inline in the DSL. | ✗ won't implement — input variation is the easy half; response matching per row is the hard half and has no clean solution. Integration tests validate behavior, not data ranges — this pattern belongs at the unit layer. Risk: encourages replicating unit test style in integration tests. |
 | [INT-001] | Event / Message Queue Assertions | Assert that Kafka/RabbitMQ/SQS messages were published after an HTTP call. | — |
 | [TOOL-002] | HTML / JUnit Report Generation | Human-readable HTML report + JUnit XML for CI dashboards. | — |
 

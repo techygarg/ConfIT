@@ -54,7 +54,7 @@ public class TestHttpClient : IDisposable
 
         var token = _tokenProvider?.Token();
         if (!string.IsNullOrWhiteSpace(token))
-            _client.DefaultRequestHeaders.Add("Authorization", token);
+            _client.DefaultRequestHeaders.Add(_tokenProvider!.HeaderKey(), token);
     }
 
     public static TestHttpClient Create(string serverUrl, IAuthTokenProvider authTokenProvider)

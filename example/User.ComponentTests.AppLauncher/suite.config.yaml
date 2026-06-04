@@ -22,6 +22,11 @@ component:
       intervalMs: 500
   api:
     url: http://localhost:5170
+  auth:
+    type: oauth2-client-credentials
+    tokenUrl: http://localhost:8887/oauth/token
+    clientId: component-test-client
+    clientSecret: component-test-secret
   mock:
     url: http://localhost:8888
   folders:

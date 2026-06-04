@@ -13,7 +13,7 @@ namespace User.IntegrationTests
         {
             var cfg = SuiteConfiguration.LoadIntegration("suite.config.yaml");
             SuiteConfig    = cfg.ToSuiteConfig();
-            TestHttpClient = TestHttpClient.Create(cfg.Api.Url!, new AuthTokenProvider());
+            TestHttpClient = TestHttpClient.Create(cfg.Api.Url!, cfg.ToAuthTokenProvider());
             Filter         = cfg.ToTestFilter();
             ResultCollector = new TestResultCollector();
             Directory.CreateDirectory(Environment.CurrentDirectory + $"/{SuiteConfig.ApiResponseFolder}");

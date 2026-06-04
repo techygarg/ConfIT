@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.RegularExpressions;
+using ConfIT.Config.AuthProvider;
 using ConfIT.Constant;
 using ConfIT.Server.Boot;
 using ConfIT.Util;
@@ -12,9 +13,10 @@ namespace ConfIT.Config;
 public static class SuiteConfiguration
 {
     #region Public API
+
     public static ComponentConfig LoadComponent(string filePath)
     {
-        var root    = ParseYaml(filePath);
+        var root = ParseYaml(filePath);
         var section = RequireSection(root, "component", filePath);
 
         ResolveEnvVars(section, "component", filePath);
@@ -26,7 +28,7 @@ public static class SuiteConfiguration
 
     public static IntegrationEnvironmentConfig LoadIntegration(string filePath, string? environment = null)
     {
-        var root        = ParseYaml(filePath);
+        var root = ParseYaml(filePath);
         var integration = RequireSection(root, "integration", filePath);
 
         var activeEnv = environment
@@ -53,7 +55,8 @@ public static class SuiteConfiguration
     private static void ValidateComponent(ComponentConfig cfg, string filePath)
     {
         var mode = cfg.Startup?.Mode ?? StartupConfig.InProcessMode;
-        Validate.OneOf(mode, "component.startup.mode", filePath, StartupConfig.InProcessMode, StartupConfig.CommandMode);
+        Validate.OneOf(mode, "component.startup.mode", filePath, StartupConfig.InProcessMode,
+            StartupConfig.CommandMode);
         Validate.Required(cfg.Api?.Url, "component.api.url", filePath);
 
         if (cfg.Startup?.IsInProcess == true)
@@ -63,17 +66,19 @@ public static class SuiteConfiguration
         {
             Validate.Required(cfg.Startup.Command, "component.startup.command", filePath);
             Validate.ExactlyOneSet("component.startup.readiness", filePath,
-                ("url",  cfg.Startup.Readiness?.Url),
+                ("url", cfg.Startup.Readiness?.Url),
                 ("port", cfg.Startup.Readiness?.Port));
         }
 
         ValidateFilter(cfg.Filter, "component", filePath);
+        cfg.Auth?.ValidateAuth("component", filePath);
     }
 
     private static void ValidateIntegrationEnv(IntegrationEnvironmentConfig cfg, string env, string filePath)
     {
         Validate.Required(cfg.Api?.Url, $"integration.{env}.api.url", filePath);
         ValidateFilter(cfg.Filter, $"integration.{env}", filePath);
+        cfg.Auth?.ValidateAuth($"integration.{env}", filePath);
     }
 
     private static void ValidateFilter(FilterConfig? filter, string parent, string filePath)
@@ -143,4 +148,3 @@ public static class SuiteConfiguration
 
     #endregion
 }
-

@@ -16,6 +16,16 @@ Patterns worth preserving from past implementation sessions. Each entry is a spe
 
 ---
 
+## Config fields with no consuming extension method are inert dead code
+
+**Context:** Designing ENV-001 Declarative Auth Profiles — discovered `ApiConfig.AuthToken` was added in ENV-004 but never read by any extension method or validation path.
+
+**Pattern:** A config DTO field that is deserialized from YAML but never read downstream (no extension method, no validation, no mapping to a runtime object) has zero effect. It silently accepts user input and does nothing with it — worse than not existing because users may believe it works.
+
+**How to apply:** When adding a new config field, wire it end-to-end in the same PR — DTO field, `ResolveEnvVars` coverage, validation, and extension method mapping. If a field cannot be fully wired yet, do not add it to the DTO. When designing extensions to an existing config section, grep for all DTO fields and verify each has a consuming call before assuming they work.
+
+---
+
 ## When a pipeline step must mutate both `actual` and `expected`, inline it in `MatchResponseBody`
 
 **Context:** Designing where to call `SemanticMatcher.Apply` in ASSERT-001.

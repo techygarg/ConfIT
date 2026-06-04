@@ -23,6 +23,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="WireMock.Net" Version="2.8.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -34,6 +35,9 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="TestCase\02-user-errors.yaml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="TestCase\03-oauth2.yaml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="suite.config.yaml">

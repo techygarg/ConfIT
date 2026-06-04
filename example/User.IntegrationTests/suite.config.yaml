@@ -15,7 +15,9 @@ integration:
   qa:
     api:
       url: "https://api.qa.example.com"
-      authToken: ${QA_API_TOKEN}
+    auth:
+      type: bearer
+      token: ${QA_API_TOKEN}
     folders:
       response: ApiResponses
       requestBody: TestCase/Request

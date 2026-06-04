@@ -1,20 +1,24 @@
+using ConfIT.Config.AuthProvider;
+
 namespace ConfIT.Config;
 using Server.Boot;
 
 public sealed class ComponentConfig
 {
     public StartupConfig Startup { get; set; } = new();
-    public ApiConfig Api { get; set; } = new();
-    public MockConfig? Mock { get; set; }
+    public ApiConfig     Api     { get; set; } = new();
+    public AuthConfig?   Auth    { get; set; }
+    public MockConfig?   Mock    { get; set; }
     public FolderConfig? Folders { get; set; }
-    public FilterConfig? Filter { get; set; }
+    public FilterConfig? Filter  { get; set; }
 }
 
 public sealed class IntegrationEnvironmentConfig
 {
-    public ApiConfig Api { get; set; } = new();
+    public ApiConfig     Api     { get; set; } = new();
+    public AuthConfig?   Auth    { get; set; }
     public FolderConfig? Folders { get; set; }
-    public FilterConfig? Filter { get; set; }
+    public FilterConfig? Filter  { get; set; }
 }
 
 public sealed class StartupConfig
@@ -35,8 +39,7 @@ public sealed class StartupConfig
 
 public sealed class ApiConfig
 {
-    public string? Url       { get; set; }
-    public string? AuthToken { get; set; }
+    public string? Url { get; set; }
 }
 
 public sealed class MockConfig

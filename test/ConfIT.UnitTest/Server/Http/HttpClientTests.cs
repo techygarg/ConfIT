@@ -204,6 +204,7 @@ public class HttpClientTests
         {
             // Given
             var testApi = CreateTestApi("GET");
+            _mockAuthTokenProvider.Setup(x => x.HeaderKey()).Returns("Authorization");
             _mockAuthTokenProvider.Setup(x => x.Token()).Returns(DefaultAuthToken);
             SetupMockHandler(HttpStatusCode.OK);
 
@@ -213,6 +214,23 @@ public class HttpClientTests
             // Then
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             VerifyAuthorizationHeader(DefaultAuthToken);
+        }
+
+        [Fact]
+        public async Task Execute_WithApiKeyAuth_UsesCustomHeader()
+        {
+            // Given
+            var testApi = CreateTestApi("GET");
+            _mockAuthTokenProvider.Setup(x => x.HeaderKey()).Returns("X-API-Key");
+            _mockAuthTokenProvider.Setup(x => x.Token()).Returns("my-api-key");
+            SetupMockHandler(HttpStatusCode.OK);
+
+            // When
+            var response = await _testHttpClient.Execute(testApi);
+
+            // Then
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            VerifyHttpCallWithHeaders(new Dictionary<string, string> { { "X-API-Key", "my-api-key" } });
         }
 
         [Fact]

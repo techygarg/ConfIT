@@ -58,12 +58,18 @@ Component and integration tests share a large common surface — how tests are d
 |---|---|
 | [AppLauncher](doc/app-launcher.md) | Out-of-process startup — run any language/framework, app manages its own test environment, language-agnostic testing |
 
+### Auth
+
+| Document | What it covers |
+|---|---|
+| [Auth Profiles](doc/auth-profiles.md) | Bearer, OAuth2 client credentials, API key — declarative YAML config; custom `IAuthTokenProvider` for signing and complex flows; OAuth2 WireMock testing pattern; YAML-based header verification |
+
 ### Operations and Extension
 
 | Document | What it covers |
 |---|---|
 | [Reading Failure Output](doc/failure-output.md) | Per-field failure messages, path notation, suite summary table, debugging tips |
-| [Extending ConfIT](doc/extending-confit.md) | `IAuthTokenProvider`, `ITestOutputLogger`, `ITestProcessor` hooks, custom semantic matchers |
+| [Extending ConfIT](doc/extending-confit.md) | `ITestOutputLogger`, `ITestProcessor` hooks, custom semantic matchers |
 
 ---
 

@@ -1,4 +1,5 @@
 using ConfIT.Config;
+using ConfIT.Config.AuthProvider;
 using ConfIT.Server.Boot;
 using static ConfIT.UnitTest.Config.ConfigTestHelper;
 
@@ -109,8 +110,7 @@ public class SuiteConfigurationLoadComponentTests
                          component:
                            startup:
                              settings: s.json
-                           api:
-                             authToken: tok
+                           api: {}
                          """);
         try
         {
@@ -333,7 +333,7 @@ public class SuiteConfigurationLoadIntegrationTests
     }
 
     [Fact]
-    public void LoadIntegration_EnvVarToken_Resolved()
+    public void LoadIntegration_BearerAuthEnvVar_Resolved()
     {
         Environment.SetEnvironmentVariable("QA_API_TOKEN_TEST", "my-secret");
         var path = Write("""
@@ -342,12 +342,16 @@ public class SuiteConfigurationLoadIntegrationTests
                            qa:
                              api:
                                url: http://qa.internal
-                               authToken: ${QA_API_TOKEN_TEST}
+                             auth:
+                               type: bearer
+                               token: ${QA_API_TOKEN_TEST}
                          """);
         try
         {
             var cfg = SuiteConfiguration.LoadIntegration(path);
-            Assert.Equal("my-secret", cfg.Api.AuthToken);
+            Assert.NotNull(cfg.Auth);
+            Assert.Equal("bearer", cfg.Auth!.Type);
+            Assert.Equal("my-secret", cfg.Auth.Token);
         }
         finally
         {
@@ -424,6 +428,162 @@ public class SuiteConfigurationExtensionTests
             Startup = new StartupConfig { Mode = "in-process" }
         };
         Assert.Throws<InvalidOperationException>(() => cfg.ToAppLauncherConfig());
+    }
+}
+
+[Collection("SuiteConfiguration")]
+public class SuiteConfigurationAuthValidationTests
+{
+    [Fact]
+    public void LoadComponent_BearerAuthMissingToken_Throws()
+    {
+        var path = Write("""
+                         component:
+                           startup:
+                             settings: s.json
+                           api:
+                             url: http://localhost
+                           auth:
+                             type: bearer
+                         """);
+        try
+        {
+            var ex = Assert.Throws<InvalidDataException>(() => SuiteConfiguration.LoadComponent(path));
+            Assert.Contains("component.auth.token", ex.Message);
+        }
+        finally { Cleanup(path); }
+    }
+
+    [Fact]
+    public void LoadComponent_OAuth2MissingClientSecret_Throws()
+    {
+        var path = Write("""
+                         component:
+                           startup:
+                             settings: s.json
+                           api:
+                             url: http://localhost
+                           auth:
+                             type: oauth2-client-credentials
+                             tokenUrl: https://auth/token
+                             clientId: my-id
+                         """);
+        try
+        {
+            var ex = Assert.Throws<InvalidDataException>(() => SuiteConfiguration.LoadComponent(path));
+            Assert.Contains("component.auth.clientSecret", ex.Message);
+        }
+        finally { Cleanup(path); }
+    }
+
+    [Fact]
+    public void LoadComponent_ApiKeyMissingHeaderKey_Throws()
+    {
+        var path = Write("""
+                         component:
+                           startup:
+                             settings: s.json
+                           api:
+                             url: http://localhost
+                           auth:
+                             type: api-key
+                             value: my-key
+                         """);
+        try
+        {
+            var ex = Assert.Throws<InvalidDataException>(() => SuiteConfiguration.LoadComponent(path));
+            Assert.Contains("component.auth.headerKey", ex.Message);
+        }
+        finally { Cleanup(path); }
+    }
+
+    [Fact]
+    public void LoadComponent_UnknownAuthType_Throws()
+    {
+        var path = Write("""
+                         component:
+                           startup:
+                             settings: s.json
+                           api:
+                             url: http://localhost
+                           auth:
+                             type: digest
+                         """);
+        try
+        {
+            Assert.Throws<InvalidDataException>(() => SuiteConfiguration.LoadComponent(path));
+        }
+        finally { Cleanup(path); }
+    }
+}
+
+[Collection("SuiteConfiguration")]
+public class SuiteConfigurationAuthExtensionTests
+{
+    [Fact]
+    public void ToAuthTokenProvider_NoAuthBlock_ReturnsNull()
+    {
+        var cfg = new ComponentConfig { Api = new ApiConfig { Url = "http://localhost" } };
+        Assert.Null(cfg.ToAuthTokenProvider());
+    }
+
+    [Fact]
+    public void ToAuthTokenProvider_Bearer_ReturnsBearerProvider()
+    {
+        var cfg = new ComponentConfig
+        {
+            Api  = new ApiConfig { Url = "http://localhost" },
+            Auth = new AuthConfig { Type = "bearer", Token = "my-token" }
+        };
+        var provider = cfg.ToAuthTokenProvider();
+        Assert.NotNull(provider);
+        Assert.Equal("Authorization", provider!.HeaderKey());
+        Assert.Equal("Bearer my-token", provider.Token());
+    }
+
+    [Fact]
+    public void ToAuthTokenProvider_BearerWithCustomHeaderKey_UsesCustomKey()
+    {
+        var cfg = new ComponentConfig
+        {
+            Api  = new ApiConfig { Url = "http://localhost" },
+            Auth = new AuthConfig { Type = "bearer", Token = "tok", HeaderKey = "X-Auth" }
+        };
+        var provider = cfg.ToAuthTokenProvider();
+        Assert.Equal("X-Auth", provider!.HeaderKey());
+    }
+
+    [Fact]
+    public void ToAuthTokenProvider_ApiKey_ReturnsApiKeyProvider()
+    {
+        var cfg = new ComponentConfig
+        {
+            Api  = new ApiConfig { Url = "http://localhost" },
+            Auth = new AuthConfig { Type = "api-key", HeaderKey = "X-API-Key", Value = "secret" }
+        };
+        var provider = cfg.ToAuthTokenProvider();
+        Assert.NotNull(provider);
+        Assert.Equal("X-API-Key", provider!.HeaderKey());
+        Assert.Equal("secret", provider.Token());
+    }
+
+    [Fact]
+    public void ToAuthTokenProvider_IntegrationConfig_NoAuthBlock_ReturnsNull()
+    {
+        var cfg = new IntegrationEnvironmentConfig { Api = new ApiConfig { Url = "http://localhost" } };
+        Assert.Null(cfg.ToAuthTokenProvider());
+    }
+
+    [Fact]
+    public void ToAuthTokenProvider_IntegrationConfig_Bearer_ReturnsBearerProvider()
+    {
+        var cfg = new IntegrationEnvironmentConfig
+        {
+            Api  = new ApiConfig { Url = "http://localhost" },
+            Auth = new AuthConfig { Type = "bearer", Token = "integration-token" }
+        };
+        var provider = cfg.ToAuthTokenProvider();
+        Assert.Equal("Bearer integration-token", provider!.Token());
     }
 }
 

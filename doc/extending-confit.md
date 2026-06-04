@@ -6,48 +6,9 @@ Reach for the DSL first. Reach for these when the DSL can't express it.
 
 ---
 
-## Injecting auth into every request — `IAuthTokenProvider`
+## Auth — declarative and custom
 
-If your service requires an `Authorization` header on every request, implement `IAuthTokenProvider` and pass it to `TestHttpClient.Create`. ConfIT calls `Token()` before each HTTP request and adds the return value directly as the `Authorization` header value.
-
-**Interface:**
-
-```csharp
-public interface IAuthTokenProvider
-{
-    string Token();
-}
-```
-
-The return value is used verbatim as the header value — return the full header string, including the scheme prefix.
-
-**Implementation example — bearer token from an environment variable:**
-
-```csharp
-public class AuthTokenProvider : IAuthTokenProvider
-{
-    public string Token()
-    {
-        var token = Environment.GetEnvironmentVariable("API_TOKEN")
-            ?? throw new InvalidOperationException("API_TOKEN is not set");
-        return $"Bearer {token}";
-    }
-}
-```
-
-**Wiring in fixture setup:**
-
-```csharp
-TestHttpClient = TestHttpClient.Create(suiteConfig.ApiServerUrl, new AuthTokenProvider());
-```
-
-If your suite does not require auth, pass `null` for the provider:
-
-```csharp
-TestHttpClient = TestHttpClient.Create(suiteConfig.ApiServerUrl, null);
-```
-
-📄 Live example: [`User.IntegrationTests/AuthTokenProvider.cs`](../example/User.IntegrationTests/AuthTokenProvider.cs)
+See **[Auth Profiles](./auth-profiles.md)** for the complete auth reference: bearer, OAuth2 client credentials, API key, custom header keys, OAuth2 WireMock testing pattern, YAML-based header verification, `IAuthTokenProvider` interface, custom C# implementations, and when to use each approach.
 
 ---
 

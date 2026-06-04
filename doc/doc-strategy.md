@@ -66,6 +66,7 @@ Impact on docs: `suite-setup.md` must be substantially rewritten. The config-dri
 | `suite-setup.md` | ✅ complete | How to install, configure, and wire ConfIT — both config-driven and manual paths |
 | `test-execution-flow.md` | ✅ complete | What happens at runtime — fixture startup, execution loop, suite summary |
 | `app-launcher.md` | ✅ complete | Out-of-process startup, language-agnostic scope, app test-env responsibility |
+| `auth-profiles.md` | ✅ complete | Bearer, OAuth2, API key declarative auth; custom IAuthTokenProvider; WireMock OAuth2 testing; YAML header verification |
 | `test-file-format.md` | ✅ no change | Full DSL reference — all fields, JSON and YAML |
 | `matchers-and-patterns.md` | ✅ no change | Asserting on dynamic fields without writing code |
 | `variable-extraction-and-injection.md` | ✅ no change | Passing data between tests declaratively |
@@ -77,6 +78,7 @@ Impact on docs: `suite-setup.md` must be substantially rewritten. The config-dri
 | `mock-interactions.md` | ✅ no change | Declaring WireMock stubs inline, `bodyFromFile`, request/response matching |
 | `test-filtering.md` | ✅ no change | `RUN_TESTS`, `RUN_POOLS`, `TestFilter` factory methods, CI usage |
 | `test-dependency-graph.md` | ✅ complete | `depends:` field, skip-not-fail, cascading, load-time validation |
+| `auth-profiles.md` | ✅ complete | Single auth reference — all types, WireMock OAuth2 pattern, IAuthTokenProvider C# |
 
 ### Tier 3 — Reference (for advanced use or extension)
 

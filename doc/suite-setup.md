@@ -74,7 +74,9 @@ integration:
   qa:
     api:
       url: ${QA_API_URL}
-      authToken: ${QA_API_TOKEN}
+    auth:
+      type: bearer
+      token: ${QA_API_TOKEN}
     folders:
       response: ApiResponses
       requestBody: TestCase/Request
@@ -91,7 +93,9 @@ Any scalar string value can reference an environment variable with `${VAR_NAME}`
 ```yaml
 api:
   url: ${QA_API_URL}
-  authToken: ${QA_API_TOKEN}
+auth:
+  type: bearer
+  token: ${QA_API_TOKEN}
 ```
 
 #### Copy to output
@@ -160,7 +164,7 @@ public class TestSuiteFixture : IDisposable
     {
         var cfg = SuiteConfiguration.LoadIntegration("suite.config.yaml");
         SuiteConfig     = cfg.ToSuiteConfig();
-        TestHttpClient  = TestHttpClient.Create(cfg.Api.Url!, new AuthTokenProvider());
+        TestHttpClient  = TestHttpClient.Create(cfg.Api.Url!, cfg.ToAuthTokenProvider());
         Filter          = cfg.ToTestFilter();
         ResultCollector = new TestResultCollector();
         Directory.CreateDirectory(
@@ -190,6 +194,22 @@ dotnet test                                        # falls back to 'default' (lo
 ```
 
 📄 Live example: [`User.IntegrationTests/TestSuiteFixture.cs`](../example/User.IntegrationTests/TestSuiteFixture.cs)
+
+---
+
+### Auth Profiles
+
+Add an `auth:` block at the `component` or environment level. ConfIT injects the configured header on every request — no C# required for bearer, OAuth2 client credentials, and API key auth.
+
+```yaml
+auth:
+  type: bearer
+  token: ${API_TOKEN}
+```
+
+Pass `cfg.ToAuthTokenProvider()` to `TestHttpClient.Create` in your fixture. For full reference — all three auth types, custom header keys, OAuth2 WireMock testing, YAML-based header verification, and migration from C# providers — see **[Auth Profiles](./auth-profiles.md)**.
+
+📄 Live example: [`User.IntegrationTests/suite.config.yaml`](../example/User.IntegrationTests/suite.config.yaml)
 
 ---
 

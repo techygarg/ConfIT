@@ -1,3 +1,6 @@
+using ConfIT.Config;
+using ConfIT.Config.AuthProvider;
+using ConfIT.Contract;
 using ConfIT.Server.Boot;
 
 namespace ConfIT.Extension;
@@ -50,6 +53,25 @@ public static class SuiteConfigurationExtensions
             StopCommand = config.Startup.StopCommand,
             Readiness   = config.Startup.Readiness!,
             Env         = config.Startup.Env ?? new Dictionary<string, string>()
+        };
+    }
+
+    public static IAuthTokenProvider? ToAuthTokenProvider(this ComponentConfig config) =>
+        BuildAuthProvider(config.Auth);
+
+    public static IAuthTokenProvider? ToAuthTokenProvider(this IntegrationEnvironmentConfig config) =>
+        BuildAuthProvider(config.Auth);
+
+    private static IAuthTokenProvider? BuildAuthProvider(AuthConfig? auth)
+    {
+        if (auth is null) return null;
+        return auth.Type switch
+        {
+            "bearer"                    => new BearerAuthTokenProvider(auth.Token!, auth.HeaderKey),
+            "oauth2-client-credentials" => new OAuth2ClientCredentialsProvider(auth),
+            "api-key"                   => new ApiKeyAuthTokenProvider(auth.HeaderKey!, auth.Value!),
+            _                           => throw new InvalidOperationException(
+                                               $"Unknown auth type '{auth.Type}'.")
         };
     }
 
