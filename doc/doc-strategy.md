@@ -8,125 +8,100 @@ This file tracks which documents exist, which are missing, and the conventions t
 
 | File | Status | What it covers |
 |---|---|---|
-| `matchers-and-patterns.md` | ✅ complete | `ignore`, `pattern`, `semantic`, nested paths, custom matchers |
-| `variable-extraction-and-injection.md` | ✅ complete | `extract`, `{{inject}}`, `${ENV}`, error cases, migration from `ITestProcessor` |
-| `test-dependency-graph.md` | ✅ complete | `depends:` field, skip-not-fail semantics, cascading, load-time validation |
-| `test-file-format.md` | ✅ complete | DSL structure, all fields including `depends:`, JSON and YAML format |
-| `suite-setup.md` | ⚠️ major update needed | Manual fixture wiring only — pre-dates config-driven setup and AppLauncher |
-| `mock-interactions.md` | ✅ complete | WireMock stubs, request matching, YAML anchor reuse |
-| `test-filtering.md` | ✅ complete | RUN_POOLS, RUN_TESTS, CI patterns |
-| `extending-confit.md` | ⚠️ minor update needed | `ITestProcessor` section references old `TestServerStartup` pattern (deleted) |
-| `failure-output.md` | ✅ complete | Field-level failure messages, path notation, suite summary, debugging tips |
-| `app-launcher.md` | ✅ complete | Out-of-process startup, language-agnostic testing, application responsibility |
-| `test-execution-flow.md` | ✅ complete | ASCII flow diagrams — component (in-process), component (command), integration, execution loop |
+| `suite-setup.md` | ✅ current | `SuiteBootstrapper` (primary), adapter chain, manual wiring, shared concepts |
+| `app-launcher.md` | ✅ current | Command mode, language-agnostic testing, self-seeding, readiness probes, direct use |
+| `auth-profiles.md` | ✅ current | Bearer, OAuth2, API key, OAuth2 stub pattern, custom `IAuthTokenProvider` |
+| `extending-confit.md` | ✅ current | `ITestOutputLogger`, `ITestProcessor`/factory, `CustomMatchers`, factory + bootstrapper patterns |
+| `test-execution-flow.md` | ✅ current | ASCII flow diagrams — fixture startup, execution loop, suite summary |
+| `matchers-and-patterns.md` | ✅ current | `ignore`, `pattern`, `semantic`, nested paths, custom matchers |
+| `variable-extraction-and-injection.md` | ✅ current | `extract`, `{{inject}}`, `${ENV}`, error cases |
+| `test-dependency-graph.md` | ✅ current | `depends:` field, skip-not-fail semantics, cascading, load-time validation |
+| `test-file-format.md` | ✅ current | DSL structure, all fields including `depends:`, JSON and YAML format |
+| `mock-interactions.md` | ✅ current | WireMock stubs, request matching, YAML anchor reuse |
+| `test-filtering.md` | ✅ current | RUN_POOLS, RUN_TESTS, CI patterns |
+| `failure-output.md` | ✅ current | Field-level failure messages, path notation, suite summary, debugging tips |
 | `doc-strategy.md` | ✅ this file | Planning only |
 
 ---
 
-## What Changed Since Last Doc Round
+## What Changed in the Architecture Transformation (Buckets 1–4 + SuiteBootstrapper)
 
-Three new features shipped (ENV-003, ENV-004, ENV-005) that significantly change the onboarding story and expand ConfIT's scope.
+### Bucket 1 — Structural Skeleton (namespace reorganisation)
 
-### ENV-003 — Modern Test Host Initialization
+Key namespace changes that affect documentation:
+- `ConfIT.Server.Dto` → `ConfIT.Model`
+- `ConfIT.Server.Http` → `ConfIT.Runner.Http`
+- `ConfIT.Server.Boot` → `ConfIT.Runner.Boot`
+- `ConfIT.Util` → `ConfIT.Matching`, `ConfIT.Reader`, `ConfIT.Reporting`
+- `IntegrationEnvironmentConfig` → `IntegrationConfig`
 
-`TestSuiteInitializer` was rewritten to use `WebApplicationFactory<TProgram>`. The old `TStartup` generic pattern (which required subclassing `Startup` as `TestServerStartup`) is gone. The new API uses a callback for service overrides and `Startup` (not a subclass) as the type argument.
+These are internal library types — consumers access them only via extension methods and the bootstrapper, so docs show minimal type names.
 
-Impact on docs: `suite-setup.md` shows the old pattern. Must be updated.
+### Bucket 2 — Clean Data Model
 
-### ENV-004 — Declarative Suite Configuration
+- `BaseRequestResponse` renamed to `HttpPayload`
+- `Initialize()` removed from all model types — `TestCaseResolver` handles file loading
+- `TestFilter.Tags` / `TestNames` changed from `List<string>` to `IReadOnlyList<string>`
+- `TestCase`, `ApiInteraction`, `HttpTestRequest`, `HttpTestResponse` are now pure data — no file I/O
 
-`SuiteConfiguration.LoadComponent(filePath)` and `LoadIntegration(filePath, env?)` read a `suite.config.yaml` file and return a typed config object. Extension methods `ToSuiteConfig()`, `ToTestFilter()`, `ToAppLauncherConfig()` project it to ConfIT objects. This replaces 60-80 lines of fixture boilerplate.
+Consumer-visible impact: none in normal usage (extension method `ToTestCase()` still works identically).
 
-The `integration` section supports named environments (`local`, `qa`, `staging`) — `TEST_ENVIRONMENT` env var selects which one runs. This changes how integration tests are configured for multiple targets.
+### Bucket 3 — Execution Pipeline Hardening
 
-Impact on docs: `suite-setup.md` must be substantially rewritten. The config-driven path is now the RECOMMENDED onboarding path — the manual wiring remains documented as the advanced/custom path.
+- `TestSuiteContext` record introduced — single object that bundles `HttpClient`, `Config`, `ProcessorFactory`, `Filter`, `ResultCollector`
+- `BaseTest` now has `protected BaseTest(TestSuiteContext context, ITestOutputLogger? logger)` as the primary constructor; the 6-param constructor is kept as a delegating overload
+- `BaseTest.Config` changed from `protected static` to `protected` (instance property via `_config`)
+- `TestHttpClient` now builds per-request `HttpRequestMessage` instead of mutating `DefaultRequestHeaders`
+- `AuthConfig.ValidateAuth()` moved into `SuiteConfiguration`
 
-### ENV-005 — AppLauncher
+Consumer-visible impact: test class constructor simplified to `base(fixture.Context, logger)`.
 
-`AppLauncher` starts an external process (any shell command), waits for a readiness probe (HTTP 2xx or TCP port), and stops the process on dispose. Combined with `suite.config.yaml` (`startup.mode: command`), it enables out-of-process component testing.
+### Bucket 4 — API Surface Polish
 
-**This is the most significant capability shift.** Key aspects that must be documented:
+- `MatchResult` record introduced — `ResultMatcher.MatchResponseBody` returns `MatchResult` instead of throwing; `BaseTest.Verify` owns the assertion
+- `SemanticMatcher.Apply` returns `string?` (failure description) instead of throwing via FluentAssertions
+- `ITestReporter` skeleton added to `Reporting/`
 
-1. **Language-agnostic testing**: Because AppLauncher runs a shell command, ConfIT can now test APIs written in Go, Node.js, Python, or any other stack — not just .NET. The test definitions (JSON/YAML), matchers, mocks, and assertions work identically regardless of what's running on the other end.
+Consumer-visible impact: none. `MatchResult` is an internal decoupling; the assertion behaviour from the test's perspective is identical.
 
-2. **Application responsibility for test environment**: In AppLauncher mode, the API manages its own test configuration through standard mechanisms (environment variables, launch profiles, config files). ConfIT does not reach inside the app to override services or seed data. The app responds to `ASPNETCORE_ENVIRONMENT=ComponentTest` (or equivalent) by configuring itself appropriately — InMemory DB, pointing to WireMock, etc.
+### SuiteBootstrapper
 
-3. **Self-seeding pattern**: The app seeds its own test data on startup when in the component test environment. This eliminates the `InitializeDb` call in the fixture (which required a reference to the app's internals). Tests that need data create it themselves via the API; error/validation tests need no setup.
+New types:
+- `SuiteBootstrapper` — static factory with `ForComponent<TStartup>`, `ForCommand`, `ForIntegration`
+- `BootstrappedSuite` — disposable wrapper holding `TestSuiteContext Context` and `IServiceProvider? Services`
 
-4. **Comparison with in-process mode**: Both modes produce identical test execution. In-process is faster and gives a fresh DB per run automatically. Command/AppLauncher is language-agnostic and keeps the test project completely decoupled from app internals.
+Consumer impact: fixtures shrink from 15–28 lines to 5–10. `SuiteBootstrapper` is the new recommended primary path. The adapter chain (`ToSuiteConfig()` etc.) and manual wiring remain fully supported.
 
 ---
 
-## Document Inventory — What Should Exist
+## Document Inventory — Tier Structure
 
 ### Tier 1 — Foundation (everyone needs these)
 
-| Document | Status | One-liner |
-|---|---|---|
-| `suite-setup.md` | ✅ complete | How to install, configure, and wire ConfIT — both config-driven and manual paths |
-| `test-execution-flow.md` | ✅ complete | What happens at runtime — fixture startup, execution loop, suite summary |
-| `app-launcher.md` | ✅ complete | Out-of-process startup, language-agnostic scope, app test-env responsibility |
-| `auth-profiles.md` | ✅ complete | Bearer, OAuth2, API key declarative auth; custom IAuthTokenProvider; WireMock OAuth2 testing; YAML header verification |
-| `test-file-format.md` | ✅ no change | Full DSL reference — all fields, JSON and YAML |
-| `matchers-and-patterns.md` | ✅ no change | Asserting on dynamic fields without writing code |
-| `variable-extraction-and-injection.md` | ✅ no change | Passing data between tests declaratively |
+| Document | One-liner |
+|---|---|
+| `suite-setup.md` | How to wire a ConfIT suite — bootstrapped (primary), adapter chain, manual |
+| `test-execution-flow.md` | What happens at runtime — fixture startup, execution loop, suite summary |
+| `app-launcher.md` | Out-of-process startup, language-agnostic scope, self-seeding, AppLauncher direct use |
+| `auth-profiles.md` | All auth types, OAuth2 component stub pattern, custom `IAuthTokenProvider` |
+| `test-file-format.md` | Full DSL reference — all fields, JSON and YAML |
+| `matchers-and-patterns.md` | Asserting on dynamic fields without writing code |
+| `variable-extraction-and-injection.md` | Passing data between tests declaratively |
 
-### Tier 2 — Features (go deeper once foundation is read)
+### Tier 2 — Features
 
-| Document | Status | One-liner |
-|---|---|---|
-| `mock-interactions.md` | ✅ no change | Declaring WireMock stubs inline, `bodyFromFile`, request/response matching |
-| `test-filtering.md` | ✅ no change | `RUN_TESTS`, `RUN_POOLS`, `TestFilter` factory methods, CI usage |
-| `test-dependency-graph.md` | ✅ complete | `depends:` field, skip-not-fail, cascading, load-time validation |
-| `auth-profiles.md` | ✅ complete | Single auth reference — all types, WireMock OAuth2 pattern, IAuthTokenProvider C# |
+| Document | One-liner |
+|---|---|
+| `mock-interactions.md` | WireMock stubs inline, `bodyFromFile`, request/response matching |
+| `test-filtering.md` | `RUN_TESTS`, `RUN_POOLS`, `TestFilter` factory methods, CI usage |
+| `test-dependency-graph.md` | `depends:` field, skip-not-fail, cascading, load-time validation |
 
-### Tier 3 — Reference (for advanced use or extension)
+### Tier 3 — Reference
 
-| Document | Status | One-liner |
-|---|---|---|
-| `extending-confit.md` | ⚠️ minor update | Remove `TestServerStartup` example; update `TestSuiteInitializer` snippet to new API |
-| `failure-output.md` | ✅ no change | Reading per-field failure messages, debugging a failing suite |
-
----
-
-## `suite-setup.md` Rewrite Plan
-
-The doc must now present two distinct onboarding paths clearly:
-
-**Path A — Config-driven (recommended for most teams):**
-1. Drop a `suite.config.yaml` in your test project
-2. Call `SuiteConfiguration.LoadComponent` or `LoadIntegration` in the fixture
-3. Use `ToSuiteConfig()`, `ToTestFilter()`, etc. to get ConfIT objects
-4. For component tests: choose `startup.mode: in-process` or `startup.mode: command`
-
-**Path B — Manual wiring (for custom scenarios or full control):**
-- The current content — still valid, just clearly labelled as the advanced/custom path
-
-The `suite.config.yaml` format should be shown for both in-process and command modes. The multi-environment integration config (`local`, `qa`, `staging`) should be shown in the integration section.
-
-The `TestSuiteInitializer` entry should be updated: `TProgram` is now the entry point class (typically `Startup` for Startup-class apps, `Program` with `public partial class Program {}` for minimal-hosting apps). The `TestServerStartup` subclass pattern is gone.
-
----
-
-## `app-launcher.md` New Doc Plan
-
-Sections:
-1. **What AppLauncher does** — starts a process, probes readiness, stops on dispose. One paragraph.
-2. **Why it matters: language-agnostic testing** — the API can be written in any language. ConfIT tests HTTP; it doesn't care what's serving it.
-3. **The two modes compared** — in-process vs command mode side-by-side. When to use each.
-4. **How the app manages its test environment** — the app reads `ASPNETCORE_ENVIRONMENT` (or equivalent), loads test-specific config, sets up InMemory DB, points to WireMock. ConfIT doesn't reach inside the app.
-5. **The self-seeding pattern** — tests create their own data via the API rather than depending on pre-seeded state; error tests need nothing. Why this is better architecture for component tests.
-6. **`suite.config.yaml` command mode** — the YAML config, what each field does, readiness probe options (HTTP vs TCP).
-7. **Running with `make component.applauncher`** — how the Makefile pre-builds and runs.
-8. **Live example** — links to `User.ComponentTests.AppLauncher`.
-
----
-
-## `extending-confit.md` Minor Update Plan
-
-One targeted change: the `TestSuiteInitializer` code snippet in the fixture setup section shows the old `TestServerStartup` subclass pattern. Replace with the current pattern: `new TestSuiteInitializer<Startup>("appsettings.Tests.json")` and note that service overrides go in the optional `Action<IServiceCollection>` callback.
-
-The `IAuthTokenProvider`, `ITestOutputLogger`, `ITestProcessor`, and custom matchers sections are unchanged.
+| Document | One-liner |
+|---|---|
+| `extending-confit.md` | Extension points: `ITestOutputLogger`, `ITestProcessor`, `CustomMatchers`, `ITestProcessorFactory` with bootstrapper |
+| `failure-output.md` | Reading per-field failure messages, debugging a failing suite |
 
 ---
 
@@ -143,3 +118,5 @@ The `IAuthTokenProvider`, `ITestOutputLogger`, `ITestProcessor`, and custom matc
 **Code snippet format.** Use JSON as the primary snippet format. When YAML is relevant, show it as an alternative after the JSON, not instead of it. For `suite.config.yaml`, YAML is primary.
 
 **Length target.** Each doc should be readable in under 10 minutes. If a page scrolls longer than `matchers-and-patterns.md`, consider splitting.
+
+**Bootstrapper is the recommended path.** In code examples, show `SuiteBootstrapper` by default. Show the adapter chain only in the "custom wiring" sections. Show manual `SuiteConfig` construction only in the "manual wiring / advanced" sections.

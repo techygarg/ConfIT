@@ -308,7 +308,7 @@ Processing order: `semantic` fields are validated and removed first, then `patte
 
 ## Custom matchers
 
-For domain-specific assertions (e.g., proprietary ID formats, enum values), register additional matchers via `SuiteConfig.CustomMatchers` in your test fixture. Custom matchers follow the same `name` or `name(param)` syntax in the DSL.
+For domain-specific assertions (e.g., proprietary ID formats, enum values), register additional matchers in your fixture. Custom matchers follow the same `name` or `name(param)` syntax in the DSL.
 
 **`SemanticMatcherFunc` signature:**
 
@@ -317,13 +317,11 @@ For domain-specific assertions (e.g., proprietary ID formats, enum values), regi
 public delegate string? SemanticMatcherFunc(JToken value, string? parameter);
 ```
 
-**Registration in fixture setup:**
+**Registration in fixture setup (bootstrapped path):**
 
 ```csharp
-SuiteConfig = new SuiteConfig
-{
-    ApiServerUrl = "http://localhost",
-    CustomMatchers = new Dictionary<string, SemanticMatcherFunc>
+_suite = SuiteBootstrapper.ForIntegration("suite.config.yaml",
+    customMatchers: new Dictionary<string, SemanticMatcherFunc>
     {
         ["isDomainId"] = (token, _) =>
             token.Value<string>()?.StartsWith("DOM-") == true

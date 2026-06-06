@@ -28,7 +28,7 @@ Component and integration tests share a large common surface — how tests are d
 
 ## Getting Started
 
-→ **[Suite Setup](doc/suite-setup.md)** — install the package, configure via `suite.config.yaml` or manual wiring, choose your startup mode (in-process or AppLauncher). Start here.
+→ **[Suite Setup](doc/suite-setup.md)** — install the package, write a `suite.config.yaml`, and call `SuiteBootstrapper.ForComponent` / `ForIntegration` / `ForCommand` — that's the fixture. Start here.
 
 → **[Test Execution Flow](doc/test-execution-flow.md)** — ASCII flow diagrams showing what happens at runtime across all three suite types.
 
@@ -69,7 +69,7 @@ Component and integration tests share a large common surface — how tests are d
 | Document | What it covers |
 |---|---|
 | [Reading Failure Output](doc/failure-output.md) | Per-field failure messages, path notation, suite summary table, debugging tips |
-| [Extending ConfIT](doc/extending-confit.md) | `ITestOutputLogger`, `ITestProcessor` hooks, custom semantic matchers |
+| [Extending ConfIT](doc/extending-confit.md) | `ITestOutputLogger`, `ITestProcessor` / `ITestProcessorFactory` hooks, custom semantic matchers, `IAuthTokenProvider` |
 
 ---
 

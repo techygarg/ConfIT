@@ -13,13 +13,7 @@ namespace User.ComponentTests.Launcher
     public class UserComponentTests : BaseTest, IClassFixture<TestSuiteFixture>
     {
         public UserComponentTests(TestSuiteFixture fixture, ITestOutputHelper output)
-            : base(
-                fixture.TestHttpClient,
-                fixture.SuiteConfig,
-                null,
-                null,
-                fixture.Filter,
-                fixture.ResultCollector)
+            : base(fixture.Context, null)
         {
         }
 

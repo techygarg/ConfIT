@@ -163,44 +163,27 @@ The `command` path is relative to the test output directory (e.g., `bin/Debug/ne
 
 ### Step 4 — Write the fixture
 
-The fixture has no reference to the application project. It loads config, starts the launcher, and wires up the HTTP client.
+The fixture has no reference to the application project. `SuiteBootstrapper.ForCommand` reads the config, starts the launcher, builds the HTTP client, and manages the full lifecycle:
 
 ```csharp
 public class TestSuiteFixture : IDisposable
 {
-    private readonly AppLauncher _launcher;
+    private readonly BootstrappedSuite _suite;
 
-    public TestSuiteFixture()
-    {
-        var cfg = SuiteConfiguration.LoadComponent("suite.config.yaml");
+    public TestSuiteFixture() =>
+        _suite = SuiteBootstrapper.ForCommand("suite.config.yaml");
 
-        _launcher       = AppLauncher.Start(cfg.ToAppLauncherConfig());
-        TestHttpClient  = TestHttpClient.Create(cfg.Api.Url!, null);
-        SuiteConfig     = cfg.ToSuiteConfig();
-        SuiteConfig.ApiResponseFolder = EnsureDirectory(cfg.Folders?.Response ?? "responses");
-        Filter          = cfg.ToTestFilter();
-        ResultCollector = new TestResultCollector();
-    }
+    public TestSuiteContext Context => _suite.Context;
 
-    public TestHttpClient       TestHttpClient  { get; }
-    public SuiteConfig          SuiteConfig     { get; }
-    public TestFilter           Filter          { get; }
-    public TestResultCollector  ResultCollector { get; }
-
-    private static string EnsureDirectory(string path) =>
-        Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, path)).FullName;
-
-    public void Dispose()
-    {
-        _launcher.Dispose();
-        ResultCollector.Dispose();
-    }
+    public void Dispose() => _suite.Dispose();
 }
 ```
 
-`AppLauncher.Start` blocks until the readiness probe passes (or throws `AppLauncherException` on timeout or premature exit). `Dispose` kills the process and waits up to `GracePeriodSeconds` (default: 5 s) for it to exit.
+`ForCommand` blocks until the readiness probe passes (or throws `AppLauncherException` on timeout or premature exit). `Dispose` shuts down the process, waits for port release, then prints the suite summary.
 
-Note there is no `TestSuiteInitializer`, no `InitializeDb`, and no reference to `User.Api` anywhere in the fixture or project file.
+There is no `TestSuiteInitializer`, no `InitializeDb`, and no reference to `User.Api` anywhere in the fixture or project file.
+
+If you need to pass `CustomMatchers` or a non-standard config source, use the [adapter chain pattern](./suite-setup.md#adapter-chain-custom-wiring) with `AppLauncher.Start(cfg.ToAppLauncherConfig())` directly instead of `ForCommand`.
 
 📄 Live example: [`User.ComponentTests.AppLauncher/SetUp/TestSuiteFixture.cs`](../example/User.ComponentTests.AppLauncher/SetUp/TestSuiteFixture.cs)
 

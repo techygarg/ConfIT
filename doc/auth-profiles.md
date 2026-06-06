@@ -6,7 +6,7 @@ ConfIT supports three declarative auth types — bearer token, OAuth2 client cre
 
 ## How It Works
 
-Auth is declared as an `auth:` block in the `component` or `integration` environment section of `suite.config.yaml`. At suite startup, `SuiteConfiguration.Load*` reads the block, resolves `${ENV_VAR}` references, and validates required fields. When the fixture calls `cfg.ToAuthTokenProvider()`, ConfIT constructs the appropriate internal provider. That provider is passed to `TestHttpClient.Create` — every HTTP request the suite sends automatically carries the configured header and value.
+Auth is declared as an `auth:` block in the `component` or `integration` environment section of `suite.config.yaml`. `SuiteBootstrapper` (or `SuiteConfiguration.Load*` in the adapter-chain path) reads the block, resolves `${ENV_VAR}` references, validates required fields, and constructs the appropriate internal provider. That provider is wired into `TestHttpClient` — every HTTP request the suite sends automatically carries the configured header and value.
 
 Under the hood, all three auth types implement the `IAuthTokenProvider` interface:
 
@@ -183,12 +183,13 @@ The solution is to start a dedicated WireMock server for the token endpoint (por
 ```csharp
 public class TestSuiteFixture : IDisposable
 {
-    private readonly AppLauncher    _launcher;
-    private readonly WireMockServer _oauthServer;
+    private readonly BootstrappedSuite _suite;
+    private readonly WireMockServer    _oauthServer;
 
     public TestSuiteFixture()
     {
-        // Must start before cfg.ToAuthTokenProvider() — token is fetched at construction time.
+        // Must start before ForCommand() — OAuth2ClientCredentialsProvider fetches
+        // the token eagerly in its constructor, so the stub must be ready first.
         _oauthServer = WireMockServer.Start(8887);
         _oauthServer
             .Given(Request.Create().WithPath("/oauth/token").UsingPost())
@@ -197,23 +198,17 @@ public class TestSuiteFixture : IDisposable
                 .WithBody("""{"access_token":"component-test-token","token_type":"Bearer"}""")
                 .WithHeader("Content-Type", "application/json"));
 
-        var cfg = SuiteConfiguration.LoadComponent("suite.config.yaml");
-        _launcher = AppLauncher.Start(cfg.ToAppLauncherConfig());
-
-        var authProvider = cfg.ToAuthTokenProvider()
-            ?? throw new InvalidOperationException("No auth block found in suite.config.yaml.");
-
-        TestHttpClient  = TestHttpClient.Create(cfg.Api.Url!, authProvider);
-        SuiteConfig     = cfg.ToSuiteConfig();
-        Filter          = cfg.ToTestFilter();
-        ResultCollector = new TestResultCollector();
+        // ForCommand reads suite.config.yaml, starts the process, then builds the
+        // OAuth2 provider (which POSTs to the stub above) — ordering is respected.
+        _suite = SuiteBootstrapper.ForCommand("suite.config.yaml");
     }
+
+    public TestSuiteContext Context => _suite.Context;
 
     public void Dispose()
     {
-        _launcher.Dispose();
+        _suite.Dispose();
         _oauthServer.Stop();
-        ResultCollector.Dispose();
     }
 }
 ```
@@ -277,26 +272,33 @@ This is end-to-end proof: the test passes only if `TestHttpClient` sent `Authori
 
 ## Wiring in the Fixture
 
-### Integration test
+### Bootstrapped path (recommended)
+
+Auth is handled automatically — declare the `auth:` block in `suite.config.yaml` and call the appropriate `SuiteBootstrapper` method. No fixture code needed:
+
+```csharp
+// Integration
+_suite = SuiteBootstrapper.ForIntegration("suite.config.yaml");
+
+// Component command mode
+_suite = SuiteBootstrapper.ForCommand("suite.config.yaml");
+
+// Component in-process mode (auth header injected on every request)
+_suite = SuiteBootstrapper.ForComponent<Startup>("suite.config.yaml");
+```
+
+When no `auth:` block is present, `SuiteBootstrapper` passes `null` as the provider — requests carry no auth header.
+
+### Adapter-chain path
+
+When using the adapter chain directly, pass `cfg.ToAuthTokenProvider()` to `TestHttpClient.Create`:
 
 ```csharp
 var cfg = SuiteConfiguration.LoadIntegration("suite.config.yaml");
 TestHttpClient = TestHttpClient.Create(cfg.Api.Url!, cfg.ToAuthTokenProvider());
 ```
 
-`ToAuthTokenProvider()` returns `null` when no `auth:` block is declared — `TestHttpClient` sends no auth header, identical to the previous no-provider behaviour.
-
-### Component test (in-process)
-
-In-process component tests typically don't require auth because the service runs in the same process with a test-specific configuration. If you do need it:
-
-```csharp
-var cfg = SuiteConfiguration.LoadComponent("suite.config.yaml");
-var initializer = new TestSuiteInitializer<Startup>(cfg.Startup.Settings!);
-TestHttpClient = initializer.TestHttpClient;  // already has auth if configured
-```
-
-`TestSuiteInitializer` creates `TestHttpClient` internally — auth is not injected via the fixture in in-process mode. Use AppLauncher (command) mode for full auth testing.
+`ToAuthTokenProvider()` returns `null` when no `auth:` block is declared.
 
 ---
 

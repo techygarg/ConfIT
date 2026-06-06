@@ -44,8 +44,7 @@ Pass it in your test class constructor:
 
 ```csharp
 public UserTests(TestSuiteFixture fixture, ITestOutputHelper output)
-    : base(fixture.TestHttpClient, fixture.SuiteConfig, null,
-           new TestOutputLogger(output), fixture.Filter, fixture.ResultCollector)
+    : base(fixture.Context, new TestOutputLogger(output))
 { }
 ```
 
@@ -125,24 +124,44 @@ public class TestProcessorFactory : ITestProcessorFactory
 }
 ```
 
-Pass the factory through the fixture and into `BaseTest`:
+Pass the factory through the fixture and into `BaseTest`. When using the bootstrapper, inject the factory via the `with` expression on the context record:
 
 ```csharp
-// In fixture setup:
-ProcessorFactory = new TestProcessorFactory(SuiteConfig);
+// Fixture — add factory to the bootstrapped context
+public TestSuiteFixture()
+{
+    var suite = SuiteBootstrapper.ForComponent<Startup>("suite.config.yaml");
+    Context = suite.Context with
+    {
+        ProcessorFactory = new TestProcessorFactory(suite.Context.Config)
+    };
+    _suite = suite;
+}
 
-// In test class constructor:
-: base(fixture.TestHttpClient, fixture.SuiteConfig, fixture.ProcessorFactory,
-       new TestOutputLogger(output), fixture.Filter, fixture.ResultCollector)
+public TestSuiteContext Context { get; }
+
+// Test class constructor — unchanged
+: base(fixture.Context, new TestOutputLogger(output))
+```
+
+When using the adapter chain directly, populate `TestSuiteContext` with the factory:
+
+```csharp
+Context = new TestSuiteContext(
+    HttpClient:      initializer.TestHttpClient,
+    Config:          suiteConfig,
+    ProcessorFactory: new TestProcessorFactory(suiteConfig),
+    Filter:          cfg.ToTestFilter(),
+    ResultCollector: new TestResultCollector());
 ```
 
 If no test in a suite needs a processor, pass `null` — this is the common case and both example suites do exactly that.
 
 ---
 
-## Domain-specific matchers — `SuiteConfig.CustomMatchers`
+## Domain-specific matchers — `CustomMatchers`
 
-When the same domain-specific assertion recurs across many tests, register it as a named matcher via `SuiteConfig.CustomMatchers`. Once registered, it is available by name in the `semantic` block of any test in that suite, exactly like built-in matchers.
+When the same domain-specific assertion recurs across many tests, register it as a named matcher. Once registered, it is available by name in the `semantic` block of any test in that suite, exactly like built-in matchers.
 
 **`SemanticMatcherFunc` signature:**
 
@@ -155,17 +174,28 @@ The second argument is the parameter parsed from `name(param)` syntax in the DSL
 
 **Example — validating a proprietary domain ID format (`DOM-{n}`):**
 
+When using the bootstrapper, pass the dictionary as `customMatchers`:
+
 ```csharp
-SuiteConfig = new SuiteConfig
-{
-    ApiServerUrl = "http://localhost:5170",
-    CustomMatchers = new Dictionary<string, SemanticMatcherFunc>
+_suite = SuiteBootstrapper.ForComponent<Startup>("suite.config.yaml",
+    customMatchers: new Dictionary<string, SemanticMatcherFunc>
     {
         ["isDomainId"] = (token, _) =>
             token.Value<string>()?.StartsWith("DOM-") == true
                 ? null
                 : $"Expected domain ID starting with 'DOM-' but got: {token}"
-    }
+    });
+```
+
+When wiring manually, set `SuiteConfig.CustomMatchers` directly:
+
+```csharp
+suiteConfig.CustomMatchers = new Dictionary<string, SemanticMatcherFunc>
+{
+    ["isDomainId"] = (token, _) =>
+        token.Value<string>()?.StartsWith("DOM-") == true
+            ? null
+            : $"Expected domain ID starting with 'DOM-' but got: {token}"
 };
 ```
 
