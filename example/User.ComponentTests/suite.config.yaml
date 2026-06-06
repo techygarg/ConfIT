@@ -10,4 +10,4 @@ component:
     response: responses
   filter:
     strategy: tags
-    envVariable: RUN_POOLS
+    envVariable: TEST_TAGS

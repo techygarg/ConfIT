@@ -29,7 +29,7 @@ component:
     response: responses
   filter:
     strategy: tags
-    envVariable: RUN_POOLS
+    envVariable: TEST_TAGS
 ```
 
 #### Component suite — command mode
@@ -50,7 +50,7 @@ component:
     response: responses
   filter:
     strategy: tags
-    envVariable: RUN_POOLS
+    envVariable: TEST_TAGS
 ```
 
 #### Integration suite — multi-environment
@@ -68,7 +68,7 @@ integration:
       responseBody: TestCase/Response
     filter:
       strategy: tags
-      envVariable: RUN_POOLS
+      envVariable: TEST_TAGS
 
   qa:
     api:
@@ -82,7 +82,7 @@ integration:
       responseBody: TestCase/Response
     filter:
       strategy: tags
-      envVariable: RUN_POOLS
+      envVariable: TEST_TAGS
 ```
 
 #### `${ENV_VAR}` interpolation
@@ -164,7 +164,7 @@ _suite = SuiteBootstrapper.ForIntegration("suite.config.yaml", environment: "qa"
 Select the environment at runtime:
 
 ```bash
-TEST_ENVIRONMENT=qa RUN_POOLS=smoke dotnet test   # QA smoke run
+TEST_ENVIRONMENT=qa TEST_TAGS=smoke dotnet test   # QA smoke run
 dotnet test                                        # falls back to 'default' (local)
 ```
 
@@ -387,7 +387,7 @@ public class TestSuiteFixture : IDisposable
         Context = new TestSuiteContext(
             HttpClient:      initializer.TestHttpClient,
             Config:          suiteConfig,
-            Filter:          TestFilter.CreateForTagsFromEnvVariable("RUN_POOLS"),
+            Filter:          TestFilter.CreateForTagsFromEnvVariable("TEST_TAGS"),
             ResultCollector: new TestResultCollector());
     }
 
@@ -417,11 +417,11 @@ Controls which tests run. Passed inside `TestSuiteContext` — the bootstrapper 
 When constructing manually:
 
 ```csharp
-// Read tag list from RUN_POOLS — unset means all tests run
-Filter = TestFilter.CreateForTagsFromEnvVariable("RUN_POOLS");
+// Read tag list from TEST_TAGS — unset means all tests run
+Filter = TestFilter.CreateForTagsFromEnvVariable("TEST_TAGS");
 
-// Read test names from RUN_TESTS
-Filter = TestFilter.CreateForTestsFromEnvVariable("RUN_TESTS");
+// Read test names from TEST_NAMES
+Filter = TestFilter.CreateForTestsFromEnvVariable("TEST_NAMES");
 
 // Hardcode tags or names (useful for local debugging)
 Filter = TestFilter.CreateForTags("smoke");
@@ -431,8 +431,8 @@ Filter = TestFilter.CreateForTests("ShouldCreateAUser,ShouldGetUserById");
 At runtime:
 
 ```bash
-RUN_POOLS=smoke dotnet test
-RUN_TESTS=ShouldCreateAUser,ShouldGetUserById dotnet test
+TEST_TAGS=smoke dotnet test
+TEST_NAMES=ShouldCreateAUser,ShouldGetUserById dotnet test
 ```
 
 ### `TestResultCollector`

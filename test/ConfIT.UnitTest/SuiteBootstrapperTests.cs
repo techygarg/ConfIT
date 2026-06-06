@@ -47,14 +47,14 @@ public class SuiteBootstrapperTests
                                url: http://localhost:9999
                              filter:
                                strategy: tags
-                               envVariable: RUN_POOLS
+                               envVariable: TEST_TAGS
                          """);
         try
         {
             // When
             using var suite = SuiteBootstrapper.ForIntegration(path);
 
-            // Then — filter is built; env var RUN_POOLS is not set so Tags is empty
+            // Then — filter is built; env var TEST_TAGS is not set so Tags is empty
             suite.Context.Filter.Should().NotBeNull();
             suite.Context.Filter!.Tags.Should().BeEmpty();
         }

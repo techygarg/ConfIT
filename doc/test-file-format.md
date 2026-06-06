@@ -144,13 +144,13 @@ Mock interactions also support `bodyFromFile` and `override` on both the request
 
 ## `tags`
 
-Tag a test with one or more labels. At runtime, `RUN_POOLS` env var filters tests by tag — only tests whose tags intersect the env var value will run. Untagged tests always run when no filter is active.
+Tag a test with one or more labels. At runtime, `TEST_TAGS` env var filters tests by tag — only tests whose tags intersect the env var value will run. Untagged tests always run when no filter is active.
 
 ```json
 "tags": ["smoke", "user"]
 ```
 
-Tests without tags run regardless of `RUN_POOLS`. Tests with tags are skipped if none of their tags appear in `RUN_POOLS`.
+Tests without tags run regardless of `TEST_TAGS`. Tests with tags are skipped if none of their tags appear in `TEST_TAGS`.
 
 See [Test Filtering](./test-filtering.md) for the full reference.
 

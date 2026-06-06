@@ -28,7 +28,7 @@ public class SuiteConfigurationLoadComponentTests
                              url: http://localhost:8888
                            filter:
                              strategy: tags
-                             envVariable: RUN_POOLS
+                             envVariable: TEST_TAGS
                          """);
         try
         {
@@ -39,7 +39,7 @@ public class SuiteConfigurationLoadComponentTests
             Assert.Equal("http://localhost:5170", cfg.Api.Url);
             Assert.Equal("http://localhost:8888", cfg.Mock?.Url);
             Assert.Equal("tags", cfg.Filter?.Strategy);
-            Assert.Equal("RUN_POOLS", cfg.Filter?.EnvVariable);
+            Assert.Equal("TEST_TAGS", cfg.Filter?.EnvVariable);
         }
         finally
         {
@@ -387,7 +387,7 @@ public class SuiteConfigurationExtensionTests
         var cfg = new ComponentConfig
         {
             Api = new ApiConfig { Url = "http://localhost" },
-            Filter = new FilterConfig { Strategy = "tags", EnvVariable = "RUN_POOLS" }
+            Filter = new FilterConfig { Strategy = "tags", EnvVariable = "TEST_TAGS" }
         };
         Assert.NotNull(cfg.ToTestFilter());
     }

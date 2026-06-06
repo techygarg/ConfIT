@@ -146,7 +146,7 @@ component:
     response: responses
   filter:
     strategy: tags
-    envVariable: RUN_POOLS
+    envVariable: TEST_TAGS
 ```
 
 The `command` path is relative to the test output directory (e.g., `bin/Debug/net10.0/`). Use `--no-build` only after a separate pre-build step — see [Makefile Pre-Build Pattern](#makefile-pre-build-pattern).

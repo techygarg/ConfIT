@@ -42,7 +42,7 @@ Component and integration tests share a large common surface — how tests are d
 |---|---|
 | [Test File Format](doc/test-file-format.md) | Full DSL reference — every field in JSON and YAML, `bodyFromFile`, `override`, multi-file rules |
 | [Mock Interactions](doc/mock-interactions.md) | Declaring WireMock stubs inline for component tests — request matching, response definition, YAML anchor reuse |
-| [Test Filtering](doc/test-filtering.md) | Running a subset by tag (`RUN_POOLS`) or name (`RUN_TESTS`), CI patterns |
+| [Test Filtering](doc/test-filtering.md) | Running a subset by tag (`TEST_TAGS`) or name (`TEST_NAMES`), CI patterns |
 
 ### Assertions and Data Flow
 
@@ -101,6 +101,6 @@ make help         # list all targets
 Filter at runtime without changing code:
 
 ```bash
-RUN_POOLS=smoke dotnet test    # tag filter
-RUN_TESTS=ShouldCreateAUser dotnet test    # name filter
+TEST_TAGS=smoke dotnet test    # tag filter
+TEST_NAMES=ShouldCreateAUser dotnet test    # name filter
 ```
