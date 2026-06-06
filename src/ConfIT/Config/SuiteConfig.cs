@@ -1,3 +1,5 @@
+using ConfIT.Matching;
+
 namespace ConfIT.Config;
 
 public class SuiteConfig

@@ -1,6 +1,6 @@
 using ConfIT.Config;
 using ConfIT.Config.AuthProvider;
-using ConfIT.Server.Boot;
+using ConfIT.Runner.Boot;
 using static ConfIT.UnitTest.Config.ConfigTestHelper;
 
 namespace ConfIT.UnitTest.Config;
@@ -570,14 +570,14 @@ public class SuiteConfigurationAuthExtensionTests
     [Fact]
     public void ToAuthTokenProvider_IntegrationConfig_NoAuthBlock_ReturnsNull()
     {
-        var cfg = new IntegrationEnvironmentConfig { Api = new ApiConfig { Url = "http://localhost" } };
+        var cfg = new IntegrationConfig { Api = new ApiConfig { Url = "http://localhost" } };
         Assert.Null(cfg.ToAuthTokenProvider());
     }
 
     [Fact]
     public void ToAuthTokenProvider_IntegrationConfig_Bearer_ReturnsBearerProvider()
     {
-        var cfg = new IntegrationEnvironmentConfig
+        var cfg = new IntegrationConfig
         {
             Api  = new ApiConfig { Url = "http://localhost" },
             Auth = new AuthConfig { Type = "bearer", Token = "integration-token" }

@@ -1,9 +1,8 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using ConfIT.Config.AuthProvider;
-using ConfIT.Constant;
-using ConfIT.Server.Boot;
-using ConfIT.Util;
+using ConfIT.Reader;
+using ConfIT.Runner.Boot;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using YamlDotNet.Core;
@@ -12,6 +11,8 @@ namespace ConfIT.Config;
 
 public static class SuiteConfiguration
 {
+    private const string TestEnvironmentKey = "TEST_ENVIRONMENT";
+
     #region Public API
 
     public static ComponentConfig LoadComponent(string filePath)
@@ -26,23 +27,23 @@ public static class SuiteConfiguration
         return cfg;
     }
 
-    public static IntegrationEnvironmentConfig LoadIntegration(string filePath, string? environment = null)
+    public static IntegrationConfig LoadIntegration(string filePath, string? environment = null)
     {
         var root = ParseYaml(filePath);
         var integration = RequireSection(root, "integration", filePath);
 
         var activeEnv = environment
-                        ?? Environment.GetEnvironmentVariable(EnvironmentKeys.TestEnvironment)
+                        ?? Environment.GetEnvironmentVariable(TestEnvironmentKey)
                         ?? integration["default"]?.Value<string>()
                         ?? throw ConfigError(filePath,
-                            $"Cannot determine active environment. Set {EnvironmentKeys.TestEnvironment}, " +
+                            $"Cannot determine active environment. Set {TestEnvironmentKey}, " +
                             "pass an environment argument, or add 'default: <name>' to the integration section.");
 
         var section = integration[activeEnv] as JObject
                       ?? throw ConfigError(filePath, $"No environment '{activeEnv}' found in the integration section");
 
         ResolveEnvVars(section, $"integration.{activeEnv}", filePath);
-        var cfg = Deserialize<IntegrationEnvironmentConfig>(section);
+        var cfg = Deserialize<IntegrationConfig>(section);
 
         ValidateIntegrationEnv(cfg, activeEnv, filePath);
         return cfg;
@@ -74,7 +75,7 @@ public static class SuiteConfiguration
         cfg.Auth?.ValidateAuth("component", filePath);
     }
 
-    private static void ValidateIntegrationEnv(IntegrationEnvironmentConfig cfg, string env, string filePath)
+    private static void ValidateIntegrationEnv(IntegrationConfig cfg, string env, string filePath)
     {
         Validate.Required(cfg.Api?.Url, $"integration.{env}.api.url", filePath);
         ValidateFilter(cfg.Filter, $"integration.{env}", filePath);

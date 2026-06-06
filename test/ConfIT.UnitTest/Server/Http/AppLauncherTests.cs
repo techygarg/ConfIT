@@ -1,5 +1,5 @@
 using System.Net.Sockets;
-using ConfIT.Server.Boot;
+using ConfIT.Runner.Boot;
 
 namespace ConfIT.UnitTest.Server.Http;
 
