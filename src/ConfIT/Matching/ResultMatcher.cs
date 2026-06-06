@@ -1,39 +1,41 @@
 using System.Text.RegularExpressions;
 using ConfIT.Model;
-using FluentAssertions;
 using JsonDiffPatchDotNet;
 
 namespace ConfIT.Matching;
 
 public static class ResultMatcher
 {
-    public static void MatchResponseBody(
+    public static MatchResult MatchResponseBody(
         JToken actualResponse,
-        JToken expectedResponse,
-        Matcher matcher,
+        JToken? expectedResponse,
+        Matcher? matcher,
         IReadOnlyDictionary<string, SemanticMatcherFunc>? customMatchers = null)
     {
-        var actual = actualResponse.DeepClone();
-        SemanticMatcher.Apply(actual, expectedResponse, matcher?.Semantic, customMatchers);
-        var response = ApplyMatcher(actual, matcher);
+        var actual          = actualResponse.DeepClone();
+        var semanticFailure = SemanticMatcher.Apply(actual, expectedResponse!, matcher?.Semantic, customMatchers);
+        if (semanticFailure is not null)
+            return new MatchResult(false, semanticFailure);
+
+        var response  = ApplyMatcher(actual, matcher);
         expectedResponse = ApplyIgnoreMatcher(expectedResponse, matcher?.Ignore);
-        var diff = new JsonDiffPatch().Diff(response, expectedResponse);
-        if (diff is not null)
-            DeltaFormatter.Format(diff).Should().BeNullOrWhiteSpace();
+        var diff      = new JsonDiffPatch().Diff(response, expectedResponse);
+        if (diff is null)
+            return MatchResult.Ok;
+
+        return new MatchResult(false, DeltaFormatter.Format(diff));
     }
 
-    private static JToken ApplyMatcher(JToken response, Matcher matcher)
+    private static JToken? ApplyMatcher(JToken response, Matcher? matcher)
     {
-        if (response is null || matcher is null)
-            return response;
+        if (matcher is null) return response;
 
         response = ApplyPatternMatcher(response, matcher.Pattern);
         response = ApplyIgnoreMatcher(response, matcher.Ignore);
-
         return response;
     }
 
-    private static JToken ApplyPatternMatcher(JToken response, Dictionary<string, string>? patterns)
+    private static JToken? ApplyPatternMatcher(JToken response, Dictionary<string, string>? patterns)
     {
         if (patterns is { Count: > 0 })
             foreach (var (keyWithParent, regex) in patterns)
@@ -45,9 +47,9 @@ public static class ResultMatcher
         return response;
     }
 
-    private static JToken ApplyIgnoreMatcher(JToken response, List<string>? ignore)
+    private static JToken? ApplyIgnoreMatcher(JToken? response, List<string>? ignore)
     {
-        if (ignore is { Count: > 0 })
+        if (response is not null && ignore is { Count: > 0 })
             foreach (var keyWithParent in ignore)
             {
                 var (key, parents) = ExtractKeyAndParentPath(keyWithParent);
@@ -57,7 +59,7 @@ public static class ResultMatcher
         return response;
     }
 
-    private static void RemoveField(this JToken token, string key, string parentsKey, string regex = null)
+    private static void RemoveField(this JToken token, string key, string parentsKey, string? regex = null)
     {
         if (token is not JContainer container) return;
 
@@ -75,15 +77,13 @@ public static class ResultMatcher
             el.Remove();
     }
 
-    private static bool IsParentMatching(JProperty prop, string parentsKey)
-    {
-        return string.IsNullOrWhiteSpace(parentsKey) || prop.Parent.Path.Equals(parentsKey);
-    }
+    private static bool IsParentMatching(JProperty prop, string parentsKey) =>
+        string.IsNullOrWhiteSpace(parentsKey) || prop.Parent!.Path.Equals(parentsKey);
 
     private static (string key, string parents) ExtractKeyAndParentPath(string keyWithParents)
     {
         var parts = keyWithParents.Split("__").ToList();
-        var key = parts.Last();
+        var key   = parts.Last();
         parts.RemoveAt(parts.Count - 1);
         return (key, string.Join('.', parts));
     }

@@ -13,6 +13,7 @@ global using ConfIT.Extension;
 global using ConfIT.Matching;
 global using ConfIT.Model;
 global using ConfIT.Reader;
+global using ConfIT.Reporting;
 global using ConfIT.Runner.Http;
 global using ConfIT.Variable;
 global using ConfIT.Variable.Exception;

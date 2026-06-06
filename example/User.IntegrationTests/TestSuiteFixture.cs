@@ -3,7 +3,8 @@ using System.IO;
 using ConfIT;
 using ConfIT.Config;
 using ConfIT.Extension;
-using ConfIT.Server.Http;
+using ConfIT.Reporting;
+using ConfIT.Runner.Http;
 
 namespace User.IntegrationTests
 {
@@ -21,7 +22,7 @@ namespace User.IntegrationTests
 
         public TestHttpClient TestHttpClient { get; }
         public SuiteConfig SuiteConfig { get; }
-        public TestFilter Filter { get; }
+        public TestFilter? Filter { get; }
         public TestResultCollector ResultCollector { get; }
 
         public void Dispose() => ResultCollector.Dispose();

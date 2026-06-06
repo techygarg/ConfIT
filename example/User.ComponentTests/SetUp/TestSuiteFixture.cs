@@ -3,7 +3,8 @@ using System.IO;
 using ConfIT;
 using ConfIT.Config;
 using ConfIT.Extension;
-using ConfIT.Server.Http;
+using ConfIT.Reporting;
+using ConfIT.Runner.Http;
 using Microsoft.Extensions.DependencyInjection;
 using User.Api;
 using User.Api.Persistence;
@@ -26,7 +27,7 @@ namespace User.ComponentTests.SetUp
 
         public TestHttpClient TestHttpClient { get; private set; }
         public SuiteConfig SuiteConfig { get; private set; }
-        public TestFilter Filter { get; private set; }
+        public TestFilter? Filter { get; private set; }
         public TestResultCollector ResultCollector { get; }
 
         private static void InitializeDb(TestSuiteInitializer<Startup> initializer)

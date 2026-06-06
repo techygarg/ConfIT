@@ -2,6 +2,10 @@ namespace ConfIT.UnitTest.Util;
 
 public class SemanticMatcherTests
 {
+    private static string? Apply(JToken actual, JToken expected, string field, string spec,
+        IReadOnlyDictionary<string, SemanticMatcherFunc>? custom = null)
+        => SemanticMatcher.Apply(actual, expected, new Dictionary<string, string> { [field] = spec }, custom);
+
     #region Format matchers
 
     [Theory]
@@ -9,53 +13,29 @@ public class SemanticMatcherTests
     [InlineData("A1B2C3D4-E5F6-7890-ABCD-EF1234567890")]
     public void Apply_IsUuidWithValidUuid_Passes(string uuid)
     {
-        // Given
-        var actual   = JToken.Parse($"{{'id': '{uuid}'}}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["id"] = "isUuid" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse($"{{'id': '{uuid}'}}"), JToken.Parse("{}"), "id", "isUuid");
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Apply_IsUuidWithInvalidValue_ThrowsWithFieldName()
+    public void Apply_IsUuidWithInvalidValue_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'id': 'not-a-uuid'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["id"] = "isUuid" }, null);
-        action.Should().Throw<Exception>().WithMessage("*id*isUuid*");
+        var result = Apply(JToken.Parse("{'id': 'not-a-uuid'}"), JToken.Parse("{}"), "id", "isUuid");
+        result.Should().NotBeNull().And.Contain("id").And.Contain("isUuid");
     }
 
     [Fact]
     public void Apply_IsIsoDateWithValidDate_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'date': '2026-05-31'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["date"] = "isIsoDate" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'date': '2026-05-31'}"), JToken.Parse("{}"), "date", "isIsoDate");
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Apply_IsIsoDateWithDateTime_Throws()
+    public void Apply_IsIsoDateWithDateTime_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'date': '2026-05-31T10:30:00Z'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["date"] = "isIsoDate" }, null);
-        action.Should().Throw<Exception>().WithMessage("*date*isIsoDate*");
+        var result = Apply(JToken.Parse("{'date': '2026-05-31T10:30:00Z'}"), JToken.Parse("{}"), "date", "isIsoDate");
+        result.Should().NotBeNull().And.Contain("date").And.Contain("isIsoDate");
     }
 
     [Theory]
@@ -64,53 +44,29 @@ public class SemanticMatcherTests
     [InlineData("2026-05-31T10:30:00.123Z")]
     public void Apply_IsIsoDateTimeWithValidDateTime_Passes(string dateTime)
     {
-        // Given
-        var actual   = JToken.Parse($"{{'createdAt': '{dateTime}'}}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["createdAt"] = "isIsoDateTime" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse($"{{'createdAt': '{dateTime}'}}"), JToken.Parse("{}"), "createdAt", "isIsoDateTime");
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Apply_IsIsoDateTimeWithDateOnly_Throws()
+    public void Apply_IsIsoDateTimeWithDateOnly_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'createdAt': '2026-05-31'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["createdAt"] = "isIsoDateTime" }, null);
-        action.Should().Throw<Exception>().WithMessage("*createdAt*isIsoDateTime*");
+        var result = Apply(JToken.Parse("{'createdAt': '2026-05-31'}"), JToken.Parse("{}"), "createdAt", "isIsoDateTime");
+        result.Should().NotBeNull().And.Contain("createdAt").And.Contain("isIsoDateTime");
     }
 
     [Fact]
     public void Apply_IsEmailWithValidEmail_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'email': 'user@example.com'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["email"] = "isEmail" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'email': 'user@example.com'}"), JToken.Parse("{}"), "email", "isEmail");
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Apply_IsEmailWithInvalidValue_Throws()
+    public void Apply_IsEmailWithInvalidValue_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'email': 'not-an-email'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["email"] = "isEmail" }, null);
-        action.Should().Throw<Exception>().WithMessage("*email*isEmail*");
+        var result = Apply(JToken.Parse("{'email': 'not-an-email'}"), JToken.Parse("{}"), "email", "isEmail");
+        result.Should().NotBeNull().And.Contain("email").And.Contain("isEmail");
     }
 
     #endregion
@@ -120,53 +76,29 @@ public class SemanticMatcherTests
     [Fact]
     public void Apply_IsNullWithNullValue_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'deletedAt': null}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["deletedAt"] = "isNull" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'deletedAt': null}"), JToken.Parse("{}"), "deletedAt", "isNull");
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Apply_IsNullWithNonNullValue_Throws()
+    public void Apply_IsNullWithNonNullValue_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'deletedAt': '2026-05-31'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["deletedAt"] = "isNull" }, null);
-        action.Should().Throw<Exception>().WithMessage("*deletedAt*isNull*");
+        var result = Apply(JToken.Parse("{'deletedAt': '2026-05-31'}"), JToken.Parse("{}"), "deletedAt", "isNull");
+        result.Should().NotBeNull().And.Contain("deletedAt").And.Contain("isNull");
     }
 
     [Fact]
     public void Apply_IsNotNullWithPresentValue_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'id': 1}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["id"] = "isNotNull" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'id': 1}"), JToken.Parse("{}"), "id", "isNotNull");
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Apply_IsNotNullWithNullValue_Throws()
+    public void Apply_IsNotNullWithNullValue_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'id': null}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["id"] = "isNotNull" }, null);
-        action.Should().Throw<Exception>().WithMessage("*id*isNotNull*");
+        var result = Apply(JToken.Parse("{'id': null}"), JToken.Parse("{}"), "id", "isNotNull");
+        result.Should().NotBeNull().And.Contain("id").And.Contain("isNotNull");
     }
 
     #endregion
@@ -176,79 +108,43 @@ public class SemanticMatcherTests
     [Fact]
     public void Apply_IsEmptyWithEmptyString_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'name': ''}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["name"] = "isEmpty" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'name': ''}"), JToken.Parse("{}"), "name", "isEmpty");
+        result.Should().BeNull();
     }
 
     [Fact]
     public void Apply_IsEmptyWithEmptyArray_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'items': []}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["items"] = "isEmpty" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'items': []}"), JToken.Parse("{}"), "items", "isEmpty");
+        result.Should().BeNull();
     }
 
     [Fact]
     public void Apply_IsEmptyWithEmptyObject_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'meta': {}}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["meta"] = "isEmpty" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'meta': {}}"), JToken.Parse("{}"), "meta", "isEmpty");
+        result.Should().BeNull();
     }
 
     [Fact]
     public void Apply_IsNotEmptyWithNonEmptyArray_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'items': [1, 2]}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["items"] = "isNotEmpty" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'items': [1, 2]}"), JToken.Parse("{}"), "items", "isNotEmpty");
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Apply_IsNotEmptyWithEmptyString_Throws()
+    public void Apply_IsNotEmptyWithEmptyString_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'name': ''}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["name"] = "isNotEmpty" }, null);
-        action.Should().Throw<Exception>().WithMessage("*name*isNotEmpty*");
+        var result = Apply(JToken.Parse("{'name': ''}"), JToken.Parse("{}"), "name", "isNotEmpty");
+        result.Should().NotBeNull().And.Contain("name").And.Contain("isNotEmpty");
     }
 
     [Fact]
-    public void Apply_IsNotEmptyWithEmptyArray_Throws()
+    public void Apply_IsNotEmptyWithEmptyArray_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'items': []}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["items"] = "isNotEmpty" }, null);
-        action.Should().Throw<Exception>().WithMessage("*items*isNotEmpty*");
+        var result = Apply(JToken.Parse("{'items': []}"), JToken.Parse("{}"), "items", "isNotEmpty");
+        result.Should().NotBeNull().And.Contain("items").And.Contain("isNotEmpty");
     }
 
     #endregion
@@ -258,66 +154,36 @@ public class SemanticMatcherTests
     [Fact]
     public void Apply_GreaterThanWithValueAboveThreshold_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'count': 5}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["count"] = "greaterThan(0)" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'count': 5}"), JToken.Parse("{}"), "count", "greaterThan(0)");
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Apply_GreaterThanWithValueAtThreshold_Throws()
+    public void Apply_GreaterThanWithValueAtThreshold_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'count': 0}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["count"] = "greaterThan(0)" }, null);
-        action.Should().Throw<Exception>().WithMessage("*count*greaterThan(0)*");
+        var result = Apply(JToken.Parse("{'count': 0}"), JToken.Parse("{}"), "count", "greaterThan(0)");
+        result.Should().NotBeNull().And.Contain("count").And.Contain("greaterThan(0)");
     }
 
     [Fact]
-    public void Apply_GreaterThanWithNonNumericValue_Throws()
+    public void Apply_GreaterThanWithNonNumericValue_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'score': 'high'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["score"] = "greaterThan(0)" }, null);
-        action.Should().Throw<Exception>().WithMessage("*score*");
+        var result = Apply(JToken.Parse("{'score': 'high'}"), JToken.Parse("{}"), "score", "greaterThan(0)");
+        result.Should().NotBeNull().And.Contain("score");
     }
 
     [Fact]
     public void Apply_LessThanWithValueBelowThreshold_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'age': 17}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["age"] = "lessThan(18)" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'age': 17}"), JToken.Parse("{}"), "age", "lessThan(18)");
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Apply_LessThanWithValueAtThreshold_Throws()
+    public void Apply_LessThanWithValueAtThreshold_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'age': 18}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["age"] = "lessThan(18)" }, null);
-        action.Should().Throw<Exception>().WithMessage("*age*lessThan(18)*");
+        var result = Apply(JToken.Parse("{'age': 18}"), JToken.Parse("{}"), "age", "lessThan(18)");
+        result.Should().NotBeNull().And.Contain("age").And.Contain("lessThan(18)");
     }
 
     #endregion
@@ -327,53 +193,29 @@ public class SemanticMatcherTests
     [Fact]
     public void Apply_HasLengthWithExactMatch_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'zip': '12345'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["zip"] = "hasLength(5)" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'zip': '12345'}"), JToken.Parse("{}"), "zip", "hasLength(5)");
+        result.Should().BeNull();
     }
 
     [Fact]
     public void Apply_HasLengthWithinInclusiveRange_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'name': 'Al'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["name"] = "hasLength(1,50)" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'name': 'Al'}"), JToken.Parse("{}"), "name", "hasLength(1,50)");
+        result.Should().BeNull();
     }
 
     [Fact]
     public void Apply_HasLengthOnArray_Passes()
     {
-        // Given
-        var actual   = JToken.Parse("{'tags': ['a', 'b', 'c']}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["tags"] = "hasLength(3)" }, null);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'tags': ['a', 'b', 'c']}"), JToken.Parse("{}"), "tags", "hasLength(3)");
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Apply_HasLengthWithMismatch_Throws()
+    public void Apply_HasLengthWithMismatch_ReturnsFailure()
     {
-        // Given
-        var actual   = JToken.Parse("{'zip': '1234'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["zip"] = "hasLength(5)" }, null);
-        action.Should().Throw<Exception>().WithMessage("*zip*hasLength(5)*");
+        var result = Apply(JToken.Parse("{'zip': '1234'}"), JToken.Parse("{}"), "zip", "hasLength(5)");
+        result.Should().NotBeNull().And.Contain("zip").And.Contain("hasLength(5)");
     }
 
     #endregion
@@ -383,14 +225,11 @@ public class SemanticMatcherTests
     [Fact]
     public void Apply_NestedFieldPath_PassesForValidValue()
     {
-        // Given
         var actual   = JToken.Parse("{'user': {'profile': {'id': 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'}}}");
         var expected = JToken.Parse("{'user': {'profile': {}}}");
 
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["user__profile__id"] = "isUuid" }, null);
-        action.Should().NotThrow();
+        var result = Apply(actual, expected, "user__profile__id", "isUuid");
+        result.Should().BeNull();
     }
 
     #endregion
@@ -400,23 +239,17 @@ public class SemanticMatcherTests
     [Fact]
     public void ValidateSpecs_UnknownMatcherName_ThrowsArgumentException()
     {
-        // Given
-        var semantic = new Dictionary<string, string> { ["id"] = "isWeird" };
-
-        // When / Then
-        var action = () => SemanticMatcher.ValidateSpecs(semantic, null);
+        var action = () => SemanticMatcher.ValidateSpecs(
+            new Dictionary<string, string> { ["id"] = "isWeird" }, null);
         action.Should().Throw<ArgumentException>().WithMessage("*isWeird*id*");
     }
 
     [Fact]
     public void ValidateSpecs_CustomMatcherConflictsWithBuiltIn_ThrowsArgumentException()
     {
-        // Given
-        var semantic = new Dictionary<string, string> { ["id"] = "isUuid" };
-        var custom   = new Dictionary<string, SemanticMatcherFunc> { ["isUuid"] = (_, _) => null };
-
-        // When / Then
-        var action = () => SemanticMatcher.ValidateSpecs(semantic, custom);
+        var action = () => SemanticMatcher.ValidateSpecs(
+            new Dictionary<string, string> { ["id"] = "isUuid" },
+            new Dictionary<string, SemanticMatcherFunc> { ["isUuid"] = (_, _) => null });
         action.Should().Throw<ArgumentException>().WithMessage("*isUuid*conflicts*");
     }
 
@@ -430,13 +263,7 @@ public class SemanticMatcherTests
     [Fact]
     public void Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException()
     {
-        // Given
-        var actual   = JToken.Parse("{'name': 'test'}");
-        var expected = JToken.Parse("{}");
-
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["id"] = "isUuid" }, null);
+        var action = () => Apply(JToken.Parse("{'name': 'test'}"), JToken.Parse("{}"), "id", "isUuid");
         action.Should().Throw<InvalidOperationException>().WithMessage("*id*absent*");
     }
 
@@ -447,19 +274,14 @@ public class SemanticMatcherTests
     [Fact]
     public void Apply_CustomMatcherName_DelegatesToCustomFunc()
     {
-        // Given
-        var actual   = JToken.Parse("{'code': 'DOM-42'}");
-        var expected = JToken.Parse("{}");
-        var custom   = new Dictionary<string, SemanticMatcherFunc>
+        var custom = new Dictionary<string, SemanticMatcherFunc>
         {
             ["isDomainId"] = (token, _) =>
                 token.Value<string>()?.StartsWith("DOM-") == true ? null : "Expected DOM-{n} format"
         };
 
-        // When / Then
-        var action = () => SemanticMatcher.Apply(actual, expected,
-            new Dictionary<string, string> { ["code"] = "isDomainId" }, custom);
-        action.Should().NotThrow();
+        var result = Apply(JToken.Parse("{'code': 'DOM-42'}"), JToken.Parse("{}"), "code", "isDomainId", custom);
+        result.Should().BeNull();
     }
 
     #endregion

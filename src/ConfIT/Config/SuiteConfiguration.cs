@@ -72,14 +72,36 @@ public static class SuiteConfiguration
         }
 
         ValidateFilter(cfg.Filter, "component", filePath);
-        cfg.Auth?.ValidateAuth("component", filePath);
+        ValidateAuth(cfg.Auth, "component", filePath);
     }
 
     private static void ValidateIntegrationEnv(IntegrationConfig cfg, string env, string filePath)
     {
         Validate.Required(cfg.Api?.Url, $"integration.{env}.api.url", filePath);
         ValidateFilter(cfg.Filter, $"integration.{env}", filePath);
-        cfg.Auth?.ValidateAuth($"integration.{env}", filePath);
+        ValidateAuth(cfg.Auth, $"integration.{env}", filePath);
+    }
+
+    private static void ValidateAuth(AuthConfig? auth, string section, string filePath)
+    {
+        if (auth is null) return;
+        Validate.OneOf(auth.Type, $"{section}.auth.type", filePath,
+            "bearer", "oauth2-client-credentials", "api-key");
+        switch (auth.Type)
+        {
+            case "bearer":
+                Validate.Required(auth.Token, $"{section}.auth.token", filePath);
+                break;
+            case "oauth2-client-credentials":
+                Validate.Required(auth.TokenUrl,     $"{section}.auth.tokenUrl",     filePath);
+                Validate.Required(auth.ClientId,     $"{section}.auth.clientId",     filePath);
+                Validate.Required(auth.ClientSecret, $"{section}.auth.clientSecret", filePath);
+                break;
+            case "api-key":
+                Validate.Required(auth.HeaderKey, $"{section}.auth.headerKey", filePath);
+                Validate.Required(auth.Value,     $"{section}.auth.value",     filePath);
+                break;
+        }
     }
 
     private static void ValidateFilter(FilterConfig? filter, string parent, string filePath)

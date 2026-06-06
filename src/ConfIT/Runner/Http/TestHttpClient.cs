@@ -9,11 +9,11 @@ namespace ConfIT.Runner.Http;
 public class TestHttpClient : IDisposable
 {
     private readonly HttpClient _client;
-    private readonly IAuthTokenProvider _tokenProvider;
+    private readonly IAuthTokenProvider? _tokenProvider;
 
-    public TestHttpClient(HttpClient client, IAuthTokenProvider tokenProvider = default)
+    public TestHttpClient(HttpClient client, IAuthTokenProvider? tokenProvider = null)
     {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
+        _client        = client ?? throw new ArgumentNullException(nameof(client));
         _tokenProvider = tokenProvider;
     }
 
@@ -26,38 +26,41 @@ public class TestHttpClient : IDisposable
     {
         if (testApi == null) throw new ArgumentNullException(nameof(testApi));
 
-        AddRequestHeaders(testApi.Request.Headers);
-        return testApi.Request.Method.ToUpper() switch
+        var method = testApi.Request.Method.ToUpper() switch
         {
-            "GET" => await _client.GetAsync(testApi.Request.Path),
-            "PUT" => await _client.PutAsync(testApi.Request.Path, RequestBody(testApi.Request.Body)),
-            "PATCH" => await _client.PatchAsync(testApi.Request.Path, RequestBody(testApi.Request.Body)),
-            "POST" => await _client.PostAsync(testApi.Request.Path, RequestBody(testApi.Request.Body)),
-            "DELETE" => await _client.DeleteAsync(testApi.Request.Path),
-            _ => throw new NotSupportedException($"HTTP method '{testApi.Request.Method}' is not supported.")
+            "GET"    => HttpMethod.Get,
+            "PUT"    => HttpMethod.Put,
+            "PATCH"  => HttpMethod.Patch,
+            "POST"   => HttpMethod.Post,
+            "DELETE" => HttpMethod.Delete,
+            var m    => throw new NotSupportedException($"HTTP method '{m}' is not supported.")
         };
+
+        var request = new HttpRequestMessage(method, testApi.Request.Path);
+        AddHeaders(request, testApi.Request.Headers);
+
+        if (method != HttpMethod.Get && method != HttpMethod.Delete)
+            request.Content = RequestBody(testApi.Request.Body);
+
+        return await _client.SendAsync(request);
     }
 
-    private static StringContent RequestBody(JToken body)
+    private void AddHeaders(HttpRequestMessage request, Dictionary<string, string>? headers)
     {
-        return new StringContent(body?.ToString() ?? string.Empty, Encoding.UTF8, "application/json");
-    }
-
-    private void AddRequestHeaders(Dictionary<string, string> headers)
-    {
-        _client.DefaultRequestHeaders.Clear();
-
         if (headers is { Count: > 0 })
             foreach (var (name, value) in headers)
                 if (!string.IsNullOrEmpty(value))
-                    _client.DefaultRequestHeaders.Add(name, value);
+                    request.Headers.TryAddWithoutValidation(name, value);
 
         var token = _tokenProvider?.Token();
         if (!string.IsNullOrWhiteSpace(token))
-            _client.DefaultRequestHeaders.Add(_tokenProvider!.HeaderKey(), token);
+            request.Headers.TryAddWithoutValidation(_tokenProvider!.HeaderKey(), token);
     }
 
-    public static TestHttpClient Create(string serverUrl, IAuthTokenProvider authTokenProvider)
+    private static StringContent RequestBody(JToken? body) =>
+        new(body?.ToString() ?? string.Empty, Encoding.UTF8, "application/json");
+
+    public static TestHttpClient Create(string serverUrl, IAuthTokenProvider? authTokenProvider)
     {
         if (string.IsNullOrWhiteSpace(serverUrl))
             throw new ArgumentException("Server URL cannot be null or empty", nameof(serverUrl));

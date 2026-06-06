@@ -149,7 +149,7 @@ public class TestFilterTests
         var filter = TestFilter.CreateForTags("tag1");
 
         // Then
-        filter.TestNames.Should().BeNull();
+        filter.TestNames.Should().BeEmpty();
     }
 
     [Fact]
@@ -159,6 +159,6 @@ public class TestFilterTests
         var filter = TestFilter.CreateForTests("test1");
 
         // Then
-        filter.Tags.Should().BeNull();
+        filter.Tags.Should().BeEmpty();
     }
 }

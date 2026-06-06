@@ -11,9 +11,11 @@ public class ResultMatcherTests
         var actual   = JToken.Parse("{'name': 'test', 'value': 123}");
         var expected = JToken.Parse("{'name': 'test', 'value': 123}");
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, new Matcher());
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, new Matcher());
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     [Fact]
@@ -24,9 +26,11 @@ public class ResultMatcherTests
         var expected = JToken.Parse("{'name': 'test'}");
         var matcher  = new Matcher { Pattern = new Dictionary<string, string> { ["id"] = "[a-z]+-\\d+" } };
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     [Fact]
@@ -37,9 +41,11 @@ public class ResultMatcherTests
         var expected = JToken.Parse("{'name': 'test'}");
         var matcher  = new Matcher { Ignore = ["id", "timestamp"] };
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     [Fact]
@@ -50,9 +56,11 @@ public class ResultMatcherTests
         var expected = JToken.Parse("{'user': {'details': {'age': 30}}}");
         var matcher  = new Matcher { Ignore = ["user__id"] };
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     [Fact]
@@ -63,9 +71,11 @@ public class ResultMatcherTests
         var expected = JToken.Parse("{'data': {}, 'metadata': {'id': '456'}}");
         var matcher  = new Matcher { Ignore = ["data__id"] };
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     [Fact]
@@ -76,9 +86,11 @@ public class ResultMatcherTests
         var expected = JToken.Parse("{'level1': {'level2': {'level3': {}}}}");
         var matcher  = new Matcher { Ignore = ["level1__level2__level3__id"] };
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     [Fact]
@@ -88,9 +100,11 @@ public class ResultMatcherTests
         var actual   = JToken.Parse("{'id': '123', 'name': 'test'}");
         var expected = JToken.Parse("{'id': '123', 'name': 'test'}");
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, null);
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, null);
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     [Fact]
@@ -101,9 +115,11 @@ public class ResultMatcherTests
         var expected = JToken.Parse("{'id': '123', 'name': 'test'}");
         var matcher  = new Matcher { Pattern = new Dictionary<string, string>() };
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     [Fact]
@@ -114,9 +130,11 @@ public class ResultMatcherTests
         var expected = JToken.Parse("{'id': '123', 'name': 'test'}");
         var matcher  = new Matcher { Ignore = [] };
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     #endregion
@@ -130,21 +148,23 @@ public class ResultMatcherTests
         JToken actual   = null;
         var expected    = JToken.Parse("{}");
 
-        // When / Then
+        // When / Then — null actual is a caller error; DeepClone throws
         var action = () => ResultMatcher.MatchResponseBody(actual, expected, new Matcher());
-        action.Should().Throw<Exception>().Which.Message.Should().NotBeNullOrEmpty();
+        action.Should().Throw<Exception>();
     }
 
     [Fact]
-    public void MatchResponseBody_NullExpected_ThrowsException()
+    public void MatchResponseBody_NullExpected_ReturnsFailed()
     {
         // Given
         var actual      = JToken.Parse("{}");
         JToken expected = null;
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, new Matcher());
-        action.Should().Throw<Exception>().Which.Message.Should().NotBeNullOrEmpty();
+        // When — null expected means "expect nothing"; diff against actual returns failure
+        var result = ResultMatcher.MatchResponseBody(actual, expected, new Matcher());
+
+        // Then
+        result.Passed.Should().BeFalse();
     }
 
     [Fact]
@@ -161,15 +181,18 @@ public class ResultMatcherTests
     }
 
     [Fact]
-    public void MatchResponseBody_ExpectedFieldMissingFromActual_Throws()
+    public void MatchResponseBody_ExpectedFieldMissingFromActual_ReturnsFailed()
     {
         // Given
         var actual   = JToken.Parse("{'name': 'John', 'age': 30}");
         var expected = JToken.Parse("{'name': 'John', 'age': 30, 'extra': 'field'}");
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, new Matcher());
-        action.Should().Throw<XunitException>();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, new Matcher());
+
+        // Then
+        result.Passed.Should().BeFalse();
+        result.Description.Should().NotBeNullOrWhiteSpace();
     }
 
     #endregion
@@ -177,53 +200,52 @@ public class ResultMatcherTests
     #region Failure output
 
     [Fact]
-    public void MatchResponseBody_FieldsDiffer_FailureMessageNamesField()
+    public void MatchResponseBody_FieldsDiffer_DescriptionNamesField()
     {
         // Given
         var actual   = JToken.Parse("{'name': 'alice'}");
         var expected = JToken.Parse("{'name': 'bob'}");
 
         // When
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, null);
-        var ex     = action.Should().Throw<Exception>().Which;
+        var result = ResultMatcher.MatchResponseBody(actual, expected, null);
 
         // Then
-        ex.Message.Should().Contain("name");
-        ex.Message.Should().Contain("expected:");
-        ex.Message.Should().Contain("\"bob\"");
-        ex.Message.Should().Contain("actual:");
-        ex.Message.Should().Contain("\"alice\"");
+        result.Passed.Should().BeFalse();
+        result.Description.Should().Contain("name")
+            .And.Contain("expected:")
+            .And.Contain("\"bob\"")
+            .And.Contain("actual:")
+            .And.Contain("\"alice\"");
     }
 
     [Fact]
-    public void MatchResponseBody_MultipleFieldsDiffer_FailureMessageIncludesAllFields()
+    public void MatchResponseBody_MultipleFieldsDiffer_DescriptionIncludesAllFields()
     {
         // Given
         var actual   = JToken.Parse("{'name': 'alice', 'age': 30}");
         var expected = JToken.Parse("{'name': 'bob',   'age': 31}");
 
         // When
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, null);
-        var ex     = action.Should().Throw<Exception>().Which;
+        var result = ResultMatcher.MatchResponseBody(actual, expected, null);
 
         // Then
-        ex.Message.Should().Contain("name");
-        ex.Message.Should().Contain("age");
+        result.Passed.Should().BeFalse();
+        result.Description.Should().Contain("name").And.Contain("age");
     }
 
     [Fact]
-    public void MatchResponseBody_BodyDiffers_FailureMessageContainsHeader()
+    public void MatchResponseBody_BodyDiffers_DescriptionContainsHeader()
     {
         // Given
         var actual   = JToken.Parse("{'x': 1}");
         var expected = JToken.Parse("{'x': 2}");
 
         // When
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, null);
-        var ex     = action.Should().Throw<Exception>().Which;
+        var result = ResultMatcher.MatchResponseBody(actual, expected, null);
 
         // Then
-        ex.Message.Should().Contain("Response body mismatch:");
+        result.Passed.Should().BeFalse();
+        result.Description.Should().Contain("Response body mismatch:");
     }
 
     #endregion
@@ -238,22 +260,27 @@ public class ResultMatcherTests
         var expected = JToken.Parse("{'name': 'test'}");
         var matcher  = new Matcher { Semantic = new Dictionary<string, string> { ["id"] = "greaterThan(0)" } };
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     [Fact]
-    public void MatchResponseBody_SemanticMatcherFails_ThrowsWithFieldName()
+    public void MatchResponseBody_SemanticMatcherFails_ReturnedDescriptionNamesField()
     {
         // Given
         var actual   = JToken.Parse("{'id': -1, 'name': 'test'}");
         var expected = JToken.Parse("{'name': 'test'}");
         var matcher  = new Matcher { Semantic = new Dictionary<string, string> { ["id"] = "greaterThan(0)" } };
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-        action.Should().Throw<Exception>().WithMessage("*id*greaterThan(0)*");
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeFalse();
+        result.Description.Should().Contain("id").And.Contain("greaterThan(0)");
     }
 
     [Fact]
@@ -269,9 +296,11 @@ public class ResultMatcherTests
                 token.Value<string>()?.StartsWith("DOM-") == true ? null : "Expected DOM-{n} format"
         };
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher, custom);
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher, custom);
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     [Fact]
@@ -283,14 +312,16 @@ public class ResultMatcherTests
         var expected = JToken.Parse("{'name': 'test'}");
         var matcher  = new Matcher
         {
-            Semantic = new Dictionary<string, string> { ["id"]        = "isUuid" },
-            Pattern  = new Dictionary<string, string> { ["code"]      = "[A-Z]+-\\d+" },
+            Semantic = new Dictionary<string, string> { ["id"]   = "isUuid" },
+            Pattern  = new Dictionary<string, string> { ["code"] = "[A-Z]+-\\d+" },
             Ignore   = ["createdAt"]
         };
 
-        // When / Then
-        var action = () => ResultMatcher.MatchResponseBody(actual, expected, matcher);
-        action.Should().NotThrow();
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
     }
 
     #endregion

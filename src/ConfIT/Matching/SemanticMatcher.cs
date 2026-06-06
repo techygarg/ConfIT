@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using FluentAssertions;
 
 namespace ConfIT.Matching;
 
@@ -9,17 +8,17 @@ public static class SemanticMatcher
     private static readonly IReadOnlyDictionary<string, SemanticMatcherFunc> BuiltIns =
         new Dictionary<string, SemanticMatcherFunc>
         {
-            ["isUuid"] = (v, _) => CheckIsUuid(v),
-            ["isIsoDate"] = (v, _) => CheckIsIsoDate(v),
+            ["isUuid"]        = (v, _) => CheckIsUuid(v),
+            ["isIsoDate"]     = (v, _) => CheckIsIsoDate(v),
             ["isIsoDateTime"] = (v, _) => CheckIsIsoDateTime(v),
-            ["isEmail"] = (v, _) => CheckIsEmail(v),
-            ["isNull"] = (v, _) => CheckIsNull(v),
-            ["isNotNull"] = (v, _) => CheckIsNotNull(v),
-            ["isEmpty"] = (v, _) => CheckIsEmpty(v),
-            ["isNotEmpty"] = (v, _) => CheckIsNotEmpty(v),
-            ["greaterThan"] = CheckGreaterThan,
-            ["lessThan"] = CheckLessThan,
-            ["hasLength"] = CheckHasLength
+            ["isEmail"]       = (v, _) => CheckIsEmail(v),
+            ["isNull"]        = (v, _) => CheckIsNull(v),
+            ["isNotNull"]     = (v, _) => CheckIsNotNull(v),
+            ["isEmpty"]       = (v, _) => CheckIsEmpty(v),
+            ["isNotEmpty"]    = (v, _) => CheckIsNotEmpty(v),
+            ["greaterThan"]   = CheckGreaterThan,
+            ["lessThan"]      = CheckLessThan,
+            ["hasLength"]     = CheckHasLength
         };
 
     public static void ValidateSpecs(
@@ -43,13 +42,15 @@ public static class SemanticMatcher
         }
     }
 
-    public static void Apply(
+    // Returns null on success, or a failure description on the first failing field.
+    // Mutates actual and expected by removing matched fields (so the diff step skips them).
+    public static string? Apply(
         JToken actual,
         JToken expected,
         Dictionary<string, string>? semantic,
         IReadOnlyDictionary<string, SemanticMatcherFunc>? customMatchers)
     {
-        if (semantic is not { Count: > 0 }) return;
+        if (semantic is not { Count: > 0 }) return null;
 
         foreach (var (fieldPath, matcherSpec) in semantic)
         {
@@ -65,13 +66,15 @@ public static class SemanticMatcher
                               ?? throw new InvalidOperationException(
                                   $"Semantic matcher '{matcherSpec}': field '{fieldPath}' was absent from the response");
 
-            var result = fn(actualField, param);
-            if (result != null)
-                false.Should().BeTrue($"field '{fieldPath}' [{matcherSpec}]: {result}");
+            var failure = fn(actualField, param);
+            if (failure != null)
+                return $"field '{fieldPath}' [{matcherSpec}]: {failure}";
 
             actualField.Parent?.Remove();
             expected.SelectToken(jPath)?.Parent?.Remove();
         }
+
+        return null;
     }
 
     private static (string name, string? param) ParseSpec(string spec, string fieldPath)
@@ -140,56 +143,41 @@ public static class SemanticMatcher
             : $"expected email format but got '{s}'";
     }
 
-    private static string? CheckIsNull(JToken value)
-    {
-        return value.Type == JTokenType.Null ? null : $"expected null but got '{value}'";
-    }
+    private static string? CheckIsNull(JToken value) =>
+        value.Type == JTokenType.Null ? null : $"expected null but got '{value}'";
 
-    private static string? CheckIsNotNull(JToken value)
-    {
-        return value.Type != JTokenType.Null ? null : "expected non-null value but got null";
-    }
+    private static string? CheckIsNotNull(JToken value) =>
+        value.Type != JTokenType.Null ? null : "expected non-null value but got null";
 
-    private static string? CheckIsEmpty(JToken value)
+    private static string? CheckIsEmpty(JToken value) => value switch
     {
-        return value switch
-        {
-            { Type: JTokenType.String } when value.Value<string>()?.Length == 0 => null,
-            { Type: JTokenType.String } s => $"expected empty string but got '{s.Value<string>()}'",
-            JArray { Count: 0 } => null,
-            JArray arr => $"expected empty array but got array with {arr.Count} element(s)",
-            JObject obj when !obj.HasValues => null,
-            JObject => "expected empty object but got non-empty object",
-            _ => $"isEmpty requires string, array, or object but got {value.Type}"
-        };
-    }
+        { Type: JTokenType.String } when value.Value<string>()?.Length == 0 => null,
+        { Type: JTokenType.String } s => $"expected empty string but got '{s.Value<string>()}'",
+        JArray { Count: 0 }          => null,
+        JArray arr                   => $"expected empty array but got array with {arr.Count} element(s)",
+        JObject obj when !obj.HasValues => null,
+        JObject                      => "expected empty object but got non-empty object",
+        _                            => $"isEmpty requires string, array, or object but got {value.Type}"
+    };
 
-    private static string? CheckIsNotEmpty(JToken value)
+    private static string? CheckIsNotEmpty(JToken value) => value switch
     {
-        return value switch
-        {
-            { Type: JTokenType.String } when value.Value<string>()?.Length > 0 => null,
-            { Type: JTokenType.String } => "expected non-empty string but got empty string",
-            JArray { Count: > 0 } => null,
-            JArray => "expected non-empty array but got empty array",
-            JObject obj when obj.HasValues => null,
-            JObject => "expected non-empty object but got empty object",
-            _ => $"isNotEmpty requires string, array, or object but got {value.Type}"
-        };
-    }
+        { Type: JTokenType.String } when value.Value<string>()?.Length > 0 => null,
+        { Type: JTokenType.String } => "expected non-empty string but got empty string",
+        JArray { Count: > 0 }       => null,
+        JArray                      => "expected non-empty array but got empty array",
+        JObject obj when obj.HasValues => null,
+        JObject                     => "expected non-empty object but got empty object",
+        _                           => $"isNotEmpty requires string, array, or object but got {value.Type}"
+    };
 
-    private static string? CheckGreaterThan(JToken value, string? param)
-    {
-        return CheckNumeric(value, param, "greaterThan", (actual, threshold) => actual > threshold, ">");
-    }
+    private static string? CheckGreaterThan(JToken value, string? param) =>
+        CheckNumeric(value, param, "greaterThan", (a, t) => a > t, ">");
 
-    private static string? CheckLessThan(JToken value, string? param)
-    {
-        return CheckNumeric(value, param, "lessThan", (actual, threshold) => actual < threshold, "<");
-    }
+    private static string? CheckLessThan(JToken value, string? param) =>
+        CheckNumeric(value, param, "lessThan", (a, t) => a < t, "<");
 
-    private static string? CheckNumeric(
-        JToken value, string? param, string matcherName,
+    private static string? CheckNumeric(JToken value, string? param, string matcherName,
         Func<decimal, decimal, bool> predicate, string symbol)
     {
         if (value.Type is not JTokenType.Integer and not JTokenType.Float)
@@ -207,9 +195,9 @@ public static class SemanticMatcher
         var (actualLength, typeDesc) = value switch
         {
             { Type: JTokenType.String } => (value.Value<string>()?.Length ?? 0, "string"),
-            JArray arr => (arr.Count, "array"),
-            JObject obj => (obj.Count, "object"),
-            _ => (-1, null)
+            JArray arr                  => (arr.Count, "array"),
+            JObject obj                 => (obj.Count, "object"),
+            _                           => (-1, (string?)null)
         };
 
         if (typeDesc is null)

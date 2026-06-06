@@ -22,7 +22,6 @@ public abstract class BaseTest : IDisposable
 {
     private const string HeaderSep = "══════════════════════════════════════════════════════";
     private const string FooterSep = "──────────────────────────────────────────────────────";
-    protected static SuiteConfig Config;
 
     // Console is the single channel for structured test output (header, bodies, matchers).
     // ITestOutputHelper is intentionally NOT used for structured content — both xUnit's
@@ -31,29 +30,39 @@ public abstract class BaseTest : IDisposable
     // one test's console block never interleaves with the next test's.
     private readonly List<string>         _consoleBuffer = new();
     private readonly TestResultCollector? _resultCollector;
-    protected readonly ITestProcessorFactory Factory;
-    protected readonly TestFilter         Filter;
-    protected readonly TestHttpClient     HttpClient;
-    protected readonly HttpMockServer     HttpMockServer;
-    protected readonly ITestOutputLogger  TestOutputLogger;
+    private readonly SuiteConfig          _config;
+    protected readonly ITestProcessorFactory? Factory;
+    protected readonly TestFilter?            Filter;
+    protected readonly TestHttpClient         HttpClient;
+    protected readonly HttpMockServer?        HttpMockServer;
+    protected readonly ITestOutputLogger?     TestOutputLogger;
 
-    protected BaseTest(
-        TestHttpClient httpClient,
-        SuiteConfig config,
-        ITestProcessorFactory factory,
-        ITestOutputLogger testOutputLogger,
-        TestFilter filter,
-        TestResultCollector? resultCollector = null)
+    // Convenience accessor — preserved for subclass compatibility
+    protected SuiteConfig Config => _config;
+
+    protected BaseTest(TestSuiteContext context, ITestOutputLogger? logger = null)
     {
-        Config           = config;
-        Factory          = factory;
-        HttpClient       = httpClient;
-        TestOutputLogger = testOutputLogger;
-        Filter           = filter;
-        _resultCollector = resultCollector;
+        _config          = context.Config;
+        Factory          = context.ProcessorFactory;
+        HttpClient       = context.HttpClient;
+        TestOutputLogger = logger;
+        Filter           = context.Filter;
+        _resultCollector = context.ResultCollector;
 
-        if (!string.IsNullOrWhiteSpace(Config.MockServerUrl))
-            HttpMockServer = new HttpMockServer(Config.MockServerUrl, Config.EnableMockServerLogs);
+        if (!string.IsNullOrWhiteSpace(_config.MockServerUrl))
+            HttpMockServer = new HttpMockServer(_config.MockServerUrl, _config.EnableMockServerLogs);
+    }
+
+    // Legacy 6-param constructor — kept for backward compatibility with existing fixtures
+    protected BaseTest(
+        TestHttpClient            httpClient,
+        SuiteConfig               config,
+        ITestProcessorFactory?    factory,
+        ITestOutputLogger?        testOutputLogger,
+        TestFilter?               filter,
+        TestResultCollector?      resultCollector = null)
+        : this(new TestSuiteContext(httpClient, config, factory, filter, resultCollector), testOutputLogger)
+    {
     }
 
     public virtual void Dispose()
@@ -109,12 +118,13 @@ public abstract class BaseTest : IDisposable
             var testProcessor = Factory?.GetTestProcessor(testName);
             var resolvedCase  = VariableInjector.Inject(testCase, VariableStore.Instance);
 
-            SemanticMatcher.ValidateSpecs(resolvedCase.Api.Response.Matcher?.Semantic, Config.CustomMatchers);
+            SemanticMatcher.ValidateSpecs(resolvedCase.Api.Response.Matcher?.Semantic, _config.CustomMatchers);
             HttpMockServer?.Initialize(resolvedCase.Mock);
             testProcessor?.Before(resolvedCase.Api);
 
-            var response     = await HttpClient.Execute(resolvedCase.Api);
-            var actualBody   = JToken.Parse(response.Content.ReadAsStringAsync().Result);
+            var response   = await HttpClient.Execute(resolvedCase.Api);
+            var content    = await response.Content.ReadAsStringAsync();
+            var actualBody = JToken.Parse(content);
             var expectedBody = resolvedCase.Api.Response.Body;
 
             Log(actualBody, expectedBody, resolvedCase);
@@ -123,7 +133,7 @@ public abstract class BaseTest : IDisposable
 
             VariableExtractor.Extract(testName, response, actualBody,
                 resolvedCase.Api.Response.Extract, VariableStore.Instance);
-            SaveApiResponse(Config.ApiResponseFolder, testName, actualBody);
+            SaveApiResponse(_config.ApiResponseFolder, testName, actualBody);
 
             _consoleBuffer.Add(TestColor.Subtle(FooterSep));
             _consoleBuffer.Add(string.Empty);
@@ -143,7 +153,8 @@ public abstract class BaseTest : IDisposable
         }
     }
 
-    private void RecordStatus(string testName, TestRunStatus status, TimeSpan? duration = null, string? sourceFile = null, string? reason = null)
+    private void RecordStatus(string testName, TestRunStatus status, TimeSpan? duration = null,
+        string? sourceFile = null, string? reason = null)
     {
         TestDependencyStore.Instance.RecordStatus(testName, status);
         _resultCollector?.Record(testName, status, duration, sourceFile, reason);
@@ -160,19 +171,22 @@ public abstract class BaseTest : IDisposable
         TestApi testApi)
     {
         response.StatusCode.Should().Be(Enum.Parse<HttpStatusCode>(testApi.Response.StatusCode.ToString()));
-        MatchResponseBody(actualResponseBody, expectedResponseBody, testApi.Response.Matcher, Config.CustomMatchers);
+        var result = MatchResponseBody(actualResponseBody, expectedResponseBody,
+            testApi.Response.Matcher, _config.CustomMatchers);
+        if (!result.Passed)
+            false.Should().BeTrue(result.Description);
     }
 
     protected bool ShouldSkipTheTest(string testName, TestCase testCase)
     {
         if (Filter is null) return false;
 
-        if (Filter.TestNames?.Count > 0
+        if (Filter.TestNames.Count > 0
             && !Filter.TestNames.Any(n =>
                 n.Trim().Equals(testName.Trim(), StringComparison.InvariantCultureIgnoreCase)))
             return true;
 
-        if (Filter.Tags?.Count > 0)
+        if (Filter.Tags.Count > 0)
             if (testCase.Tags is not { Count: > 0 }
                 || !testCase.Tags.Select(s => s.Trim())
                     .Intersect(Filter.Tags.Select(s => s.Trim()), StringComparer.InvariantCultureIgnoreCase)
@@ -186,7 +200,7 @@ public abstract class BaseTest : IDisposable
 
     #region Output
 
-    protected void Log(JToken actualBody, JToken expectedBody, TestCase test)
+    protected void Log(JToken actualBody, JToken? expectedBody, TestCase test)
     {
         var matcher = test.Api.Response.Matcher;
 
@@ -224,6 +238,7 @@ public abstract class BaseTest : IDisposable
 
     protected virtual void SaveApiResponse(string apiResponseFolder, string testName, JToken response)
     {
+        if (string.IsNullOrWhiteSpace(apiResponseFolder)) return;
         File.WriteAllText($"{GetFullPath(apiResponseFolder)}/{testName.ToLower()}.json", response.ToString());
     }
 

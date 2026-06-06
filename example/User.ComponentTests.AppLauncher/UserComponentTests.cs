@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ConfIT;
 using ConfIT.Extension;
-using ConfIT.Util;
+using ConfIT.Reader;
 using Newtonsoft.Json.Linq;
 using User.ComponentTests.Launcher.SetUp;
 using Xunit;
