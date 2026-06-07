@@ -46,7 +46,7 @@ public static class SemanticMatcher
     // Mutates actual and expected by removing matched fields (so the diff step skips them).
     public static string? Apply(
         JToken actual,
-        JToken expected,
+        JToken? expected,
         Dictionary<string, string>? semantic,
         IReadOnlyDictionary<string, SemanticMatcherFunc>? customMatchers)
     {
@@ -71,7 +71,8 @@ public static class SemanticMatcher
                 return $"field '{fieldPath}' [{matcherSpec}]: {failure}";
 
             actualField.Parent?.Remove();
-            expected.SelectToken(jPath)?.Parent?.Remove();
+            // expected may be null when a test defines semantic matchers but omits response.body
+            expected?.SelectToken(jPath)?.Parent?.Remove();
         }
 
         return null;

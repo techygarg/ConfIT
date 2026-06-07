@@ -1,4 +1,5 @@
 using ConfIT.Reporting;
+using ConfIT.Runner.Http;
 
 namespace ConfIT;
 
@@ -12,6 +13,7 @@ public sealed class BootstrappedSuite : IDisposable
 {
     private readonly IDisposable?        _infrastructure;
     private readonly TestResultCollector _resultCollector;
+    private readonly TestHttpClient?     _ownedHttpClient;
     private bool                         _disposed;
 
     /// <summary>
@@ -27,15 +29,17 @@ public sealed class BootstrappedSuite : IDisposable
     public IServiceProvider? Services { get; }
 
     internal BootstrappedSuite(
-        TestSuiteContext  context,
-        IDisposable?      infrastructure,
+        TestSuiteContext    context,
+        IDisposable?        infrastructure,
         TestResultCollector resultCollector,
-        IServiceProvider? services = null)
+        IServiceProvider?   services        = null,
+        TestHttpClient?     ownedHttpClient = null)
     {
         Context          = context;
         _infrastructure  = infrastructure;
         _resultCollector = resultCollector;
         Services         = services;
+        _ownedHttpClient = ownedHttpClient;
     }
 
     public void Dispose()
@@ -46,5 +50,6 @@ public sealed class BootstrappedSuite : IDisposable
         // Print the suite summary before tearing down infrastructure.
         _resultCollector.Dispose();
         _infrastructure?.Dispose();
+        _ownedHttpClient?.Dispose();
     }
 }

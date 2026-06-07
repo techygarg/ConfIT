@@ -267,6 +267,19 @@ public class SemanticMatcherTests
         action.Should().Throw<InvalidOperationException>().WithMessage("*id*absent*");
     }
 
+    [Fact]
+    public void Apply_NullExpected_DoesNotThrow()
+    {
+        // When response.body is omitted in the test definition but semantic matchers are declared,
+        // expected is null. Actual-field validation still runs; removal from expected is skipped.
+        var result = SemanticMatcher.Apply(
+            JToken.Parse("{'id': 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'}"),
+            null,
+            new Dictionary<string, string> { ["id"] = "isUuid" },
+            null);
+        result.Should().BeNull();
+    }
+
     #endregion
 
     #region Custom matcher extension
