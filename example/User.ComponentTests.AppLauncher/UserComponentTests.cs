@@ -20,7 +20,7 @@ namespace User.ComponentTests.Launcher
         [Theory]
         [MemberData(nameof(GetTestCasesForFolder), "TestCase")]
         public async Task ExecuteTest(string testName, JToken test, string sourceFile) =>
-            await Execute(testName, test.ToTestCase(null, null), sourceFile);
+            await Execute(testName, test, sourceFile);
 
         public static IEnumerable<object[]> GetTestCases(string fileName) =>
             TestReader.GetTestsForAFile("TestCase", fileName);

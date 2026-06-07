@@ -72,6 +72,12 @@ public abstract class BaseTest : IDisposable
 
     #region Execute pipeline
 
+    protected virtual async Task Execute(string testName, JToken test, string? sourceFile = null)
+    {
+        var testCase = test.ToTestCase(_config.RequestBodyFolder, _config.ResponseBodyFolder);
+        await Execute(testName, testCase, sourceFile);
+    }
+
     protected virtual async Task Execute(string testName, TestCase testCase, string? sourceFile = null)
     {
         if (TrySkipForDependency(testName, testCase, sourceFile)) return;

@@ -232,7 +232,7 @@ public class UserTests : BaseTest, IClassFixture<TestSuiteFixture>
     [Theory]
     [MemberData(nameof(GetTestCasesForFolder), "TestCase")]
     public async Task ExecuteTest(string testName, JToken test, string sourceFile) =>
-        await Execute(testName, test.ToTestCase(null, null), sourceFile);
+        await Execute(testName, test, sourceFile);
 
     public static IEnumerable<object[]> GetTestCasesForFolder(string folder) =>
         TestReader.GetTestsForAFolder(folder);
@@ -241,14 +241,7 @@ public class UserTests : BaseTest, IClassFixture<TestSuiteFixture>
 
 `TestReader.GetTestsForAFolder("TestCase")` discovers all `.json` and `.yaml` files in the `TestCase` output directory and yields `(testName, testBody, sourceFileName)` tuples. xUnit feeds each tuple as a theory row.
 
-`test.ToTestCase(requestFolder, responseFolder)` deserialises the raw token into a typed `TestCase`. Pass `null` for both folders when tests use inline bodies only. Pass `Config.RequestBodyFolder` and `Config.ResponseBodyFolder` for integration tests that load bodies from files:
-
-```csharp
-public async Task ExecuteTest(string testName, JContainer test, string sourceFile) =>
-    await Execute(testName, test.ToTestCase(Config.RequestBodyFolder, Config.ResponseBodyFolder), sourceFile);
-```
-
-`Config` is available as a protected property on `BaseTest` — it reads from the context passed to the constructor.
+`BaseTest.Execute(testName, test, sourceFile)` accepts the raw `JToken` directly and resolves it to a `TestCase` internally using the folder paths from `_config` (`RequestBodyFolder`, `ResponseBodyFolder`). This works identically for component tests (no body files — folders are empty) and integration tests (body files loaded from config-driven paths). No explicit `ToTestCase` call is needed.
 
 `TestOutputLogger` is a thin adapter; implement it in your test project:
 

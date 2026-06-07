@@ -18,8 +18,8 @@ namespace User.IntegrationTests
 
         [Theory]
         [MemberData(nameof(GetTestCasesForFolder), "TestCase")]
-        public async Task ExecuteTest(string testName, JContainer test, string sourceFile) =>
-            await Execute(testName, test.ToTestCase(Config.RequestBodyFolder, Config.ResponseBodyFolder), sourceFile);
+        public async Task ExecuteTest(string testName, JToken test, string sourceFile) =>
+            await Execute(testName, test, sourceFile);
 
         public static IEnumerable<object[]> GetTestCases(string fileName) =>
             TestReader.GetTestsForAFile(fileName, "TestCase");
