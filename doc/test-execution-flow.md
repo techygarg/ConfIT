@@ -12,14 +12,11 @@ The service boots inside the test process. No network ports, no external process
 ┌─────────────────────────────────────────────────────────────┐
 │  xUnit starts fixture                                        │
 │                                                             │
-│  1. SuiteConfiguration.LoadComponent("suite.config.yaml")  │
-│     • Validate config, resolve ${ENV_VAR} references        │
-│     • Return ComponentConfig                                 │
-│                                                             │
-│  2. TestSuiteInitializer<Startup>(settings, overrides?)     │
+│  1. SuiteBootstrapper.ForComponent<Startup>(configFile, …)  │
+│     • Loads + validates suite.config.yaml                   │
 │     • WebApplicationFactory boots service in-process        │
 │     • Service uses InMemory DB / test config                 │
-│     • Services.CreateScope() → seed test data               │
+│     • onStarted callback → seed test data (if provided)     │
 │                                                             │
 │  3. WireMock starts on MockServerUrl port                    │
 │     (managed by ConfIT per-test, not here)                   │
@@ -68,19 +65,15 @@ The service runs as a real external process started by the test fixture. Works w
 ┌─────────────────────────────────────────────────────────────┐
 │  xUnit starts fixture                                        │
 │                                                             │
-│  1. SuiteConfiguration.LoadComponent("suite.config.yaml")  │
-│     • Validate config, resolve ${ENV_VAR} references        │
-│     • Return ComponentConfig (mode: command)                 │
-│                                                             │
-│  2. AppLauncher.Start(cfg.ToAppLauncherConfig())            │
+│  1. SuiteBootstrapper.ForCommand(configFile)                │
+│     • Loads + validates suite.config.yaml                   │
 │     • Runs shell command (e.g. dotnet run --no-build ...)   │
 │     • Injects env vars (ASPNETCORE_ENVIRONMENT, etc.)       │
 │     • Polls readiness probe (HTTP 2xx or TCP port)          │
 │       ┌── process exits early → throw with stderr tail      │
 │       └── timeout elapsed → kill process, throw             │
 │     • App starts, self-seeds data, configures from env      │
-│                                                             │
-│  3. TestHttpClient.Create(cfg.Api.Url)                       │
+│     • Builds TestHttpClient.Create(cfg.Api.Url, authProvider)│
 └───────────────────────┬─────────────────────────────────────┘
                         │
               ┌─────────▼──────────────────────────────────┐
@@ -110,15 +103,13 @@ Services run out-of-process (started by the CI pipeline or `make integration`). 
 │                                                             │
 │  xUnit starts fixture                                        │
 │                                                             │
-│  1. SuiteConfiguration.LoadIntegration("suite.config.yaml") │
+│  1. SuiteBootstrapper.ForIntegration(configFile, env?)      │
 │     • Read TEST_ENVIRONMENT env var (or use default)        │
 │     • Load named environment block (local / qa / staging)   │
 │     • Resolve ${ENV_VAR} for URLs, tokens                   │
-│     • Return IntegrationEnvironmentConfig                    │
-│                                                             │
-│  2. TestHttpClient.Create(cfg.Api.Url, authProvider)        │
-│     • Points at the real running service                    │
-│     • Auth token injected per request if provider set       │
+│     • Return IntegrationConfig                               │
+│     • Builds TestHttpClient.Create(cfg.Api.Url, authProvider)│
+│     • Auth token injected per request if auth block set     │
 └───────────────────────┬─────────────────────────────────────┘
                         │
               ┌─────────▼──────────────────────────────────┐

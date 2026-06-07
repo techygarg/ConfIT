@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using ConfIT.Server.Dto;
+using ConfIT.Model;
 using ConfIT.Variable.Exception;
 using Newtonsoft.Json;
 

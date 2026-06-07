@@ -1,162 +1,231 @@
 # Test Filtering
 
-By default, every test in a suite runs. Filtering lets you run a targeted subset without touching the test files — useful for CI pipelines that run only a smoke pool on every push, debugging a single failing test, or separating fast and slow test groups.
+By default every test in a suite runs. Filtering lets you run a targeted subset without changing the test files — useful for smoke pipelines, debugging a single failing test, or separating fast and slow groups.
 
-Filtering works through the `TestFilter` object passed to `BaseTest`. A filtered-out test is **skipped**, not failed — it does not affect the overall pass/fail result of the suite.
+A filtered-out test is **skipped**, not failed. It does not affect the suite's pass/fail result and appears in the summary with a `⏭` marker.
 
 ---
 
-## Tags in the DSL
+## How Filtering Works
 
-Add a `tags` array to any test case. Tags are arbitrary strings; a test can carry as many as you need.
+Filtering is controlled by a `TestFilter` object passed to `BaseTest` through `TestSuiteContext`. When `SuiteBootstrapper` reads your `suite.config.yaml`, it builds the filter from the `filter:` section automatically — no C# required.
 
-**JSON:**
-```json
-"ShouldReturnErrorIfUserNotExist": {
-  "tags": ["errors", "user"],
-  "api": {
-    "request": { "method": "GET", "path": "/api/user/notexist@test.com" },
-    "response": { "statusCode": 404 }
-  }
-}
+There are **two strategies**:
+
+| Strategy | What it filters on | Filter is active when |
+|---|---|---|
+| `tags` | The `tags` array on each test case | Env var is set and non-empty |
+| `tests` | The test name (exact match) | Env var is set and non-empty |
+
+When the env var is unset or empty, the filter is inactive and every test runs. This is the correct CI default — don't set the env var to run the full suite.
+
+---
+
+## Declaring Filters in `suite.config.yaml`
+
+Add a `filter:` block to the `component` section or to an integration environment block.
+
+```yaml
+component:
+  filter:
+    strategy: tags      # "tags" or "tests"
+    envVariable: TEST_TAGS  # the name of the env var this filter reads at runtime
 ```
 
-**YAML:**
 ```yaml
-ShouldCreateUser_InYamlFormat:
+integration:
+  default: local
+  local:
+    filter:
+      strategy: tags
+      envVariable: TEST_TAGS
+  qa:
+    filter:
+      strategy: tests
+      envVariable: TEST_NAMES
+```
+
+**`strategy`** — one of two values:
+- `"tags"` — reads the env var and matches it against each test's `tags` array
+- `"tests"` — reads the env var and matches it against each test's name
+
+**`envVariable`** — the name of the environment variable to read at runtime. This is a name *you choose* — it is not a library constant. Use whatever makes sense for your project. The examples in this repository use `TEST_TAGS` for tag-based filtering and `TEST_NAMES` for name-based filtering, but these are conventions, not requirements.
+
+`SuiteBootstrapper` reads the filter block automatically — no fixture code needed.
+
+---
+
+## Filtering by Tag
+
+### In `suite.config.yaml`
+
+```yaml
+filter:
+  strategy: tags
+  envVariable: TEST_TAGS
+```
+
+### Tags in test definitions
+
+Add a `tags` array to any test case:
+
+```yaml
+ShouldReturnErrorIfUserNotExist:
   tags:
-    - yaml
-    - user
+    - errors
+    - smoke
   api:
     request:
-      method: POST
-      path: /api/user
+      method: GET
+      path: /api/user/notexist@test.com
     response:
-      statusCode: 201
+      statusCode: 404
 ```
 
-Tests with **no tags** are unaffected by any active tag filter — they always run. See the [test file format reference](test-file-format.md) for the full DSL.
+A test can carry as many tags as needed. Tags are arbitrary strings — use them to group tests by feature, criticality, speed, or any dimension that matters to your pipeline.
 
-📄 Live example: [`User.ComponentTests/TestCase/yaml-support.yaml`](../example/User.ComponentTests/TestCase/yaml-support.yaml)
+### At runtime
 
----
-
-## Filtering by Tag (`RUN_POOLS`)
-
-`TestFilter.CreateForTagsFromEnvVariable("RUN_POOLS")` reads a comma-separated list of tags from the `RUN_POOLS` environment variable. Only tests whose `tags` list intersects `RUN_POOLS` run; all others are skipped.
-
-**Fixture setup:**
-```csharp
-Filter = TestFilter.CreateForTagsFromEnvVariable("RUN_POOLS");
-```
-
-Pass `Filter` to `BaseTest` via the fixture constructor — the integration test fixture already wires this up.
-
-📄 Live example: [`User.IntegrationTests/TestSuiteFixture.cs`](../example/User.IntegrationTests/TestSuiteFixture.cs)
-
-**Runtime usage:**
 ```bash
 # Run only tests tagged "smoke"
-RUN_POOLS=smoke dotnet test
+TEST_TAGS=smoke dotnet test
 
-# Run tests tagged "smoke" or "user" (union, not intersection)
-RUN_POOLS=smoke,user dotnet test
+# Run tests tagged "smoke" or "errors" (union, not intersection)
+TEST_TAGS=smoke,errors dotnet test
+
+# Run everything — do not set the variable
+dotnet test
 ```
 
-The match is **case-insensitive** and ignores surrounding whitespace. `RUN_POOLS=Smoke` matches a test tagged `smoke`.
+The match is **case-insensitive** and ignores surrounding whitespace. `TEST_TAGS=Smoke` matches a test tagged `smoke`.
 
-**What happens to untagged tests?**
+### Untagged tests
 
-When `RUN_POOLS` is set, tests with no `tags` array are **skipped**. If you need a test to run under all tag-filtered runs, give it a tag that is always included — or leave the filter unset.
+> **Important:** when a tag filter is active, tests with **no `tags` array are skipped** — they do not run. If you need a test to run under every tag-filtered execution, give it a tag that is always included in the filter value, or run without a filter.
+
+This is intentional: an untagged test has opted out of all tag groups, so it has no claim to run when a specific group is selected.
+
+📄 Live example: [`User.ComponentTests/TestCase/`](../example/User.ComponentTests/TestCase/)
 
 ---
 
-## Filtering by Test Name (`RUN_TESTS`)
+## Filtering by Test Name
 
-`TestFilter.CreateForTestsFromEnvVariable("RUN_TESTS")` reads a comma-separated list of exact test names. Only the named tests run; all others are skipped.
+### In `suite.config.yaml`
 
-**Fixture setup:**
-```csharp
-Filter = TestFilter.CreateForTestsFromEnvVariable("RUN_TESTS");
+```yaml
+filter:
+  strategy: tests
+  envVariable: TEST_NAMES
 ```
 
-**Runtime usage:**
+### At runtime
+
 ```bash
 # Run a single test
-RUN_TESTS=ShouldCreateAUser dotnet test
+TEST_NAMES=ShouldCreateAUser dotnet test
 
 # Run two specific tests
-RUN_TESTS=ShouldCreateAUser,ShouldGetUserById dotnet test
+TEST_NAMES=ShouldCreateAUser,ShouldGetUserById dotnet test
 ```
 
-The match is **case-insensitive**. `RUN_TESTS=shouldcreateauser` matches `ShouldCreateAUser`.
+The match is **case-insensitive**. `TEST_NAMES=shouldcreateauser` matches `ShouldCreateAUser`.
+
+All other tests are skipped. Tests with no matching name are not failed.
 
 ---
 
-## Hardcoded Filters
+## No Filter — Running Everything
 
-Use `TestFilter.CreateForTags` and `TestFilter.CreateForTests` when the filter is fixed — no environment variable lookup.
+When `filter:` is absent from `suite.config.yaml`, or when the env var is not set, `TestFilter` is `null` and every test runs. This is the correct default for a full CI run.
+
+```bash
+# Run all tests — env var not set
+dotnet test
+
+# Run all tests explicitly
+TEST_TAGS= dotnet test     # empty value → filter inactive
+```
+
+---
+
+## Manual Construction (Without YAML)
+
+When wiring fixtures manually, construct `TestFilter` directly and pass it into `TestSuiteContext`:
 
 ```csharp
-// Always run only the smoke pool
-Filter = TestFilter.CreateForTags("smoke");
+// Tag-based, reads env var at construction time
+context = new TestSuiteContext(
+    ...,
+    Filter: TestFilter.CreateForTagsFromEnvVariable("TEST_TAGS"));
 
-// Always run only these two tests
-Filter = TestFilter.CreateForTests("ShouldCreateAUser,ShouldGetUserById");
+// Name-based
+context = new TestSuiteContext(
+    ...,
+    Filter: TestFilter.CreateForTestsFromEnvVariable("TEST_NAMES"));
+
+// Hardcoded — useful for local debugging only; do not commit as the fixture default
+context = new TestSuiteContext(
+    ...,
+    Filter: TestFilter.CreateForTags("smoke"));
+
+// No filter — run everything
+context = new TestSuiteContext(
+    ...,
+    Filter: null);
 ```
 
-This is convenient during local development to focus on a particular area. **Do not commit hardcoded filters as the default fixture setup** — it hides tests from CI and makes coverage gaps invisible until someone notices.
+**Do not commit a hardcoded filter as the fixture default.** It hides tests from CI and makes coverage gaps invisible.
 
 ---
 
-## Skipped vs Failed
+## CI Patterns
 
-A filtered-out test is logged and skipped:
+Control scope from outside the fixture — the fixture should always be filter-neutral by default.
 
-```
-  ⏭  Skipping: ShouldReturnErrorIfUserNotExist
-```
+**GitHub Actions — separate jobs by scope:**
 
-Skipped tests:
-- Do not count as failures
-- Do not block the overall suite from passing
-- Are grouped clearly in the suite summary
-
----
-
-## No Filter — Running All Tests
-
-Pass `null` for the `TestFilter` argument in `BaseTest` to run every test unconditionally. This is the correct default for CI when no scoping is needed:
-
-```csharp
-// Component tests fixture — no filter by default; all tests run in CI
-Filter = null;
-```
-
-When `Filter` is `null`, `ShouldSkipTheTest` returns `false` for every test.
-
----
-
-## CI Pattern
-
-Control which pools run from the outside — do not bake a filter into the fixture for CI environments.
-
-**GitHub Actions:**
 ```yaml
-- name: Run smoke tests
+- name: Smoke tests
   run: dotnet test
   env:
-    RUN_POOLS: smoke
+    TEST_TAGS: smoke
 
-- name: Run full suite
+- name: Full suite
   run: dotnet test
-  # No RUN_POOLS set — all tests run
+  # TEST_TAGS not set — all tests run
 ```
 
-**Make target:**
+**Makefile targets:**
+
 ```makefile
 smoke:
-    RUN_POOLS=smoke dotnet test ./example/User.IntegrationTests
+    TEST_TAGS=smoke dotnet test ./example/User.IntegrationTests
+
+full:
+    dotnet test ./example/User.IntegrationTests
 ```
 
-This keeps the fixture clean and lets CI orchestrate scope without modifying source files.
+**Environment-specific filtering** — different environments can use different filter strategies:
+
+```yaml
+integration:
+  local:
+    filter:
+      strategy: tags
+      envVariable: TEST_TAGS    # local: run by feature tag
+  ci:
+    filter:
+      strategy: tests
+      envVariable: TEST_NAMES   # CI: run specific regression tests
+```
+
+---
+
+## Summary
+
+| Scenario | `strategy` | env var not set | env var = `"smoke"` |
+|---|---|---|---|
+| Tag filter | `tags` | all tests run | only tests tagged `smoke` run; untagged tests skip |
+| Name filter | `tests` | all tests run | only the test named `smoke` runs |
+| No `filter:` block | — | all tests run | all tests run (var is ignored) |

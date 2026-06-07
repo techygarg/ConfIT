@@ -1,5 +1,12 @@
+using ConfIT.Matching;
+
 namespace ConfIT.Config;
 
+/// <remarks>
+/// Infrastructure config bag passed to <see cref="ConfIT.BaseTest"/>.
+/// For new suites prefer <see cref="SuiteConfiguration.LoadComponent"/> or
+/// <see cref="SuiteConfiguration.LoadIntegration"/> which produce this from YAML.
+/// </remarks>
 public class SuiteConfig
 {
     public string MockServerUrl { get; set; } = string.Empty;

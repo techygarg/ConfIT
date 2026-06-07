@@ -219,6 +219,6 @@ See [Variable Extraction + Injection](./variable-extraction-and-injection.md) fo
 
 ## Filter-Skipped Tests and Dependencies
 
-When a test is skipped by a tag or name filter (`RUN_POOLS`, `RUN_TESTS`), it is recorded as `Skipped` in the dependency tracker. Any test that declares `depends:` on a filter-skipped test is also skipped.
+When a test is skipped by a tag or name filter (`TEST_TAGS`, `TEST_NAMES`), it is recorded as `Skipped` in the dependency tracker. Any test that declares `depends:` on a filter-skipped test is also skipped.
 
 This means the dependency graph is consistent regardless of skip reason: a test that did not pass — for any reason — is treated as a failed prerequisite by its dependents.

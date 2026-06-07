@@ -1,7 +1,7 @@
 using ConfIT.Config;
 using ConfIT.Config.AuthProvider;
 using ConfIT.Contract;
-using ConfIT.Server.Boot;
+using ConfIT.Runner.Boot;
 
 namespace ConfIT.Extension;
 
@@ -19,7 +19,7 @@ public static class SuiteConfigurationExtensions
         };
     }
 
-    public static SuiteConfig ToSuiteConfig(this IntegrationEnvironmentConfig config)
+    public static SuiteConfig ToSuiteConfig(this IntegrationConfig config)
     {
         return new SuiteConfig
         {
@@ -35,7 +35,7 @@ public static class SuiteConfigurationExtensions
         return BuildFilter(config.Filter);
     }
 
-    public static TestFilter? ToTestFilter(this IntegrationEnvironmentConfig config)
+    public static TestFilter? ToTestFilter(this IntegrationConfig config)
     {
         return BuildFilter(config.Filter);
     }
@@ -59,7 +59,7 @@ public static class SuiteConfigurationExtensions
     public static IAuthTokenProvider? ToAuthTokenProvider(this ComponentConfig config) =>
         BuildAuthProvider(config.Auth);
 
-    public static IAuthTokenProvider? ToAuthTokenProvider(this IntegrationEnvironmentConfig config) =>
+    public static IAuthTokenProvider? ToAuthTokenProvider(this IntegrationConfig config) =>
         BuildAuthProvider(config.Auth);
 
     private static IAuthTokenProvider? BuildAuthProvider(AuthConfig? auth)

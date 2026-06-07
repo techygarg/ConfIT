@@ -1,11 +1,13 @@
-using ConfIT.Server.Dto;
+using ConfIT.Model;
+using ConfIT.Reader;
 
 namespace ConfIT.Extension;
 
 public static class JTokenExtensions
 {
-    public static TestCase ToTestCase(this JToken jToken, string requestFolder, string responseFolder)
+    public static TestCase ToTestCase(this JToken jToken, string? requestFolder, string? responseFolder)
     {
-        return jToken?.ToObject<TestCase>()?.Initialize(requestFolder, responseFolder)!;
+        var raw = jToken?.ToObject<TestCase>();
+        return raw is null ? null! : TestCaseResolver.Resolve(raw, requestFolder, responseFolder);
     }
 }

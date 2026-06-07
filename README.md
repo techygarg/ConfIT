@@ -28,7 +28,7 @@ Component and integration tests share a large common surface — how tests are d
 
 ## Getting Started
 
-→ **[Suite Setup](doc/suite-setup.md)** — install the package, configure via `suite.config.yaml` or manual wiring, choose your startup mode (in-process or AppLauncher). Start here.
+→ **[Suite Setup](doc/suite-setup.md)** — install the package, write a `suite.config.yaml`, and call `SuiteBootstrapper.ForComponent` / `ForIntegration` / `ForCommand` — that's the fixture. Start here.
 
 → **[Test Execution Flow](doc/test-execution-flow.md)** — ASCII flow diagrams showing what happens at runtime across all three suite types.
 
@@ -42,7 +42,7 @@ Component and integration tests share a large common surface — how tests are d
 |---|---|
 | [Test File Format](doc/test-file-format.md) | Full DSL reference — every field in JSON and YAML, `bodyFromFile`, `override`, multi-file rules |
 | [Mock Interactions](doc/mock-interactions.md) | Declaring WireMock stubs inline for component tests — request matching, response definition, YAML anchor reuse |
-| [Test Filtering](doc/test-filtering.md) | Running a subset by tag (`RUN_POOLS`) or name (`RUN_TESTS`), CI patterns |
+| [Test Filtering](doc/test-filtering.md) | Running a subset by tag (`TEST_TAGS`) or name (`TEST_NAMES`), CI patterns |
 
 ### Assertions and Data Flow
 
@@ -69,7 +69,7 @@ Component and integration tests share a large common surface — how tests are d
 | Document | What it covers |
 |---|---|
 | [Reading Failure Output](doc/failure-output.md) | Per-field failure messages, path notation, suite summary table, debugging tips |
-| [Extending ConfIT](doc/extending-confit.md) | `ITestOutputLogger`, `ITestProcessor` hooks, custom semantic matchers |
+| [Extending ConfIT](doc/extending-confit.md) | `ITestOutputLogger`, `ITestProcessor` / `ITestProcessorFactory` hooks, custom semantic matchers, `IAuthTokenProvider` |
 
 ---
 
@@ -101,6 +101,6 @@ make help         # list all targets
 Filter at runtime without changing code:
 
 ```bash
-RUN_POOLS=smoke dotnet test    # tag filter
-RUN_TESTS=ShouldCreateAUser dotnet test    # name filter
+TEST_TAGS=smoke dotnet test    # tag filter
+TEST_NAMES=ShouldCreateAUser dotnet test    # name filter
 ```

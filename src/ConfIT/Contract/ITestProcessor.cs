@@ -1,4 +1,4 @@
-using ConfIT.Server.Dto;
+using ConfIT.Model;
 
 namespace ConfIT.Contract;
 

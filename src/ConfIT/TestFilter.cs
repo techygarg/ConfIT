@@ -4,42 +4,30 @@ namespace ConfIT;
 
 public class TestFilter
 {
-    public List<string> Tags { get; set; }
-    public List<string> TestNames { get; set; }
+    public IReadOnlyList<string> Tags { get; init; } = [];
+    public IReadOnlyList<string> TestNames { get; init; } = [];
 
-    public static TestFilter CreateForTags(string tags)
+    public static TestFilter CreateForTags(string tags) => new()
     {
-        return new TestFilter
-        {
-            Tags = tags?.Split(',').ToList() ?? []
-        };
-    }
+        Tags = tags?.Split(',').ToList() ?? []
+    };
 
-    public static TestFilter CreateForTagsFromEnvVariable(string tagKey)
+    public static TestFilter CreateForTagsFromEnvVariable(string tagKey) => new()
     {
-        return new TestFilter
-        {
-            Tags = string.IsNullOrWhiteSpace(tagKey)
-                ? []
-                : GetEnvironmentVariable(tagKey)?.Split(',').ToList() ?? []
-        };
-    }
+        Tags = string.IsNullOrWhiteSpace(tagKey)
+            ? []
+            : GetEnvironmentVariable(tagKey)?.Split(',').ToList() ?? []
+    };
 
-    public static TestFilter CreateForTests(string testNames)
+    public static TestFilter CreateForTests(string testNames) => new()
     {
-        return new TestFilter
-        {
-            TestNames = testNames?.Split(',').ToList() ?? []
-        };
-    }
+        TestNames = testNames?.Split(',').ToList() ?? []
+    };
 
-    public static TestFilter CreateForTestsFromEnvVariable(string testNamesKey)
+    public static TestFilter CreateForTestsFromEnvVariable(string testNamesKey) => new()
     {
-        return new TestFilter
-        {
-            TestNames = string.IsNullOrWhiteSpace(testNamesKey)
-                ? []
-                : GetEnvironmentVariable(testNamesKey)?.Split(',').ToList() ?? []
-        };
-    }
+        TestNames = string.IsNullOrWhiteSpace(testNamesKey)
+            ? []
+            : GetEnvironmentVariable(testNamesKey)?.Split(',').ToList() ?? []
+    };
 }

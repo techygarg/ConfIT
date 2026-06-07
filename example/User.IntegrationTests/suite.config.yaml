@@ -10,7 +10,7 @@ integration:
       responseBody: TestCase/Response
     filter:
       strategy: tags
-      envVariable: RUN_POOLS
+      envVariable: TEST_TAGS
 
   qa:
     api:
@@ -24,4 +24,4 @@ integration:
       responseBody: TestCase/Response
     filter:
       strategy: tags
-      envVariable: RUN_POOLS
+      envVariable: TEST_TAGS
