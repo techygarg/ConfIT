@@ -80,7 +80,7 @@ public static class SuiteBootstrapper
             Filter:          cfg.ToTestFilter(),
             ResultCollector: resultCollector);
 
-        return new BootstrappedSuite(context, launcher, resultCollector);
+        return new BootstrappedSuite(context, launcher, resultCollector, ownedHttpClient: httpClient);
     }
 
     /// <summary>
@@ -110,7 +110,7 @@ public static class SuiteBootstrapper
             Filter:          cfg.ToTestFilter(),
             ResultCollector: resultCollector);
 
-        return new BootstrappedSuite(context, infrastructure: null, resultCollector);
+        return new BootstrappedSuite(context, infrastructure: null, resultCollector, ownedHttpClient: httpClient);
     }
 
     // Resolves the response folder to an absolute path and ensures it exists.

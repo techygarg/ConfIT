@@ -168,6 +168,18 @@ public class ResultMatcherTests
     }
 
     [Fact]
+    public void MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow()
+    {
+        // Given — response.body omitted in test definition but semantic matcher declared
+        var actual  = JToken.Parse("{'id': 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'}");
+        var matcher = new Matcher { Semantic = new Dictionary<string, string> { ["id"] = "isUuid" } };
+
+        // When / Then — must not throw NullReferenceException
+        var act = () => ResultMatcher.MatchResponseBody(actual, null, matcher);
+        act.Should().NotThrow();
+    }
+
+    [Fact]
     public void MatchResponseBody_InvalidRegexPattern_ThrowsArgumentException()
     {
         // Given

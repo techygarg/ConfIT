@@ -13,7 +13,7 @@ public static class ResultMatcher
         IReadOnlyDictionary<string, SemanticMatcherFunc>? customMatchers = null)
     {
         var actual          = actualResponse.DeepClone();
-        var semanticFailure = SemanticMatcher.Apply(actual, expectedResponse!, matcher?.Semantic, customMatchers);
+        var semanticFailure = SemanticMatcher.Apply(actual, expectedResponse, matcher?.Semantic, customMatchers);
         if (semanticFailure is not null)
             return new MatchResult(false, semanticFailure);
 
