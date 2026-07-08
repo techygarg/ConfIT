@@ -1,6 +1,6 @@
 ---
 feature: Modern Test Host Initialization
-epic: Environment Setup
+epic: Reduce Team Friction
 status: draft
 priority: P0
 depends_on: []
@@ -137,4 +137,4 @@ A developer uses the minimal hosting model but forgets to expose `Program` publi
 ## Links
 
 - Design: [env-003-modern-test-host-initialization.md](../../context/env-003-modern-test-host-initialization.md)
-- Epic index: [index.md](../index.md)
+- Epic index: [reduce-team-friction.md](../epics/reduce-team-friction.md)

@@ -1,6 +1,17 @@
+---
+feature: Variable Extraction + Injection
+epic: Remove the Capability Ceiling
+status: approved
+priority: P0
+depends_on: []
+personas:
+  - test-author
+source_docs: []
+---
+
 # [FLOW-001] Variable Extraction + Injection
 
-← [Back to Roadmap](../roadmap.md)
+← [Back to Roadmap](../index.md)
 
 **Tier:** 1 — Remove the Capability Ceiling  
 **Status:** Requirements complete
@@ -272,3 +283,10 @@ A CLI command that scans a test folder statically before any test runs and repor
 - Ordering risks — test uses a variable from a test that appears later in execution order
 
 Shifts collision and undefined-reference errors from runtime (mid-run failure) to pre-flight. Pairs naturally with [TOOL-003] CLI tool.
+
+---
+
+## Links
+
+- Design: [flow-001-variable-extraction.md](../../context/flow-001-variable-extraction.md)
+- Epic index: [remove-the-capability-ceiling.md](../epics/remove-the-capability-ceiling.md)

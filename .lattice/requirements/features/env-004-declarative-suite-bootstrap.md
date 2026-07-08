@@ -1,6 +1,6 @@
 ---
 feature: Declarative Suite Configuration
-epic: Environment Setup
+epic: Reduce Team Friction
 status: draft
 priority: P1
 depends_on:
@@ -165,4 +165,4 @@ Auth tokens and environment-specific URLs are stored as env var references, not 
 ## Links
 
 - Design: [env-004-declarative-suite-configuration.md](../../context/env-004-declarative-suite-configuration.md)
-- Epic index: [index.md](../index.md)
+- Epic index: [reduce-team-friction.md](../epics/reduce-team-friction.md)

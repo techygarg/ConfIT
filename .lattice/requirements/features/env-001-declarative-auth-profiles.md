@@ -1,6 +1,6 @@
 ---
 feature: Declarative Auth Profiles
-epic: Environment Setup
+epic: Reduce Team Friction
 status: approved
 priority: P1
 depends_on:
@@ -142,4 +142,4 @@ Feature is not shipped until the documentation exists, covers all three auth typ
 ## Links
 
 - Design: [env-001-declarative-auth-profiles.md](../../context/env-001-declarative-auth-profiles.md)
-- Epic index: [index.md](../index.md)
+- Epic index: [reduce-team-friction.md](../epics/reduce-team-friction.md)

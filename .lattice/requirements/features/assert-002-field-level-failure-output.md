@@ -179,4 +179,4 @@ Fields removed by `ignore`, `pattern`, or `semantic` matchers are not surfaced i
 ## Links
 
 - Design: *(updated when design-blueprint creates a context anchor doc for this feature)*
-- Epic index: [index.md](../index.md)
+- Epic index: [remove-the-capability-ceiling.md](../epics/remove-the-capability-ceiling.md)
