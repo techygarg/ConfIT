@@ -3,12 +3,12 @@ name: Build, Test & Checks
 on:
   push:
     branches:
-      - master
+      - main
     tags:
       - "v*"
   pull_request:
     branches:
-      - master
+      - main
 
 env:
   MY_GIT_USER:  ${{ github.actor }}
