@@ -105,5 +105,5 @@ A test names a prerequisite that does not exist in the file.
 ## Links
 
 - Design: [flow-002-test-dependency-graph.md](../../.lattice/context/flow-002-test-dependency-graph.md)
-- Epic index: [index.md](../index.md)
+- Epic index: [reduce-team-friction.md](../epics/reduce-team-friction.md)
 - Related: [FLOW-001 Variable Extraction + Injection](extraction-and-injection.md) — `depends:` complements extraction; when a prerequisite fails its `extract` block does not run, making `depends:` the correct way to prevent confusing undefined-variable errors in downstream tests

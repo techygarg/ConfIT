@@ -143,4 +143,4 @@ YAML is a declaration format only. Every DSL capability available in JSON works 
 ## Links
 
 - Design: [dsl-002-yaml-support.md](../../context/dsl-002-yaml-support.md)
-- Epic index: [index.md](../index.md)
+- Epic index: [reduce-team-friction.md](../epics/reduce-team-friction.md)

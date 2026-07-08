@@ -1,6 +1,6 @@
 ---
 feature: Semantic Matcher Library
-epic: Response Assertion
+epic: Remove the Capability Ceiling
 status: draft
 priority: P0
 depends_on: []
@@ -148,4 +148,4 @@ A test author can immediately identify which field failed and why — not from a
 ## Links
 
 - Design: [assert-001-semantic-matcher-library.md](../../context/assert-001-semantic-matcher-library.md)
-- Epic index: [index.md](../index.md)
+- Epic index: [remove-the-capability-ceiling.md](../epics/remove-the-capability-ceiling.md)

@@ -1,6 +1,6 @@
 ---
 feature: AppLauncher
-epic: Environment Setup
+epic: Reduce Team Friction
 status: draft
 priority: P1
 depends_on: []
@@ -151,4 +151,4 @@ The startup command needs `ASPNETCORE_ENVIRONMENT` set to the component test pro
 ## Links
 
 - Design: [env-005-app-launcher.md](../../context/env-005-app-launcher.md)
-- Epic index: [index.md](../index.md)
+- Epic index: [reduce-team-friction.md](../epics/reduce-team-friction.md)
