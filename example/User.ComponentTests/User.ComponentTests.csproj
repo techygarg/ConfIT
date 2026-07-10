@@ -41,7 +41,15 @@
       <None Update="TestCase\04-depends.yaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="TestCase\05-graphql.yaml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="TestCase\json-format-reference.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+
+      <!-- Request body fixtures -->
+      <None Update="TestCase\Request\user-by-id.graphql">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
 

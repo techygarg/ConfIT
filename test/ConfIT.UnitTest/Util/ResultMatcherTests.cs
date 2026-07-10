@@ -337,4 +337,103 @@ public class ResultMatcherTests
     }
 
     #endregion
+
+    #region Array-wildcard matching
+
+    [Fact]
+    public void MatchResponseBody_WildcardIgnoreAcrossArrayEntries_RemovesFieldFromEachEntry()
+    {
+        // Given
+        var actual = JToken.Parse(
+            "{'errors': [" +
+            "{'message': 'a', 'extensions': {'code': 'X'}}," +
+            "{'message': 'b', 'extensions': {'code': 'Y'}}," +
+            "{'message': 'c', 'extensions': {'code': 'Z'}}" +
+            "]}");
+        var expected = JToken.Parse(
+            "{'errors': [{'message': 'a'}, {'message': 'b'}, {'message': 'c'}]}");
+        var matcher = new Matcher { Ignore = ["errors__*__extensions"] };
+
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
+    }
+
+    [Fact]
+    public void MatchResponseBody_WildcardPatternEntryFailsRegex_DescriptionNamesConcreteIndex()
+    {
+        // Given
+        var actual = JToken.Parse(
+            "{'errors': [{'code': 'ERR-1'}, {'code': 'bad-format'}, {'code': 'ERR-3'}]}");
+        var expected = JToken.Parse("{'errors': [{}, {}, {}]}");
+        var matcher  = new Matcher
+        {
+            Pattern = new Dictionary<string, string> { ["errors__*__code"] = "^ERR-\\d+$" }
+        };
+
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeFalse();
+        result.Description.Should().Contain("errors[1]");
+    }
+
+    [Fact]
+    public void MatchResponseBody_WildcardIgnoreOnEmptyArray_Passes()
+    {
+        // Given
+        var actual   = JToken.Parse("{'errors': []}");
+        var expected = JToken.Parse("{'errors': []}");
+        var matcher  = new Matcher { Ignore = ["errors__*__extensions"] };
+
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
+    }
+
+    [Fact]
+    public void MatchResponseBody_WildcardIgnoreTwoLevelsDeep_RemovesNestedArrayField()
+    {
+        // Given
+        var actual = JToken.Parse(
+            "{'data': {'nested': {'items': [" +
+            "{'value': 1, 'keep': 'a'}," +
+            "{'value': 2, 'keep': 'b'}" +
+            "]}}}");
+        var expected = JToken.Parse(
+            "{'data': {'nested': {'items': [{'keep': 'a'}, {'keep': 'b'}]}}}");
+        var matcher = new Matcher { Ignore = ["data__nested__items__*__value"] };
+
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
+    }
+
+    [Fact]
+    public void MatchResponseBody_NonWildcardIgnoreWithArraySibling_OnlyRemovesExactPathMatch()
+    {
+        // Given — proves the normalize-and-compare rewrite behaves identically to the old
+        // exact-equality check for non-wildcard rules, even when an array sits alongside the
+        // ignored field (regression guard for the wildcard-matching change)
+        var actual = JToken.Parse(
+            "{'data': {'id': '123'}, 'errors': [{'id': 'e1'}, {'id': 'e2'}]}");
+        var expected = JToken.Parse(
+            "{'data': {}, 'errors': [{'id': 'e1'}, {'id': 'e2'}]}");
+        var matcher = new Matcher { Ignore = ["data__id"] };
+
+        // When
+        var result = ResultMatcher.MatchResponseBody(actual, expected, matcher);
+
+        // Then
+        result.Passed.Should().BeTrue();
+    }
+
+    #endregion
 }

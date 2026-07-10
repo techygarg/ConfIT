@@ -42,13 +42,14 @@ Component and integration tests share a large common surface — how tests are d
 |---|---|
 | [Test File Format](doc/test-file-format.md) | Full DSL reference — every field in JSON and YAML, `bodyFromFile`, `override`, multi-file rules |
 | [Mock Interactions](doc/mock-interactions.md) | Declaring WireMock stubs inline for component tests — request matching, response definition, YAML anchor reuse |
+| [GraphQL Support](doc/graphql-support.md) | `graphql` request block — composing query/mutation envelopes, `queryFromFile`, mutations with `extract`, matching GraphQL error arrays |
 | [Test Filtering](doc/test-filtering.md) | Running a subset by tag (`TEST_TAGS`) or name (`TEST_NAMES`), CI patterns |
 
 ### Assertions and Data Flow
 
 | Document | What it covers |
 |---|---|
-| [Matchers and Patterns](doc/matchers-and-patterns.md) | `ignore`, `pattern` regex, `semantic` named matchers (`isUuid`, `greaterThan`, `isEmail`, …), custom matchers |
+| [Matchers and Patterns](doc/matchers-and-patterns.md) | `ignore`, `pattern` regex, `semantic` named matchers (`isUuid`, `greaterThan`, `isEmail`, …), array-wildcard (`*`) segments, custom matchers |
 | [Variable Extraction + Injection](doc/variable-extraction-and-injection.md) | `extract` from responses, `{{varName}}` injection into later tests, `${ENV}` for environment values |
 | [Test Dependency Graph](doc/test-dependency-graph.md) | `depends:` field — skip dependents when a prerequisite fails, cascading skip propagation, load-time validation |
 

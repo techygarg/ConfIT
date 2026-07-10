@@ -290,6 +290,30 @@ When a `__` path does not resolve to a field in the actual response, the test fa
 
 ---
 
+## Array-wildcard segments
+
+`ignore` and `pattern` accept a literal `*` as a `__`-separated segment to target a field across **every element** of an array, regardless of how many elements the actual response contains — useful for fields that appear on a variable-length array, like a GraphQL `errors` list.
+
+```
+errors__*__extensions  →  errors[0].extensions, errors[1].extensions, ...
+```
+
+**Example — ignore a field on every entry of an array:**
+
+```json
+"matcher": {
+  "ignore": ["errors__*__extensions", "errors__*__path"]
+}
+```
+
+With this, the expected `errors` array only needs to list the fields being asserted (e.g. `message`) — one, two, or ten entries are all matched without listing an index per entry.
+
+📄 Live example: [`User.ComponentTests/TestCase/05-graphql.yaml` — `GetUserById_MultipleErrors`](../example/User.ComponentTests/TestCase/05-graphql.yaml)
+
+`*` can also appear mid-path for arrays nested more than one level deep (e.g. `groups__*__members__*__id`). It is not supported as the trailing/leaf segment — `*` selects a parent array to reach into, not the field being matched itself.
+
+---
+
 ## Combining matcher types
 
 All three types can be used together in the same test. Each type handles a different set of fields — they do not interfere.
@@ -353,6 +377,7 @@ _suite = SuiteBootstrapper.ForIntegration("suite.config.yaml",
 |---|---|---|
 | `ignore` | Remove field from diff | `"ignore": ["id", "createdAt"]` |
 | `pattern` | Regex validation | `"pattern": { "id": "^[0-9]+$" }` |
+| `*` segment | Match field across every array element | `"ignore": ["errors__*__path"]` |
 | `isUuid` | UUID format | `"id": "isUuid"` |
 | `isIsoDate` | Date only | `"dob": "isIsoDate"` |
 | `isIsoDateTime` | Datetime with/without tz | `"createdAt": "isIsoDateTime"` |

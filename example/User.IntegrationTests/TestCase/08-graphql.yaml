@@ -1,0 +1,129 @@
+# GraphQL support — exercises the `graphql` request block against the real /graphql endpoint.
+# CreateUserMutation creates a user via the createUser mutation and extracts {{graphqlUserId}}
+# for the query tests below. It reuses the same CreateUserCommand handler as POST /api/user,
+# so JustAnotherService email verification runs for real here — no mocking, unlike the component suite.
+
+CreateUserMutation:
+  tags:
+    - graphql
+  api:
+    request:
+      method: POST
+      path: /graphql
+      graphql:
+        query: |
+          mutation CreateUser($input: CreateUserCommandInput!) {
+            createUser(input: $input) {
+              id
+            }
+          }
+        variables:
+          input:
+            name: graphql-user
+            email: graphql-user@test.com
+            age: 25
+    response:
+      statusCode: 200
+      body:
+        data:
+          createUser: {}
+      extract:
+        graphqlUserId: $.body.data.createUser.id
+      matcher:
+        semantic:
+          data__createUser__id: greaterThan(0)
+
+GetUserById_InlineQuery:
+  # Scenario 1: inline `query`, no `variables` — the id is embedded directly in the query text.
+  tags:
+    - graphql
+  depends:
+    - CreateUserMutation
+  api:
+    request:
+      method: POST
+      path: /graphql
+      graphql:
+        query: |
+          query {
+            userById(id: {{graphqlUserId}}) {
+              id
+              name
+              email
+              age
+            }
+          }
+    response:
+      statusCode: 200
+      body:
+        data:
+          userById:
+            name: graphql-user
+            email: graphql-user@test.com
+            age: 25
+      matcher:
+        ignore:
+          - data__userById__id
+
+GetUserById_QueryFromFile:
+  # Scenario 3: `queryFromFile` loads the query text from Request/user-by-id.graphql;
+  # `variables` is still supplied inline alongside it.
+  tags:
+    - graphql
+  depends:
+    - CreateUserMutation
+  api:
+    request:
+      method: POST
+      path: /graphql
+      graphql:
+        queryFromFile: user-by-id.graphql
+        variables:
+          id: "{{graphqlUserId}}"
+    response:
+      statusCode: 200
+      body:
+        data:
+          userById:
+            name: graphql-user
+            email: graphql-user@test.com
+            age: 25
+      matcher:
+        ignore:
+          - data__userById__id
+
+GetUserById_MultipleErrors:
+  # Scenario 4: two aliased lookups for missing users produce two entries in errors[].
+  # The array-wildcard ignore targets `extensions` and `path` across every entry regardless of
+  # how many errors exist, so the expected body only needs to list `message`. `path` is ignored
+  # (rather than asserted) because it's populated by HotChocolate's error shape but isn't part
+  # of what this scenario is demonstrating.
+  tags:
+    - graphql
+  api:
+    request:
+      method: POST
+      path: /graphql
+      graphql:
+        query: |
+          query {
+            a: userById(id: 99998) {
+              id
+            }
+            b: userById(id: 99999) {
+              id
+            }
+          }
+    response:
+      statusCode: 200
+      body:
+        data:
+          a: null
+          b: null
+        errors:
+          - message: "User doesn't exist with Id : 99998"
+          - message: "User doesn't exist with Id : 99999"
+      matcher:
+        ignore:
+          - errors__*__extensions
+          - errors__*__path

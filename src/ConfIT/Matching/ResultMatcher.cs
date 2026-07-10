@@ -6,6 +6,10 @@ namespace ConfIT.Matching;
 
 public static class ResultMatcher
 {
+    private const string Wildcard = "*";
+
+    private static readonly Regex ArrayIndexRegex = new(@"\[\d+\]", RegexOptions.Compiled);
+
     public static MatchResult MatchResponseBody(
         JToken actualResponse,
         JToken? expectedResponse,
@@ -41,7 +45,7 @@ public static class ResultMatcher
             foreach (var (keyWithParent, regex) in patterns)
             {
                 var (key, parents) = ExtractKeyAndParentPath(keyWithParent);
-                RemoveField(response, key, parents, regex);
+                RemoveField(response, key, BuildParentTemplate(parents), regex);
             }
 
         return response;
@@ -53,32 +57,58 @@ public static class ResultMatcher
             foreach (var keyWithParent in ignore)
             {
                 var (key, parents) = ExtractKeyAndParentPath(keyWithParent);
-                RemoveField(response, key, parents);
+                RemoveField(response, key, BuildParentTemplate(parents));
             }
 
         return response;
     }
 
-    private static void RemoveField(this JToken token, string key, string parentsKey, string? regex = null)
+    private static void RemoveField(this JToken token, string key, string parentTemplate, string? regex = null)
     {
         if (token is not JContainer container) return;
 
         var removeList = new List<JToken>();
         foreach (var el in container.Children())
         {
-            if (el is JProperty p && key.Equals(p.Name) && IsParentMatching(p, parentsKey))
+            if (el is JProperty p && key.Equals(p.Name) && IsParentMatching(p, parentTemplate))
                 if (string.IsNullOrWhiteSpace(regex) || Regex.IsMatch(p.Value.ToString(), regex))
                     removeList.Add(el);
 
-            el.RemoveField(key, parentsKey, regex);
+            el.RemoveField(key, parentTemplate, regex);
         }
 
         foreach (var el in removeList)
             el.Remove();
     }
 
-    private static bool IsParentMatching(JProperty prop, string parentsKey) =>
-        string.IsNullOrWhiteSpace(parentsKey) || prop.Parent!.Path.Equals(parentsKey);
+    private static bool IsParentMatching(JProperty prop, string parentTemplate)
+    {
+        // Empty template must keep matching any parent unconditionally — this short-circuit
+        // must stay first and must not be folded into the normalized comparison below.
+        if (string.IsNullOrWhiteSpace(parentTemplate))
+            return true;
+
+        var parentPath = prop.Parent!.Path;
+
+        // No array indices on either side means the raw paths are already comparable —
+        // skip the regex normalization pass entirely in that (common) case.
+        if (!parentTemplate.Contains("[*]") && !parentPath.Contains('['))
+            return parentPath.Equals(parentTemplate);
+
+        return NormalizeArrayIndices(parentPath).Equals(parentTemplate);
+    }
+
+    private static string NormalizeArrayIndices(string path) =>
+        ArrayIndexRegex.Replace(path, "[*]");
+
+    private static string BuildParentTemplate(string parentsKey)
+    {
+        var template = "";
+        foreach (var segment in parentsKey.Split('.'))
+            template += segment == Wildcard ? "[*]" : (template.Length > 0 ? "." : "") + segment;
+
+        return template;
+    }
 
     private static (string key, string parents) ExtractKeyAndParentPath(string keyWithParents)
     {
