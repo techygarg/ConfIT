@@ -13,11 +13,12 @@ This file tracks which documents exist, which are missing, and the conventions t
 | `auth-profiles.md` | ✅ current | Bearer, OAuth2, API key, OAuth2 stub pattern, custom `IAuthTokenProvider` |
 | `extending-confit.md` | ✅ current | `ITestOutputLogger`, `ITestProcessor`/factory, `CustomMatchers`, factory + bootstrapper patterns |
 | `test-execution-flow.md` | ✅ current | ASCII flow diagrams — fixture startup, execution loop, suite summary |
-| `matchers-and-patterns.md` | ✅ current | `ignore`, `pattern`, `semantic`, nested paths, custom matchers |
+| `matchers-and-patterns.md` | ✅ current | `ignore`, `pattern`, `semantic`, nested paths, array-wildcard segments, custom matchers |
 | `variable-extraction-and-injection.md` | ✅ current | `extract`, `{{inject}}`, `${ENV}`, error cases |
 | `test-dependency-graph.md` | ✅ current | `depends:` field, skip-not-fail semantics, cascading, load-time validation |
 | `test-file-format.md` | ✅ current | DSL structure, all fields including `depends:`, JSON and YAML format |
 | `mock-interactions.md` | ✅ current | WireMock stubs, request matching, YAML anchor reuse |
+| `graphql-support.md` | ✅ current | `graphql` request block, `queryFromFile`, mutations + `extract`, error-array matching |
 | `test-filtering.md` | ✅ current | TEST_TAGS, TEST_NAMES, CI patterns |
 | `failure-output.md` | ✅ current | Field-level failure messages, path notation, suite summary, debugging tips |
 | `doc-strategy.md` | ✅ this file | Planning only |
@@ -93,6 +94,7 @@ Consumer impact: fixtures shrink from 15–28 lines to 5–10. `SuiteBootstrappe
 | Document | One-liner |
 |---|---|
 | `mock-interactions.md` | WireMock stubs inline, `bodyFromFile`, request/response matching |
+| `graphql-support.md` | `graphql` request block — query/mutation composition, `queryFromFile`, error-array matching |
 | `test-filtering.md` | `TEST_NAMES`, `TEST_TAGS`, `TestFilter` factory methods, CI usage |
 | `test-dependency-graph.md` | `depends:` field, skip-not-fail, cascading, load-time validation |
 

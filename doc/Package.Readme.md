@@ -25,6 +25,8 @@ The result is test files that anyone on the team can read, review, and add to â€
 
 **Declarative data flow.** `extract` captures values from responses. `{{varName}}` injects them into later tests. The create-then-retrieve pattern needs no C#.
 
+**GraphQL support.** A `graphql` block (`query`/`queryFromFile`/`variables`/`operationName`) composes the request envelope for you â€” the same matchers, `extract`, and mocking apply to GraphQL endpoints as to REST.
+
 **Declarative auth.** Bearer, OAuth2 client credentials, and API key auth are configured in `suite.config.yaml`. No custom C# provider for the common cases.
 
 **Language-agnostic testing.** The `AppLauncher` mode starts any process from a shell command and speaks HTTP. Test a Go API, a Node.js service, or a Python microservice with the same test files. The service manages its own test environment; ConfIT just invokes the command.

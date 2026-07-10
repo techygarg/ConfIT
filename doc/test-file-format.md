@@ -55,6 +55,7 @@ The core of every test: what request to send and what response to expect.
 | `override` | — | Deep-merge on top of `bodyFromFile` (per-test variation) |
 | `params` | — | Query string parameters as a key/value map |
 | `headers` | — | Additional request headers as a key/value map |
+| `graphql` | — | Compose a GraphQL request envelope instead of a plain body — see [GraphQL Support](./graphql-support.md) |
 
 ```json
 "request": {
@@ -105,6 +106,23 @@ The core of every test: what request to send and what response to expect.
 ```
 
 📄 Live example: [`User.IntegrationTests/TestCase/user.json` — `ShouldCreateAUser_V2`](../example/User.IntegrationTests/TestCase/user.json)
+
+---
+
+## `graphql`
+
+An alternative to `body` for GraphQL endpoints — declare `query` (or `queryFromFile`) and `variables`, and ConfIT composes the `{ query, variables, operationName }` envelope, defaults `method` to `POST`, and sets `Content-Type: application/json`.
+
+```json
+"request": {
+  "path": "/graphql",
+  "graphql": {
+    "query": "query { userById(id: 1) { id name } }"
+  }
+}
+```
+
+See [GraphQL Support](./graphql-support.md) for the full reference — field composition rules, `queryFromFile`, mutations with `extract`, and matching GraphQL error arrays.
 
 ---
 

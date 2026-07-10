@@ -22,15 +22,23 @@ public class TestCaseResolverTests : IDisposable
         return Path.GetFileName(path);
     }
 
+    private string WriteGraphqlFile(string content)
+    {
+        var path = Path.Combine(_folder, Path.GetRandomFileName() + ".graphql");
+        File.WriteAllText(path, content);
+        return Path.GetFileName(path);
+    }
+
     private static TestCase RawCase(
         string? requestBodyFromFile = null,
         string? responseBodyFromFile = null,
         JToken? requestOverride = null,
-        JToken? responseOverride = null) => new()
+        JToken? responseOverride = null,
+        GraphqlRequest? graphql = null) => new()
     {
         Api = new TestApi
         {
-            Request  = new HttpTestRequest  { Method = "GET", Path = "/test", BodyFromFile = requestBodyFromFile,  Override = requestOverride },
+            Request  = new HttpTestRequest  { Method = "GET", Path = "/test", BodyFromFile = requestBodyFromFile,  Override = requestOverride, Graphql = graphql },
             Response = new HttpTestResponse { StatusCode = 200,              BodyFromFile = responseBodyFromFile, Override = responseOverride }
         }
     };
@@ -219,6 +227,222 @@ public class TestCaseResolverTests : IDisposable
         // Then — original BodyFromFile still set, Body still null
         raw.Api.Request.BodyFromFile.Should().Be(file);
         raw.Api.Request.Body.Should().BeNull();
+    }
+
+    #endregion
+
+    #region Graphql hydration
+
+    [Fact]
+    public void Resolve_GraphqlWithInlineQuery_ComposesBodyWithQueryOnly()
+    {
+        // Given
+        var raw = RawCase(graphql: new GraphqlRequest { Query = "query { me }" });
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        var body = (JObject)result.Api.Request.Body!;
+        body["query"]!.Value<string>().Should().Be("query { me }");
+        ((IDictionary<string, JToken?>)body).ContainsKey("variables").Should().BeFalse();
+        ((IDictionary<string, JToken?>)body).ContainsKey("operationName").Should().BeFalse();
+    }
+
+    [Fact]
+    public void Resolve_GraphqlWithVariables_ComposesBodyWithVariables()
+    {
+        // Given
+        var variables = JObject.Parse(@"{""id"":1}");
+        var raw = RawCase(graphql: new GraphqlRequest { Query = "query($id: ID!) { user(id: $id) { name } }", Variables = variables });
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        result.Api.Request.Body!["variables"]!["id"]!.Value<int>().Should().Be(1);
+    }
+
+    [Fact]
+    public void Resolve_GraphqlWithOperationName_ComposesBodyWithOperationName()
+    {
+        // Given
+        var raw = RawCase(graphql: new GraphqlRequest { Query = "query Me { me }", OperationName = "Me" });
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        result.Api.Request.Body!["operationName"]!.Value<string>().Should().Be("Me");
+    }
+
+    [Fact]
+    public void Resolve_GraphqlQueryFromFile_ReadsRawFileTextByteForByte()
+    {
+        // Given
+        const string queryText = "query Me {\n  me {\n    id\n    name\n  }\n}\n";
+        var file = WriteGraphqlFile(queryText);
+        var raw = RawCase(graphql: new GraphqlRequest { QueryFromFile = file });
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        result.Api.Request.Body!["query"]!.Value<string>().Should().Be(queryText);
+    }
+
+    [Fact]
+    public void Resolve_GraphqlQueryAndQueryFromFileSet_FileWins()
+    {
+        // Given
+        var file = WriteGraphqlFile("query FromFile { x }");
+        var raw = RawCase(graphql: new GraphqlRequest { Query = "query Inline { y }", QueryFromFile = file });
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        result.Api.Request.Body!["query"]!.Value<string>().Should().Be("query FromFile { x }");
+    }
+
+    [Fact]
+    public void Resolve_GraphqlQueryFromFileSetButFolderNull_ThrowsWithMessage()
+    {
+        // Given
+        var raw = RawCase(graphql: new GraphqlRequest { QueryFromFile = "something.graphql" });
+
+        // When / Then
+        var act = () => TestCaseResolver.Resolve(raw, null, null);
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*queryFromFile*something.graphql*");
+    }
+
+    [Fact]
+    public void Resolve_GraphqlEmptyBlock_ThrowsInvalidOperationException()
+    {
+        // Given
+        var raw = RawCase(graphql: new GraphqlRequest());
+
+        // When / Then
+        var act = () => TestCaseResolver.Resolve(raw, _folder, _folder);
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*'graphql' block must set either 'query' or 'queryFromFile'*");
+    }
+
+    [Fact]
+    public void Resolve_GraphqlSetWithoutMethod_DefaultsMethodToPost()
+    {
+        // Given
+        var raw = RawCase(graphql: new GraphqlRequest { Query = "query { me }" });
+        raw.Api.Request.Method = null!;
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        result.Api.Request.Method.Should().Be("POST");
+    }
+
+    [Fact]
+    public void Resolve_GraphqlSetWithExplicitMethod_PreservesMethod()
+    {
+        // Given
+        var raw = RawCase(graphql: new GraphqlRequest { Query = "query { me }" });
+        raw.Api.Request.Method = "PUT";
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        result.Api.Request.Method.Should().Be("PUT");
+    }
+
+    [Fact]
+    public void Resolve_GraphqlSetWithNoHeaders_AddsJsonContentType()
+    {
+        // Given
+        var raw = RawCase(graphql: new GraphqlRequest { Query = "query { me }" });
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        result.Api.Request.Headers!["Content-Type"].Should().Be("application/json");
+    }
+
+    [Fact]
+    public void Resolve_GraphqlSetWithExplicitContentType_PreservesHeader()
+    {
+        // Given
+        var raw = RawCase(graphql: new GraphqlRequest { Query = "query { me }" });
+        raw.Api.Request.Headers = new Dictionary<string, string> { ["Content-Type"] = "application/graphql" };
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        result.Api.Request.Headers!["Content-Type"].Should().Be("application/graphql");
+    }
+
+    [Fact]
+    public void Resolve_GraphqlSetWithDifferentlyCasedContentType_PreservesHeaderWithoutDuplicate()
+    {
+        // Given — header lookup must be case-insensitive so an author's "content-type" isn't duplicated
+        var raw = RawCase(graphql: new GraphqlRequest { Query = "query { me }" });
+        raw.Api.Request.Headers = new Dictionary<string, string> { ["content-type"] = "application/graphql" };
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        result.Api.Request.Headers.Should().HaveCount(1);
+        result.Api.Request.Headers!["content-type"].Should().Be("application/graphql");
+    }
+
+    [Fact]
+    public void Resolve_MockInteractionGraphql_HydratesSameAsApiRequest()
+    {
+        // Given
+        var raw = new TestCase
+        {
+            Api  = new TestApi { Request = new HttpTestRequest { Method = "GET", Path = "/test" }, Response = new HttpTestResponse { StatusCode = 200 } },
+            Mock = new TestMock
+            {
+                Interactions =
+                [
+                    new MockInteraction
+                    {
+                        Request  = new HttpTestRequest { Path = "/dep", Graphql = new GraphqlRequest { Query = "query { dep }" } },
+                        Response = new HttpTestResponse { StatusCode = 200 }
+                    }
+                ]
+            }
+        };
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        var interactionRequest = result.Mock!.Interactions[0].Request;
+        interactionRequest.Body!["query"]!.Value<string>().Should().Be("query { dep }");
+        interactionRequest.Method.Should().Be("POST");
+        interactionRequest.Headers!["Content-Type"].Should().Be("application/json");
+    }
+
+    [Fact]
+    public void Resolve_GraphqlAndBodyFromFileBothSet_GraphqlBodyWins()
+    {
+        // Given — graphql hydration runs after bodyFromFile hydration, so it overwrites the file-loaded body
+        var file = WriteJson(@"{""source"":""file""}");
+        var raw  = RawCase(requestBodyFromFile: file, graphql: new GraphqlRequest { Query = "query { me }" });
+
+        // When
+        var result = TestCaseResolver.Resolve(raw, _folder, _folder);
+
+        // Then
+        var body = (JObject)result.Api.Request.Body!;
+        body["query"]!.Value<string>().Should().Be("query { me }");
+        ((IDictionary<string, JToken?>)body).ContainsKey("source").Should().BeFalse();
     }
 
     #endregion

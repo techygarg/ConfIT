@@ -8,6 +8,7 @@ component:
     url: http://localhost:8888
   folders:
     response: responses
+    requestBody: TestCase/Request
   filter:
     strategy: tags
     envVariable: TEST_TAGS

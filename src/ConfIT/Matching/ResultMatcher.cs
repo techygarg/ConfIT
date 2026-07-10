@@ -6,6 +6,8 @@ namespace ConfIT.Matching;
 
 public static class ResultMatcher
 {
+    private const string Wildcard = "*";
+
     public static MatchResult MatchResponseBody(
         JToken actualResponse,
         JToken? expectedResponse,
@@ -78,7 +80,22 @@ public static class ResultMatcher
     }
 
     private static bool IsParentMatching(JProperty prop, string parentsKey) =>
-        string.IsNullOrWhiteSpace(parentsKey) || prop.Parent!.Path.Equals(parentsKey);
+        // Empty parentsKey must keep matching any parent unconditionally — this short-circuit
+        // must stay first and must not be folded into the normalized comparison below.
+        string.IsNullOrWhiteSpace(parentsKey)
+        || NormalizeArrayIndices(prop.Parent!.Path).Equals(BuildParentTemplate(parentsKey));
+
+    private static string NormalizeArrayIndices(string path) =>
+        Regex.Replace(path, @"\[\d+\]", "[*]");
+
+    private static string BuildParentTemplate(string parentsKey)
+    {
+        var template = "";
+        foreach (var segment in parentsKey.Split('.'))
+            template += segment == Wildcard ? "[*]" : (template.Length > 0 ? "." : "") + segment;
+
+        return template;
+    }
 
     private static (string key, string parents) ExtractKeyAndParentPath(string keyWithParents)
     {

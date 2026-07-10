@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using User.Api.Extension;
+using User.Api.GraphQL;
 using User.Api.Persistence;
 
 namespace User.Api
@@ -33,6 +34,12 @@ namespace User.Api
 
             AddMvcServices(services);
             AddDbContexts(services);
+
+            services
+                .AddGraphQLServer()
+                .AddQueryType<Query>()
+                .AddMutationType<Mutation>()
+                .AddErrorFilter<UserErrorFilter>();
         }
 
 
@@ -65,7 +72,11 @@ namespace User.Api
                 .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
-                .UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
+                .UseEndpoints(endpoints =>
+                {
+                    endpoints.MapDefaultControllerRoute();
+                    endpoints.MapGraphQL();
+                });
         }
 
         public static bool IsLocalComponentTestsRunning(IConfiguration configuration) =>

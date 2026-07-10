@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ## Project Overview
 
-**ConfIT** is a .NET library for declarative API integration testing. Tests are defined in JSON files (YAML support planned) and executed against real or mocked HTTP services. The library handles request execution, mock setup, response matching, and test filtering — consumers only write JSON test definitions and minimal C# glue code.
+**ConfIT** is a .NET library for declarative API integration testing. Tests are defined in JSON or YAML files and executed against real or mocked HTTP services. The library handles request execution, mock setup, response matching, and test filtering — consumers only write test definitions and minimal C# glue code.
 
 Two test modes:
 - **Component tests** — service under test runs in-process (`TestSuiteInitializer`), external dependencies mocked via WireMock
@@ -16,13 +16,20 @@ Two test modes:
 
 ```
 src/ConfIT/              # Core library
+  BaseTest.cs, TestFilter.cs, TestSuiteContext.cs, TestDependencyStore.cs,
+  TestRunStatus.cs, SuiteBootstrapper.cs, BootstrappedSuite.cs   # root-level orchestration types
+  Config/                # Suite configuration (YAML + manual), auth providers (AuthProvider/)
   Contract/              # Public interfaces (extension points)
   Extension/             # Extension methods
-  Server/
-    Dto/                 # JSON-deserializable test definition DTOs
+  Matching/              # Response validation (ResultMatcher, SemanticMatcher, MatchResult)
+  Model/                 # Test definition data model (TestCase, TestApi, HttpPayload, Matcher, ...)
+  Reader/                # Test file loading/parsing (TestReader, TestCaseResolver, YamlConverter)
+  Reporting/             # Test result collection/output (TestResultCollector, ITestReporter)
+  Runner/
     Http/                # HTTP client + in-process server initializer
     Mock/                # WireMock.Net integration
-  Util/                  # ResultMatcher, TestReader
+    Boot/                # Out-of-process service launcher (AppLauncher, readiness probes)
+  Variable/              # Cross-test variable store/inject/extract
 
 test/ConfIT.UnitTest/    # Unit tests for the library itself
 
@@ -112,41 +119,48 @@ Abstract base class. Orchestrates test execution via template method pattern:
 6. Response body saved (`SaveApiResponse`)
 7. Status code and body validation (`Verify`)
 
-**`SuiteConfig` (`src/ConfIT/SuiteConfig.cs`)**  
-Configuration bag passed to `BaseTest`:
+**`SuiteConfig` (`src/ConfIT/Config/SuiteConfig.cs`)**  
+Configuration bag carried by `TestSuiteContext.Config` and passed to `BaseTest`:
 - `MockServerUrl` — WireMock base URL (omit to disable mocking)
 - `EnableMockServerLogs` — toggle WireMock request logs
 - `ApiServerUrl` — base URL of service under test
 - `ApiResponseFolder` — where actual responses are persisted (for dynamic linking)
 - `RequestBodyFolder` — folder for external request body JSON files
 - `ResponseBodyFolder` — folder for external expected response JSON files
+- `CustomMatchers` — consumer-registered `matcher.semantic` functions (see DSL notes below)
+
+**`TestSuiteContext` (`src/ConfIT/TestSuiteContext.cs`)**  
+Record bundling everything `BaseTest` needs: `HttpClient`, `Config`, `ProcessorFactory`, `Filter`, `ResultCollector`. Passed to `BaseTest`'s primary constructor. A legacy 6-parameter constructor (`TestHttpClient, SuiteConfig, ITestProcessorFactory?, ITestOutputLogger?, TestFilter?, TestResultCollector?`) is kept on `BaseTest` for backward compatibility and forwards into the same context internally.
 
 **`TestFilter` (`src/ConfIT/TestFilter.cs`)**  
 Controls which tests run. Factory methods:
 - `TestFilter.CreateForTests(string names)` / `CreateForTestsFromEnvVariable(string key)`
 - `TestFilter.CreateForTags(string tags)` / `CreateForTagsFromEnvVariable(string key)`
 
-**`TestHttpClient` (`src/ConfIT/Server/Http/TestHttpClient.cs`)**  
+**`TestHttpClient` (`src/ConfIT/Runner/Http/TestHttpClient.cs`)**  
 Executes HTTP calls. Static factory: `TestHttpClient.Create(serverUrl, IAuthTokenProvider)`.  
 Supports GET, POST, PUT, PATCH, DELETE. Injects auth header if provider returns a value.
 
-**`TestSuiteInitializer<TStartup>` (`src/ConfIT/Server/Http/TestSuiteInitializer.cs`)**  
+**`TestSuiteInitializer<TStartup>` (`src/ConfIT/Runner/Http/TestSuiteInitializer.cs`)**  
 Bootstraps an in-process `TestServer` from a `Startup` class. Use for component tests.  
 Exposes `TestServer` and `TestHttpClient` after construction.
 
-**`HttpMockServer` (`src/ConfIT/Server/Mock/HttpMockServer.cs`)**  
+**`HttpMockServer` (`src/ConfIT/Runner/Mock/HttpMockServer.cs`)**  
 Wraps WireMock.Net. Called by `BaseTest` to register mock interactions before each test.
 
-**`ResultMatcher` (`src/ConfIT/Util/ResultMatcher.cs`)**  
-Static response validation. `MatchResponseBody(actual, expected, matcher)`:
-1. Applies `ignore` — removes listed fields from both sides
+**`ResultMatcher` (`src/ConfIT/Matching/ResultMatcher.cs`)**  
+Static response validation. `MatchResponseBody(actual, expected, matcher, customMatchers)` returns a `MatchResult` record (`bool Passed`, `string? Description`) rather than asserting directly:
+1. Applies `semantic` matchers first via `SemanticMatcher.Apply` — short-circuits with a failed `MatchResult` on the first mismatch
 2. Applies `pattern` — validates each field with regex, then removes before diff
-3. Runs `JsonDiffPatch` on the remaining structure
+3. Applies `ignore` — removes listed fields from both sides
+4. Runs `JsonDiffPatch` on the remaining structure; a non-null diff becomes a failed `MatchResult` via `DeltaFormatter`
 
-**`TestReader` (`src/ConfIT/Util/TestReader.cs`)**  
-Reads test definitions. Returns `IEnumerable<object[]>` for xUnit `[MemberData]`:
+`BaseTest.Verify` is the single place that turns a failed `MatchResult` into a FluentAssertions failure.
+
+**`TestReader` (`src/ConfIT/Reader/TestReader.cs`)**  
+Reads test definitions from JSON or YAML (`.yaml`/`.yml`, via `YamlConverter`). Returns `IEnumerable<object[]>` of `(testName, JToken, sourceFileName)` for xUnit `[MemberData]`:
 - `GetTestsForAFile(folder, filename)`
-- `GetTestsForAFolder(folder)` — all `.json` files in a folder
+- `GetTestsForAFolder(folder)` — all `.json`/`.yaml`/`.yml` files in a folder, sorted alphabetically for deterministic ordering across platforms
 
 ---
 
@@ -241,15 +255,9 @@ Full structure reference:
 ```csharp
 public class UserTests : BaseTest, IClassFixture<TestSuiteFixture>
 {
-    private readonly string _requestFolder;
-    private readonly string _responseFolder;
-
     public UserTests(TestSuiteFixture fixture, ITestOutputHelper output)
-        : base(fixture.TestHttpClient, fixture.Config, fixture.ProcessorFactory,
-               new TestOutputLogger(output), TestFilter.CreateForTagsFromEnvVariable("RUN_POOLS"))
+        : base(fixture.Context, new TestOutputLogger(output))
     {
-        _requestFolder = "path/to/requests";
-        _responseFolder = "path/to/responses";
     }
 
     public static IEnumerable<object[]> TestCases =>
@@ -257,10 +265,12 @@ public class UserTests : BaseTest, IClassFixture<TestSuiteFixture>
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public async Task ExecuteTest(string testName, JToken test)
-        => await Execute(testName, test.ToTestCase(_requestFolder, _responseFolder));
+    public async Task ExecuteTest(string testName, JToken test, string sourceFile)
+        => await Execute(testName, test, sourceFile);
 }
 ```
+
+`fixture.Context` is a `TestSuiteContext` (typically produced by `SuiteBootstrapper.ForComponent<TStartup>(...)` / `ForIntegration(...)`, exposed as `BootstrappedSuite.Context`). Request/response folders live on `SuiteConfig` inside that context — `Execute(testName, test, sourceFile)` resolves them internally, so call sites no longer need to call `test.ToTestCase(...)` manually. The legacy 6-parameter `BaseTest` constructor still works for fixtures that construct `TestHttpClient`/`SuiteConfig`/etc. individually rather than via a `TestSuiteContext`.
 
 ---
 
@@ -278,12 +288,16 @@ public class UserTests : BaseTest, IClassFixture<TestSuiteFixture>
 
 ## Active Development Direction
 
-The library is being extended toward:
-- **YAML test definition support** alongside existing JSON
-- **Additional response matchers** beyond `ignore` and `pattern` (e.g., partial body, array matchers, type assertions)
+Recently shipped along this direction:
+- **YAML test definition support** — `.yaml`/`.yml` files are read alongside JSON via `YamlConverter`
+- **Semantic response matchers** — `matcher.semantic` resolves built-in named matchers (`isUuid`, `isIsoDate`, `isEmail`, ...) plus consumer-registered matchers via `SuiteConfig.CustomMatchers`, alongside `ignore` and `pattern`
+- **Array-wildcard matcher segments** — a literal `*` segment in `ignore`/`pattern` paths (e.g. `errors__*__path`) matches across every element of an array regardless of length; see `Matching/ResultMatcher.cs`
+- **GraphQL request support** — a `graphql` block (`query`/`queryFromFile`/`variables`/`operationName`) on `api.request` or a mock interaction's `request` compiles to the standard `{ query, variables, operationName }` body at hydration time (`Reader/TestCaseResolver.cs`), not execution time; see `doc/graphql-support.md`
+
+Still ahead:
 - Broader declarative capabilities to reduce the C# glue code consumers need to write
 
-When adding matchers: `ResultMatcher.cs` is the single point of change for matching logic. When adding format support: `TestReader.cs` handles deserialization entry points.
+When adding matchers: `Matching/ResultMatcher.cs` (and `Matching/SemanticMatcher.cs` for named matchers) is the point of change for matching logic. When adding format support: `Reader/TestReader.cs` handles deserialization entry points.
 
 ---
 
