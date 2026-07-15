@@ -6,6 +6,26 @@ ConfIT uses [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [3.1.0]
+
+### Added
+
+- **GraphQL request support** — a `graphql` block (`query` / `queryFromFile` / `variables` / `operationName`) on `api.request` or on a mock interaction's `request` compiles into the standard `{ query, variables, operationName }` JSON body at test-load time. `method` defaults to `POST` only if unset, and `Content-Type: application/json` is added only if not already present — the rest of the pipeline (matchers, `extract`, `{{inject}}`, mocking) behaves exactly as it does for any other request. See [GraphQL Support](doc/graphql-support.md).
+
+- **Array-wildcard matcher segments** — `ignore` and `pattern` paths accept a literal `*` segment (e.g. `errors__*__path`) to target a field across every element of an array regardless of length, so a variable-length array — such as a GraphQL `errors` list — can be matched without listing an index per entry.
+
+### Changed
+
+- **`ResultMatcher` wildcard matching** — parent-path template construction is hoisted to once per matcher rule instead of once per JSON property visited during tree traversal, and array-index regex normalization is skipped entirely when neither the template nor the path contains an array index.
+
+### Documentation
+
+- **[GraphQL Support](doc/graphql-support.md)** — new reference for the `graphql` block: structure, `query` vs `queryFromFile`, and how it composes into the request body.
+- **[Test File Format](doc/test-file-format.md)** and **[Matchers and Patterns](doc/matchers-and-patterns.md)** — updated with the `graphql` block and array-wildcard matcher segment documentation.
+- **NuGet package README** — `doc/Package.Readme.md` added as the package description shown on nuget.org.
+
+---
+
 ## [3.0.0]
 
 ### Added
