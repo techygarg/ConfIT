@@ -344,8 +344,16 @@ def is_test_file(data):
 
 
 def discover(root, report):
-    """Returns [(path, ordered [(name, case)])] sorted by folder then filename."""
-    found = []
+    """Returns [(path, ordered [(name, case)])] sorted by folder then filename.
+
+    Groups candidates by directory first: a directory with at least one file shaped like tests
+    is a test directory, and any dict-shaped sibling there that is NOT correctly shaped gets
+    reported instead of silently vanishing — ConfIT's own TestReader loads every file in a wired
+    folder unconditionally, so a malformed sibling fails at load time, not skips quietly.
+    Directories with no test-shaped file at all (fixture folders such as RequestBody/ResponseBody)
+    are left alone.
+    """
+    by_dir = {}
     for base, dirs, files in os.walk(root):
         dirs[:] = [d for d in dirs if d not in ("bin", "obj", ".git", "node_modules")]
         for name in sorted(files):
@@ -361,8 +369,21 @@ def discover(root, report):
                 if re.search(r"^\s*api\s*:", text, re.M):
                     report.error(path, "", "could not parse this file: %s" % exc)
                 continue
-            if is_test_file(data):
-                found.append((path, list(data.items())))
+            by_dir.setdefault(base, []).append((path, data))
+
+    found = []
+    for entries in by_dir.values():
+        test_shaped = [(path, data) for path, data in entries if is_test_file(data)]
+        if not test_shaped:
+            continue
+        test_paths = {path for path, _ in test_shaped}
+        for path, data in entries:
+            if path in test_paths or not isinstance(data, dict) or not data:
+                continue
+            for case_name, case in data.items():
+                if not (isinstance(case, dict) and "api" in case):
+                    report.error(path, case_name, "not a valid test case — missing an 'api' section")
+        found += [(path, list(data.items())) for path, data in test_shaped]
     return sorted(found, key=lambda item: (os.path.dirname(item[0]), os.path.basename(item[0])))
 
 
@@ -387,8 +408,13 @@ def builtin_matchers():
 
 
 def custom_matchers(root):
-    """Dictionary-key string literals in the project's C#, so registered custom matchers pass."""
+    """Keys inside a 'Dictionary<string, SemanticMatcherFunc>' initializer in the project's C#,
+    so registered custom matchers pass. Scoped to that type specifically — not every dictionary-key
+    string literal in the project — so an unrelated dictionary cannot accidentally whitelist a
+    typo'd or unregistered matcher name."""
     found = set()
+    block_re = re.compile(r'Dictionary\s*<\s*string\s*,\s*SemanticMatcherFunc\s*>.*?\n[ \t]*\}\s*;', re.S)
+    key_re = re.compile(r'\["([A-Za-z][A-Za-z0-9_]*)"\]\s*=')
     for base, dirs, files in os.walk(root):
         dirs[:] = [d for d in dirs if d not in ("bin", "obj", ".git")]
         for name in files:
@@ -398,7 +424,8 @@ def custom_matchers(root):
                 text = open(os.path.join(base, name), encoding="utf-8-sig", errors="replace").read()
             except OSError:
                 continue
-            found.update(re.findall(r'\["([A-Za-z][A-Za-z0-9_]*)"\]\s*=', text))
+            for block in block_re.findall(text):
+                found.update(key_re.findall(block))
     return found
 
 
@@ -652,7 +679,10 @@ def main():
     files = discover(root, report)
     if not files:
         print("no ConfIT test definition files found under %s" % root)
-        return 1 if any(i[0] == "ERROR" for i in report.items) else 0
+        if kind is not None:
+            report.error(config_path, "", "suite.config.yaml declares a '%s:' section but no "
+                                          "test definition files were found" % kind)
+        return 1 if report.print(root) else 0
 
     known = builtin_matchers()
     if known is not None:
