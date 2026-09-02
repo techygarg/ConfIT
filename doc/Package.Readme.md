@@ -82,6 +82,14 @@ await Execute(testName, test, sourceFile);
 
 ---
 
+## Agent Skills
+
+Two agent skills live in the repository — one for wiring up a suite, one for turning an OpenAPI spec, ASP.NET controller, or GraphQL schema into test definitions. They install as an agent plugin (Claude Code, Codex, more over time) and are not part of this package.
+
+→ [Agent Skills documentation](https://github.com/techygarg/ConfIT/blob/main/doc/ai-skills.md)
+
+---
+
 ## Full Documentation
 
 → [github.com/techygarg/ConfIT](https://github.com/techygarg/ConfIT)
