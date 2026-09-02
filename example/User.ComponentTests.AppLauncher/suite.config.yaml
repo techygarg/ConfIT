@@ -1,10 +1,14 @@
 # AppLauncher component test configuration.
 #
 # startup.mode: command — AppLauncher starts User.Api as an external process before
-# tests run and stops it after. The app seeds its own database on startup (see
-# User.Api/Startup.cs:SeedDatabase and appsettings.ComponentTest.json).
+# tests run and stops it after. ConfIT never reaches into the app; the app configures its
+# own test environment. Here the ComponentTest launch profile sets
+# ASPNETCORE_ENVIRONMENT=ComponentTest, which loads appsettings.ComponentTest.json —
+# that sets IsLocalComponentTests=true (Startup then selects the in-memory database) and
+# points JustAnotherService at the mock on :8888. UserDbContext creates a fresh schema
+# once per process.
 #
-# The command path is relative to the test output directory (bin/Debug/net9.0/).
+# The command path is relative to the test output directory (bin/Debug/net10.0/).
 # Adjust if your project layout differs.
 component:
   startup:
@@ -13,7 +17,7 @@ component:
     # stopCommand: explicitly kills the process by port on dispose.
     # Without this, AppLauncher kills the process tree and waits for port release automatically.
     # Provide this when the default kill does not release the port reliably on your OS.
-    # Unix/macOS: lsof -ti :5170 | xargs kill -9
+    # Unix/macOS: lsof -ti :5170 -sTCP:LISTEN | xargs kill -9
     # Windows:    taskkill /F /IM User.Api.exe
     stopCommand: lsof -ti :5170 -sTCP:LISTEN | xargs kill -9
     readiness:

@@ -22,7 +22,7 @@ namespace User.IntegrationTests
             await Execute(testName, test, sourceFile);
 
         public static IEnumerable<object[]> GetTestCases(string fileName) =>
-            TestReader.GetTestsForAFile(fileName, "TestCase");
+            TestReader.GetTestsForAFile("TestCase", fileName);
 
         public static IEnumerable<object[]> GetTestCasesForFolder(string folder) =>
             TestReader.GetTestsForAFolder(folder);
