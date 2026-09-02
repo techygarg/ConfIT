@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "confit",
+  "description": "ConfIT \u2014 declarative API integration testing for .NET. Skills for setting up a test suite and authoring test definitions from an API contract.",
+  "owner": {
+    "name": "Rahul Garg",
+    "url": "https://github.com/techygarg"
+  },
+  "plugins": [
+    {
+      "name": "confit",
+      "description": "Set up a ConfIT suite, write component tests from your controller and mocks, and write API tests from a spec.",
+      "source": "./",
+      "category": "testing"
+    }
+  ]
+}

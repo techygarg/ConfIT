@@ -1,0 +1,20 @@
+{
+  "name": "confit",
+  "version": "1.0.0",
+  "description": "Agent skills for ConfIT \u2014 set up a declarative API test suite, write component tests from your controller and its mocks, and write black-box API tests from an OpenAPI spec.",
+  "author": {
+    "name": "Rahul Garg",
+    "url": "https://github.com/techygarg"
+  },
+  "homepage": "https://github.com/techygarg/ConfIT",
+  "repository": "https://github.com/techygarg/ConfIT",
+  "license": "MIT",
+  "keywords": [
+    "testing",
+    "api-testing",
+    "integration-testing",
+    "component-testing",
+    "dotnet",
+    "confit"
+  ]
+}
