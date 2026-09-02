@@ -82,11 +82,18 @@ feature: `references/writing-tests.md`.
 
 Component-specific instincts:
 
-- **State is fresh each run**, so exact-value assertions are safe and preferred. Assert the real
-  `name`, `email`, `age`; reach for `semantic`/`ignore` only for genuinely server-generated
-  fields such as an id or a timestamp.
-- **Fixed literal test data is fine here** — the in-memory database resets per process. Do not
-  copy that habit into an integration suite.
+- **State is usually fresh each run, but ConfIT itself does not guarantee it.** It only starts
+  the application; whether the store behind it resets is that application's own behavior — true
+  of ConfIT's own example (an in-memory EF Core database, recreated per process) but not
+  automatic elsewhere. Confirm the app's DB setup — or ask — before assuming it, especially in
+  command mode (`ForCommand`/AppLauncher), where the launched process may point at a real,
+  persistent store.
+- **When freshness is confirmed, exact-value assertions are safe and preferred.** Assert the
+  real `name`, `email`, `age`; reach for `semantic`/`ignore` only for genuinely server-generated
+  fields such as an id or a timestamp. Fixed literal test data is fine under the same condition —
+  do not copy that habit into an integration suite, and do not assume it here without checking.
+  When freshness is not confirmed, use the same run-unique-data approach as integration tests
+  (`confit-integration-tests`' `references/state-and-data.md`).
 - Mocks go in the `mock:` block of the same test. Reuse a repeated response body with a YAML
   anchor rather than restating it.
 
