@@ -6,7 +6,7 @@ ConfIT uses [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [Unreleased]
+## [3.2.0]
 
 ### Added
 
