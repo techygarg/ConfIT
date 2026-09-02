@@ -60,6 +60,26 @@ registered() {
 sources()    { find "$DIR" -name '*.cs' -not -path '*/bin/*' -not -path '*/obj/*'; }
 in_sources() { sources | tr '\n' '\0' | xargs -0 grep -l "$1" 2>/dev/null | head -1; }
 
+# Prints the lines nested under a 'key:' mapping (more indented than it), stopping at the next
+# line back at or above that indent. Collects every occurrence of the key in the file, so an
+# integration config with one 'api:' block per environment still gets each of them checked.
+yaml_block() {
+    local file="$1" key="$2"
+    awk -v key="$key" '
+        {
+            raw = $0
+            gsub(/\t/, "    ", raw)
+            trimmed = raw
+            sub(/^[ ]*/, "", trimmed)
+            if (trimmed == "") next
+            indent = length(raw) - length(trimmed)
+            if (active && indent <= key_indent) active = 0
+            if (!active && trimmed ~ ("^" key ":")) { active = 1; key_indent = indent; next }
+            if (active) print raw
+        }
+    ' "$file"
+}
+
 echo "ConfIT suite check: $(basename "$CSPROJ")"
 
 # --------------------------------------------------------------------- project references
@@ -117,7 +137,10 @@ if [ -f "$CONFIG" ]; then
     fi
     [ -n "$SUITE_SECTION" ] && ok "section: $SUITE_SECTION"
 
-    grep -Eq '^[[:space:]]+url:' "$CONFIG" || err "no 'api.url' — required in every mode"
+    API_BLOCK="$(yaml_block "$CONFIG" "api")"
+    if [ -z "$API_BLOCK" ] || ! printf '%s\n' "$API_BLOCK" | grep -Eq '^[[:space:]]*url:[[:space:]]*[^[:space:]]'; then
+        err "no 'api.url' — required in every mode"
+    fi
 
     if [ "$SUITE_SECTION" = "component" ]; then
         MODE="$(sed -n 's/^[[:space:]]*mode:[[:space:]]*\([a-z-]*\).*/\1/p' "$CONFIG" | head -1)"
@@ -136,7 +159,11 @@ if [ -f "$CONFIG" ]; then
             command)
                 grep -q 'command:' "$CONFIG" || err "mode is command but 'startup.command' is not set"
                 if grep -q 'readiness:' "$CONFIG"; then
-                    if grep -Eq '^[[:space:]]+(port|url):' "$CONFIG"; then
+                    READINESS_BLOCK="$(yaml_block "$CONFIG" "readiness")"
+                    HAS_URL=0; HAS_PORT=0
+                    printf '%s\n' "$READINESS_BLOCK" | grep -Eq '^[[:space:]]*url:[[:space:]]*[^[:space:]]' && HAS_URL=1
+                    printf '%s\n' "$READINESS_BLOCK" | grep -Eq '^[[:space:]]*port:[[:space:]]*[^[:space:]]' && HAS_PORT=1
+                    if [ $((HAS_URL + HAS_PORT)) -eq 1 ]; then
                         ok "readiness probe declared"
                     else
                         err "readiness: needs exactly one of 'port' or 'url'"
