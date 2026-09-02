@@ -253,7 +253,29 @@ This is the primary reason to prefer YAML when a test has several interactions s
 
 If the service makes an outbound call that does not match any declared interaction, WireMock returns a `404` response with no body. The service will handle that response however it is coded — but in most cases the test will fail on the `api.response` assertion, reporting an unexpected status code or body.
 
-This is the intended behaviour: an unmatched call surfaces immediately as a test failure rather than silently passing or hanging. To diagnose it, enable `EnableMockServerLogs` in `SuiteConfig` — WireMock will print each incoming request and whether it matched a stub.
+This is the intended behaviour: an unmatched call surfaces immediately as a test failure rather than silently passing or hanging. To diagnose it, set `enableLogs` on the `mock:` block — WireMock will print each incoming request and whether it matched a stub.
+
+```yaml
+component:
+  mock:
+    url: http://localhost:8888
+    enableLogs: true
+```
+
+### Discovering what a service calls
+
+The same switch turns an unknown dependency surface into a listing. Write the test with **no** `mock` block, turn logging on, and run it — every outbound call comes back `404` and is logged:
+
+```
+[Warn] : HttpStatusCode set to 404 : No matching mapping found
+    "Path": "/api/demo/test@test.com",
+    "Url": "http://localhost:8888/api/demo/test@test.com",
+    "Status": "No matching mapping found"
+```
+
+Each unmatched entry is one outbound call, with its method, path, query and body — enough to write the interactions from. This works whatever language the service under test is written in, because it observes HTTP rather than code, which makes it the practical way to build mocks for an [AppLauncher](./app-launcher.md) suite.
+
+**Ignore the test's pass/fail during this loop and read the log.** A test can pass with every mock missing: the unmatched `404`s make the service take its dependency-failure path, which may be exactly the error the test expected.
 
 ---
 

@@ -6,6 +6,8 @@ component:
     url: http://localhost:5170
   mock:
     url: http://localhost:8888
+    # enableLogs: true   # log every request WireMock receives — also how you discover
+    #                    # what the service calls: run with no mock: block and read the log
   folders:
     response: responses
     requestBody: TestCase/Request

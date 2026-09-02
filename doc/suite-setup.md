@@ -25,6 +25,7 @@ component:
     url: http://localhost:5170
   mock:
     url: http://localhost:8888
+    # enableLogs: true      # print every request WireMock receives, and whether it matched
   folders:
     response: responses
   filter:
@@ -333,7 +334,7 @@ public class TestSuiteFixture : IDisposable
 |---|---|
 | `ApiServerUrl` | Base URL of the service under test. Can be empty for in-process component tests — the `TestServer` handles routing. |
 | `MockServerUrl` | WireMock base URL. Omit or leave empty to disable mocking. |
-| `EnableMockServerLogs` | Print WireMock request logs to the console. Useful during debugging. |
+| `EnableMockServerLogs` | Print WireMock request logs to the console. Set from YAML with `mock.enableLogs`. Useful when debugging a stub that will not match, or to discover what a service calls — see [Mock Interactions](./mock-interactions.md#discovering-what-a-service-calls). |
 | `RequestBodyFolder` | Folder to resolve `bodyFromFile` paths in request definitions. |
 | `ResponseBodyFolder` | Folder to resolve `bodyFromFile` paths in expected response definitions. |
 | `ApiResponseFolder` | Folder where actual responses are written after each test. |

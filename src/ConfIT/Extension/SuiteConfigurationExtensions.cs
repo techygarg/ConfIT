@@ -13,6 +13,7 @@ public static class SuiteConfigurationExtensions
         {
             ApiServerUrl = config.Api.Url ?? string.Empty,
             MockServerUrl = config.Mock?.Url ?? string.Empty,
+            EnableMockServerLogs = config.Mock?.EnableLogs ?? false,
             ApiResponseFolder = config.Folders?.Response ?? string.Empty,
             RequestBodyFolder = config.Folders?.RequestBody ?? string.Empty,
             ResponseBodyFolder = config.Folders?.ResponseBody ?? string.Empty

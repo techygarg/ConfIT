@@ -48,6 +48,56 @@ public class SuiteConfigurationLoadComponentTests
     }
 
     [Fact]
+    public void LoadComponent_MockEnableLogsTrue_ParsesFlag()
+    {
+        var path = Write("""
+                         component:
+                           startup:
+                             mode: in-process
+                             settings: appsettings.Tests.json
+                           api:
+                             url: http://localhost:5170
+                           mock:
+                             url: http://localhost:8888
+                             enableLogs: true
+                         """);
+        try
+        {
+            var cfg = SuiteConfiguration.LoadComponent(path);
+
+            Assert.True(cfg.Mock?.EnableLogs);
+            Assert.True(cfg.ToSuiteConfig().EnableMockServerLogs);
+        }
+        finally
+        {
+            Cleanup(path);
+        }
+    }
+
+    [Fact]
+    public void LoadComponent_MockWithoutEnableLogs_DefaultsToFalse()
+    {
+        var path = Write("""
+                         component:
+                           startup:
+                             mode: in-process
+                             settings: appsettings.Tests.json
+                           api:
+                             url: http://localhost:5170
+                           mock:
+                             url: http://localhost:8888
+                         """);
+        try
+        {
+            Assert.False(SuiteConfiguration.LoadComponent(path).Mock?.EnableLogs);
+        }
+        finally
+        {
+            Cleanup(path);
+        }
+    }
+
+    [Fact]
     public void LoadComponent_CommandMode_ReturnsValidConfig()
     {
         var path = Write("""
@@ -379,6 +429,27 @@ public class SuiteConfigurationExtensionTests
         Assert.Equal("resp", sc.ApiResponseFolder);
         Assert.Equal("req", sc.RequestBodyFolder);
         Assert.Equal("expResp", sc.ResponseBodyFolder);
+        Assert.False(sc.EnableMockServerLogs);
+    }
+
+    [Fact]
+    public void ToSuiteConfig_MockEnableLogsTrue_EnablesMockServerLogs()
+    {
+        var cfg = new ComponentConfig
+        {
+            Api = new ApiConfig { Url = "http://api:5170" },
+            Mock = new MockConfig { Url = "http://mock:8888", EnableLogs = true }
+        };
+
+        Assert.True(cfg.ToSuiteConfig().EnableMockServerLogs);
+    }
+
+    [Fact]
+    public void ToSuiteConfig_NoMockSection_EnableMockServerLogsIsFalse()
+    {
+        var cfg = new ComponentConfig { Api = new ApiConfig { Url = "http://api:5170" } };
+
+        Assert.False(cfg.ToSuiteConfig().EnableMockServerLogs);
     }
 
     [Fact]
