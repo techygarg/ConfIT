@@ -1,4 +1,5 @@
 using System.IO;
+using ConfIT.Contract;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -12,13 +13,16 @@ public class TestSuiteInitializer<TProgram> : IDisposable where TProgram : class
 {
     private readonly InternalFactory _factory;
 
-    public TestSuiteInitializer(string settingsFile, Action<IServiceCollection>? configureServices = null)
+    public TestSuiteInitializer(
+        string settingsFile,
+        Action<IServiceCollection>? configureServices = null,
+        IAuthTokenProvider? authTokenProvider = null)
     {
         if (string.IsNullOrWhiteSpace(settingsFile))
             throw new ArgumentException("Please provide app settings file name", nameof(settingsFile));
 
         _factory = new InternalFactory(settingsFile, configureServices);
-        TestHttpClient = new TestHttpClient(_factory.CreateClient());
+        TestHttpClient = new TestHttpClient(_factory.CreateClient(), authTokenProvider);
     }
 
     public TestHttpClient TestHttpClient { get; }
