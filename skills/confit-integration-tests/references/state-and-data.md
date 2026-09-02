@@ -57,6 +57,7 @@ a legitimate declarative teardown.
 
 DeleteOrder_Cleanup:
   tags: [orders, cleanup]
+  depends: CreateOrder
   api:
     request:
       method: DELETE
@@ -68,8 +69,10 @@ DeleteOrder_Cleanup:
 
 Caveats worth stating to the user rather than hiding:
 
-- It needs `{{orderId}}`, which only exists if the create passed. If the create failed there is
-  nothing to delete — and nothing was created, so nothing leaks.
+- It needs `{{orderId}}`, which only exists if the create passed — hence `depends: CreateOrder`.
+  Without that dependency, a failed create leaves `{{orderId}}` unresolved and the cleanup test
+  fails on variable injection instead of skipping, adding a second failure that obscures the
+  first. With it, a failed create means nothing was created, so cleanup skips and nothing leaks.
 - If the create passed but an assertion in the middle failed, this still runs. That is the point.
 - If the run is killed outright, it does not run. Unique data is what limits the damage.
 
