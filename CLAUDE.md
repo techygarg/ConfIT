@@ -54,7 +54,8 @@ make test         # unit + component tests only
 make unit         # unit tests only
 make component    # component tests only
 make integration  # wipe DB, start services, run integration tests, stop services
-make ci           # full pipeline: build + unit + component + integration
+make skills       # validate the agent skills' scripts against every example suite
+make ci           # full pipeline: build + unit + component + skills + integration
 make clean        # stop services, remove build artefacts and SQLite DB
 make services-stop# kill running User.Api / JustAnotherService processes
 make help         # list all targets with descriptions
@@ -334,6 +335,42 @@ The `example/` projects are not just demos — they run in CI as regression gate
 **Filters in fixtures**: Test filters in example fixtures (`TestFilter.CreateForTagsFromEnvVariable`) should not be hardcoded with `Environment.SetEnvironmentVariable` — that hides tests in CI. Let env vars be set externally; unset means all tests run.
 
 **CI coverage**: The CI pipeline builds and tests both `User.ComponentTests` and `User.IntegrationTests` (integration requires running services). A library change that breaks example compilation or component tests must be fixed before merge.
+
+---
+
+## Agent Skills
+
+Three agent skills live in `skills/` at the repository root and are documented in
+[doc/ai-skills.md](doc/ai-skills.md):
+
+- **`confit-suite-setup`** — wiring a suite: startup mode, `suite.config.yaml`, fixture, test class, auth, filters
+- **`confit-component-tests`** — developer, mid-implementation: works from the controller plus the mocks behind it
+- **`confit-integration-tests`** — QA, post-deployment: black box, works from a spec/collection, assumes no source
+
+Authoring is split by **persona**, not by feature. The two produce nearly the same artifact but are
+different jobs — different input, state model, matcher instinct and achievable test matrix. Do not
+merge them back.
+
+The skills are **not** shipped in the NuGet package — they are distributed as agent plugins
+only. The repository root doubles as a plugin root (`.claude-plugin/`, `.codex-plugin/`; further
+agents get one manifest directory each). Installing a plugin clones the whole repository, which is
+what lets the skills read `example/` and `doc/` directly.
+
+`skills/` must stay at the repository root: the manifests name `./skills/`, and
+`skills/confit-suite-setup/scripts/reference-path.sh` resolves the reference by finding a
+directory holding `example/`, `doc/` and `skills/` as siblings. Work on the skills locally with
+`claude --plugin-dir .` rather than copying them anywhere.
+
+**`confit-suite-setup` must not gain template files again.** It was rebuilt to read the live
+`example/` suites precisely because embedded copies of the fixture, config and `.csproj` went
+stale — `example/` took 21 commits in twelve months. New setup patterns go into `example/`, where
+CI runs them, and `example/README.md` records what is structural versus demo-specific.
+
+Shared executables live in `tools/`, not inside a skill: `tools/check-testcases.py` (test
+definitions) and `tools/verify-suite.sh` (project wiring). Both must report zero errors against
+every suite in `example/` — `make skills` enforces this and runs as part of `make ci`. Each reads
+ground truth from `src/ConfIT/` (supported frameworks, built-in matcher names) rather than
+hardcoding it, so they do not drift.
 
 ---
 

@@ -4,7 +4,7 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 
-namespace User.ComponentTests.Launcher.SetUp
+namespace User.ComponentTests.AppLauncher.SetUp
 {
     /// <summary>
     /// Demonstrates the AppLauncher (command) mode with OAuth2 client credentials auth.

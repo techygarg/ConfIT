@@ -1,0 +1,54 @@
+{
+  "name": "confit",
+  "version": "1.0.0",
+  "description": "Agent skills for ConfIT — set up a declarative API test suite, write component tests from your controller and its mocks, and write black-box API tests from an OpenAPI spec.",
+  "author": {
+    "name": "Rahul Garg"
+  },
+  "homepage": "https://github.com/techygarg/ConfIT",
+  "repository": "https://github.com/techygarg/ConfIT",
+  "license": "MIT",
+  "keywords": [
+    "testing",
+    "api-testing",
+    "integration-testing",
+    "component-testing",
+    "contract-testing",
+    "test-automation",
+    "openapi",
+    "swagger",
+    "graphql",
+    "wiremock",
+    "xunit",
+    "dotnet",
+    "confit"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "ConfIT",
+    "shortDescription": "Set up a declarative API test suite, write component tests from your code, and API tests from your spec.",
+    "longDescription": "ConfIT is a .NET library for declarative API integration testing — tests are YAML or JSON files, not C# code. This plugin gives Codex three skills. Suite Setup wires ConfIT into a project: startup mode (in-process, command/AppLauncher, or integration), suite.config.yaml, the fixture and test class, auth profiles and tag filters. Component Tests is for a developer mid-implementation: it works from the controller plus the mocks behind it, tracing the call path to discover what the service calls, and driving error paths by changing what a mocked dependency returns. Integration Tests is for testing an already-deployed service black box: it works from an OpenAPI spec, a Postman collection or a live endpoint, assumes no access to the service source, and handles environment selection, auth profiles and the shared-persistent-state problem. All three read ConfIT's own CI-verified example suites rather than carrying templates that go stale.",
+    "developerName": "Rahul Garg",
+    "category": "Testing",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Set up a ConfIT component test suite for my API.",
+      "I just implemented this controller — write component tests for it.",
+      "Discover what outbound calls this endpoint makes and mock them.",
+      "My component test gets a 404 from the mock — fix the interaction.",
+      "Here's our OpenAPI spec — write API tests against staging.",
+      "Convert this Postman collection into ConfIT tests.",
+      "Point the suite at the QA environment with a bearer token.",
+      "My ConfIT suite passes once then fails on the second run."
+    ],
+    "websiteURL": "https://github.com/techygarg/ConfIT",
+    "privacyPolicyURL": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
+    "termsOfServiceURL": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+    "brandColor": "#2F6FEB",
+    "screenshots": []
+  }
+}

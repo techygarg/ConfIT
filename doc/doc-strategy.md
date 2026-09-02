@@ -21,6 +21,7 @@ This file tracks which documents exist, which are missing, and the conventions t
 | `graphql-support.md` | ✅ current | `graphql` request block, `queryFromFile`, mutations + `extract`, error-array matching |
 | `test-filtering.md` | ✅ current | TEST_TAGS, TEST_NAMES, CI patterns |
 | `failure-output.md` | ✅ current | Field-level failure messages, path notation, suite summary, debugging tips |
+| `ai-skills.md` | ✅ current | The three agent skills, plugin install, why authoring splits by persona, the `tools/` validators |
 | `doc-strategy.md` | ✅ this file | Planning only |
 
 ---

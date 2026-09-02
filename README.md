@@ -32,6 +32,15 @@ Component and integration tests share a large common surface — how tests are d
 
 → **[Test Execution Flow](doc/test-execution-flow.md)** — ASCII flow diagrams showing what happens at runtime across all three suite types.
 
+→ **[AI Agent Skills](doc/ai-skills.md)** — three skills that let a coding agent set up a suite, write component tests from your controller, and write API tests from your spec. Install as a plugin:
+
+```
+/plugin marketplace add techygarg/ConfIT
+/plugin install confit@confit
+```
+
+Codex has its own manifest; more agents are added over time. The skills read the live [`example/`](example) suites rather than carrying templates, so what they show you is what CI proves works.
+
 ---
 
 ## Documentation
@@ -71,12 +80,13 @@ Component and integration tests share a large common surface — how tests are d
 |---|---|
 | [Reading Failure Output](doc/failure-output.md) | Per-field failure messages, path notation, suite summary table, debugging tips |
 | [Extending ConfIT](doc/extending-confit.md) | `ITestOutputLogger`, `ITestProcessor` / `ITestProcessorFactory` hooks, custom semantic matchers, `IAuthTokenProvider` |
+| [AI Agent Skills](doc/ai-skills.md) | `confit-suite-setup`, `confit-component-tests`, `confit-integration-tests` — plugin install, why authoring splits by persona, plus two standalone validation scripts |
 
 ---
 
 ## Example Projects
 
-The `example/` directory contains a working reference implementation:
+The `example/` directory contains working reference implementations of all three startup modes — see [`example/README.md`](example/README.md) for the mode-to-project map and what is demo-specific:
 
 | Project | Role |
 |---|---|

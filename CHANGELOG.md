@@ -6,6 +6,34 @@ ConfIT uses [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [3.2.0]
+
+### Added
+
+- **`mock.enableLogs`** — WireMock request logging is now switchable from `suite.config.yaml` instead of only from fixture code. Beyond debugging a stub that will not match, it turns an unknown dependency surface into a listing: run a component test with no `mock:` block and every outbound call is logged as an unmatched request, which is enough to write the interactions from. Works whatever language the service under test is written in, since it observes HTTP rather than code. See [Mock Interactions](doc/mock-interactions.md#discovering-what-a-service-calls).
+
+- **Agent skills** — three [Agent Skills](https://docs.claude.com/en/docs/claude-code/skills) in [`skills/`](skills), distributed as agent plugins: `confit-suite-setup` (wire a suite), `confit-component-tests` (developer, mid-implementation — works from the controller plus the mocks behind it) and `confit-integration-tests` (QA, post-deployment — black box, works from a spec, collection or live endpoint and assumes no access to the service source). See [AI Agent Skills](doc/ai-skills.md).
+
+- **Plugin manifests** — the repository is its own Claude Code marketplace (`/plugin marketplace add techygarg/ConfIT`, then `/plugin install confit@confit`), and carries a Codex manifest. Further agents are onboarded by adding one manifest directory each.
+
+- **`example/README.md`** — maps the three startup modes to their example projects, states what every suite structurally needs, and lists what is demo-specific so none of it is copied into a consuming project.
+
+- **Validation tooling in [`tools/`](tools)** — `check-testcases.py` statically validates test definitions (missing expected bodies, invalid `depends:`, unresolvable `{{variables}}`, `mock:` blocks in an integration suite, unregistered files, and matcher problems such as an unknown name, a missing closing parenthesis, or a wildcard in a `semantic` path). `verify-suite.sh` checks project wiring. Both exit non-zero on error and run in CI via the new `make skills` target, and both read ground truth from `src/ConfIT/` — supported frameworks, built-in matcher names — rather than hardcoding it.
+
+### Changed
+
+- **Skills read ConfIT's own `example/` and `doc/` instead of shipping templates.** Embedded copies of the fixture, `suite.config.yaml` and `.csproj` drifted from the real projects, so they were removed; each skill now resolves the repository it ships inside and reads the suites CI verifies.
+
+### Fixed
+
+- **`example/User.IntegrationTests`** — `TestReader.GetTestsForAFile` was called with its arguments reversed; removed `AuthTokenProvider.cs`, which implemented `IAuthTokenProvider` but was never referenced, since no `SuiteBootstrapper` overload accepts a custom provider (auth is configured declaratively). The `qa` environment now reads its URL from `${QA_API_URL}` instead of a hardcoded host.
+- **`example/User.ComponentTests`** — `appsettings.Tests.json` carried an `environmentVariables` key that nothing reads; `UserDbInitializer.Seed()` had a commented-out body and now seeds real reference data, demonstrating the `onStarted` hook.
+- **`example/User.ComponentTests.AppLauncher`** — configuration comments referred to a `Startup.SeedDatabase` method that does not exist, and now describe the actual `IsLocalComponentTests` / `UserDbContext` mechanism; the namespace was aligned with the project folder.
+
+Other than `mock.enableLogs`, the library is unchanged — the skills are distributed as agent plugins, not as package content.
+
+---
+
 ## [3.1.0]
 
 ### Added

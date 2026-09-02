@@ -21,6 +21,12 @@ public static class SuiteBootstrapper
     /// Bootstraps a component test suite where the application under test runs in-process
     /// via <see cref="TestSuiteInitializer{TStartup}"/>.
     /// </summary>
+    /// <remarks>
+    /// If the YAML auth block uses <c>oauth2-client-credentials</c>, the token endpoint
+    /// must be reachable before this method is called (i.e. any stub WireMock server
+    /// must already be running — the caller owns that lifecycle). The token request happens
+    /// once, eagerly, before the in-process host starts.
+    /// </remarks>
     /// <typeparam name="TStartup">The application's entry-point class (Program or Startup).</typeparam>
     /// <param name="configFile">Path to the suite YAML config file (e.g. "suite.config.yaml").</param>
     /// <param name="configureServices">Optional DI overrides applied to the in-process host.</param>
@@ -36,8 +42,9 @@ public static class SuiteBootstrapper
         Dictionary<string, SemanticMatcherFunc>?         customMatchers    = null)
         where TStartup : class
     {
-        var cfg         = SuiteConfiguration.LoadComponent(configFile);
-        var initializer = new TestSuiteInitializer<TStartup>(cfg.Startup.Settings!, configureServices);
+        var cfg          = SuiteConfiguration.LoadComponent(configFile);
+        var authProvider = cfg.ToAuthTokenProvider();
+        var initializer  = new TestSuiteInitializer<TStartup>(cfg.Startup.Settings!, configureServices, authProvider);
 
         onStarted?.Invoke(initializer.Services);
 

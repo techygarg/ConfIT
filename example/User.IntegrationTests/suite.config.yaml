@@ -14,7 +14,7 @@ integration:
 
   qa:
     api:
-      url: "https://api.qa.example.com"
+      url: ${QA_API_URL}
     auth:
       type: bearer
       token: ${QA_API_TOKEN}
