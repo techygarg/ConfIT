@@ -8,7 +8,7 @@ API_PORT  := 5170
 SVC_PORT  := 9999
 DB        := example/User.Api/User.db
 
-.PHONY: default help build unit component component.applauncher test integration services-start services-stop ci clean
+.PHONY: default help build unit component component.applauncher test integration services-start services-stop skills ci clean
 
 default: build test
 
@@ -62,8 +62,20 @@ services-stop: ## Kill any running User.Api / JustAnotherService processes
 	@lsof -ti :$(API_PORT) 2>/dev/null | xargs kill -9 2>/dev/null || true
 	@lsof -ti :$(SVC_PORT) 2>/dev/null | xargs kill -9 2>/dev/null || true
 
+# ── Agent skills ────────────────────────────────────────────────────────────────
+skills: ## Validate the agent-skill tooling against every example suite
+	@for p in example/User.ComponentTests example/User.IntegrationTests example/User.ComponentTests.AppLauncher; do \
+	   printf "  %-42s" "$$p"; \
+	   python3 tools/check-testcases.py "$$p" > /tmp/confit-skills.log 2>&1 \
+	     || { echo "FAILED"; cat /tmp/confit-skills.log; exit 1; }; \
+	   bash tools/verify-suite.sh "$$p" >> /tmp/confit-skills.log 2>&1 \
+	     || { echo "FAILED"; cat /tmp/confit-skills.log; exit 1; }; \
+	   echo "ok"; \
+	 done
+	@echo "  ✓ Skill scripts clean on all example suites"
+
 # ── Pipelines ───────────────────────────────────────────────────────────────────
-ci: build test component.applauncher integration ## Full pipeline: build + unit + component + integration
+ci: build test component.applauncher skills integration ## Full pipeline: build + unit + component + skills + integration
 
 clean: services-stop ## Stop services, remove build artefacts and SQLite DB
 	@rm -f $(DB)
