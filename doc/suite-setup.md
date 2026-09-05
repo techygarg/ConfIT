@@ -210,7 +210,7 @@ _suite = SuiteBootstrapper.ForIntegration("suite.config.yaml",
     });
 ```
 
-For full custom matcher documentation — signature, naming constraints, DSL usage — see [Extending ConfIT](./extending-confit.md#domain-specific-matchers).
+For full custom matcher documentation — signature, naming constraints, DSL usage — see [Extending ConfIT](./extending-confit.md#domain-specific-matchers--custommatchers).
 
 ---
 
@@ -338,7 +338,7 @@ public class TestSuiteFixture : IDisposable
 | `RequestBodyFolder` | Folder to resolve `bodyFromFile` paths in request definitions. |
 | `ResponseBodyFolder` | Folder to resolve `bodyFromFile` paths in expected response definitions. |
 | `ApiResponseFolder` | Folder where actual responses are written after each test. |
-| `CustomMatchers` | Additional named matchers — see [Extending ConfIT](./extending-confit.md#domain-specific-matchers). |
+| `CustomMatchers` | Additional named matchers — see [Extending ConfIT](./extending-confit.md#domain-specific-matchers--custommatchers). |
 
 ### `TestSuiteInitializer`
 

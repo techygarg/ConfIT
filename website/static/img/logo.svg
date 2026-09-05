@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="ConfIT logo">
+  <rect x="3" y="3" width="58" height="58" rx="10" fill="#181b20" stroke="#2d3139" stroke-width="2"/>
+  <circle cx="32" cy="32" r="21" fill="none" stroke="#30c9e8" stroke-width="7" stroke-dasharray="5 4.3"/>
+  <circle cx="32" cy="32" r="13" fill="#181b20" stroke="#30c9e8" stroke-width="2"/>
+  <path d="M25.5 32 L30 37 L39 25.5" fill="none" stroke="#41c873" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

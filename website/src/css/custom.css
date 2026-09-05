@@ -1,0 +1,158 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/*
+ * ConfIT's own palette -- "Terminal / Protocol": a charcoal, cyan, and green identity distinct
+ * from both the sibling Lattice site (teal/coral) and this site's earlier indigo/amber draft.
+ * Cyan reads as "protocol/network traffic"; green marks a verified match, the way CI output
+ * marks a passing test. Dark mode carries the palette's native mood (a test-runner console);
+ * light mode is a readable variant in the same hue family, not an afterthought.
+ */
+:root {
+  --ifm-color-primary: #0c6b97;
+  --ifm-color-primary-dark: #09577c;
+  --ifm-color-primary-darker: #074e6e;
+  --ifm-color-primary-darkest: #053d57;
+  --ifm-color-primary-light: #1484b8;
+  --ifm-color-primary-lighter: #1e99d2;
+  --ifm-color-primary-lightest: #3caadd;
+
+  --ifm-background-color: #f4f5f6;
+  --ifm-font-color-base: #181f25;
+  --ifm-color-emphasis-300: #dce1e5;
+
+  --ifm-font-family-base: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ifm-heading-font-family: 'Archivo', -apple-system, sans-serif;
+  --ifm-heading-font-weight: 800;
+  --ifm-font-family-monospace: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ifm-code-font-size: 90%;
+  --docusaurus-highlighted-code-line-bg: rgba(12, 107, 151, 0.12);
+
+  --ifm-menu-color: #57616b;
+  --ifm-menu-color-active: #0c6b97;
+  --ifm-menu-color-background-active: #e1eef3;
+  --ifm-menu-color-background-hover: #e9ebec;
+
+  /* Infima's admonition default is a thick left-only accent bar with no other border --
+     give it a real border on all sides instead, at the same width, in the color each
+     admonition type already carries via --ifm-alert-border-color. */
+  --ifm-alert-border-width: 1.5px;
+  --ifm-alert-border-left-width: 1.5px;
+
+  /* Not wired into Infima directly -- available to any component (the homepage and feature
+     cards use these) that needs the mark's "verified match" accent, a card surface distinct
+     from the page background, readable text on top of --ifm-color-primary, or a muted
+     secondary text tone distinct from --ifm-menu-color. */
+  --confit-accent: #1b7e3f;
+  --confit-accent-text: #126832;
+  --confit-surface: #ffffff;
+  --confit-on-primary: #ffffff;
+  --confit-muted: #57616b;
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #30c9e8;
+  --ifm-color-primary-dark: #1db0cd;
+  --ifm-color-primary-darker: #1d9bb4;
+  --ifm-color-primary-darkest: #1c7e92;
+  --ifm-color-primary-light: #4cd5f0;
+  --ifm-color-primary-lighter: #66ddf4;
+  --ifm-color-primary-lightest: #86e5f9;
+
+  --ifm-background-color: #111318;
+  --ifm-font-color-base: #e7ebef;
+  --ifm-color-emphasis-300: #2d3139;
+
+  --ifm-menu-color: #949da8;
+  --ifm-menu-color-active: #30c9e8;
+  --ifm-menu-color-background-active: #16353b;
+  --ifm-menu-color-background-hover: #181b20;
+
+  --docusaurus-highlighted-code-line-bg: rgba(48, 201, 232, 0.16);
+
+  --confit-accent: #41c873;
+  --confit-accent-text: #5fdd8d;
+  --confit-surface: #181b20;
+  /* The dark-mode primary is a bright cyan -- white text on it fails contrast, so buttons
+     filled with --ifm-color-primary need a dark foreground here instead. */
+  --confit-on-primary: #0b1114;
+  --confit-muted: #949da8;
+}
+
+/* Docs callouts: label the heading like the rest of the site's small caps/mono labels, now
+   that it's a full border instead of a card. */
+.admonition-heading {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/*
+ * Layout fix, not a style choice: Infima's footer wraps its content in `.container-fluid`
+ * (full viewport width) while every other section on the page (navbar, hero, features) uses
+ * the normal constrained container -- constrain it to match. Beyond that, the default markup
+ * stacks the link columns above a separate centered copyright row, three rows tall. The links
+ * block and the copyright block are siblings in the same container (see FooterLayout in
+ * @docusaurus/theme-classic), so instead of swizzling just to reshuffle two already-adjacent
+ * siblings, both are placed in the SAME grid cell: the links row spreads its two columns to
+ * the container's edges with space-between, and copyright centers in the gap that leaves
+ * between them -- one row instead of three, Docs and Project on the outside, copyright in
+ * the middle.
+ */
+.footer .container-fluid {
+  max-width: var(--ifm-container-width);
+  margin: 0 auto;
+  display: grid;
+  align-items: center;
+}
+
+.footer__links.row,
+.footer__bottom {
+  grid-area: 1 / 1;
+}
+
+.footer__links.row {
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  /* This box shares its grid cell with .footer__links.row (see above) and is vertically
+     centered within their shared row -- with columns of different heights (Docs: 2 links,
+     Project: 4), that center line lands ON TOP of real links in the shorter column (and a
+     middle link in the taller one), silently eating their hover/click. The copyright text
+     itself is never interactive, so let clicks/hovers pass straight through to whatever
+     link sits underneath instead of stopping at this box. */
+  pointer-events: none;
+}
+
+.footer__col {
+  /* Infima's base .col sets width:100% as a literal property, and flex-basis: auto (from
+     the shorthand alone) defers to that width -- so overriding only `flex` still left each
+     column computing to 100% of the row and wrapping onto its own line. Override
+     width/max-width directly, not just the flex shorthand. */
+  flex: 0 1 auto;
+  width: auto;
+  max-width: none;
+}
+
+@media screen and (max-width: 767px) {
+  /* Not enough width for three side-by-side zones -- fall back to a normal stacked column,
+     links first, copyright below. */
+  .footer .container-fluid {
+    display: block;
+  }
+  .footer__bottom {
+    margin-top: 2rem;
+  }
+}

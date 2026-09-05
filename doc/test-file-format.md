@@ -105,7 +105,7 @@ The core of every test: what request to send and what response to expect.
 }
 ```
 
-📄 Live example: [`User.IntegrationTests/TestCase/user.json` — `ShouldCreateAUser_V2`](../example/User.IntegrationTests/TestCase/user.json)
+📄 Live example: [`User.IntegrationTests/TestCase/04-body-fixtures.yaml` — `CreateUser_WithRequestBodyOverride`](../example/User.IntegrationTests/TestCase/04-body-fixtures.yaml)
 
 ---
 
@@ -156,7 +156,7 @@ Each interaction declares what incoming request to match and what response to re
 
 Mock interactions also support `bodyFromFile` and `override` on both the request and response sides.
 
-📄 Live example: [`User.ComponentTests/TestCase/user.json` — `ShouldCreateAUser`](../example/User.ComponentTests/TestCase/user.json)
+📄 Live example: [`User.ComponentTests/TestCase/01-user-lifecycle.yaml` — `CreateUser`](../example/User.ComponentTests/TestCase/01-user-lifecycle.yaml)
 
 ---
 
@@ -225,7 +225,7 @@ Standard JSON. Test files must be valid JSON — no comments, no trailing commas
 }
 ```
 
-📄 Live example: [`User.ComponentTests/TestCase/errors.json`](../example/User.ComponentTests/TestCase/errors.json)
+📄 Live example: [`User.ComponentTests/TestCase/02-user-errors.yaml` — `GetUser_NotFoundByEmail`](../example/User.ComponentTests/TestCase/02-user-errors.yaml)
 
 ---
 
@@ -291,7 +291,7 @@ ShouldCreateUser:
 
 YAML scalars map to the same JSON types the DSL expects: unquoted integers become numbers, `true`/`false` become booleans, `~` becomes null, everything else stays a string.
 
-📄 Live example: [`User.ComponentTests/TestCase/yaml-support.yaml`](../example/User.ComponentTests/TestCase/yaml-support.yaml)
+📄 Live example: [`User.ComponentTests/TestCase/01-user-lifecycle.yaml` — `CreateUser`](../example/User.ComponentTests/TestCase/01-user-lifecycle.yaml)
 
 ---
 

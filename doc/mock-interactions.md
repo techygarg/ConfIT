@@ -94,7 +94,7 @@ The `request` object inside each interaction describes the inbound call that Wir
 }
 ```
 
-📄 Live example: [`User.ComponentTests/TestCase/user.json` — `ShouldCreateAUser`](../example/User.ComponentTests/TestCase/user.json)
+📄 Live example: [`User.ComponentTests/TestCase/01-user-lifecycle.yaml` — `CreateUser`](../example/User.ComponentTests/TestCase/01-user-lifecycle.yaml)
 
 ---
 
@@ -128,7 +128,7 @@ The `response` object declares what WireMock returns when the request matches.
 }
 ```
 
-📄 Live example: [`User.ComponentTests/TestCase/user.json` — `ShouldCreateAUser`](../example/User.ComponentTests/TestCase/user.json)
+📄 Live example: [`User.ComponentTests/TestCase/01-user-lifecycle.yaml` — `CreateUser`](../example/User.ComponentTests/TestCase/01-user-lifecycle.yaml)
 
 ---
 
@@ -202,7 +202,7 @@ Each interaction is independent. WireMock matches each inbound request against a
 }
 ```
 
-📄 Live example: [`User.ComponentTests/TestCase/user.json` — `ShouldCreateAUser`](../example/User.ComponentTests/TestCase/user.json)
+📄 Live example: [`User.ComponentTests/TestCase/01-user-lifecycle.yaml` — `CreateUser`](../example/User.ComponentTests/TestCase/01-user-lifecycle.yaml)
 
 ---
 
@@ -245,7 +245,7 @@ The anchor name (`valid_body`) is local to the file — it never appears in the 
 
 This is the primary reason to prefer YAML when a test has several interactions sharing a common response.
 
-📄 Live example (YAML with anchor reuse): [`User.ComponentTests/TestCase/yaml-support.yaml` — `ShouldCreateUser_InYamlFormat`](../example/User.ComponentTests/TestCase/yaml-support.yaml)
+📄 Live example (YAML with anchor reuse): [`User.ComponentTests/TestCase/01-user-lifecycle.yaml` — `CreateUser`](../example/User.ComponentTests/TestCase/01-user-lifecycle.yaml)
 
 ---
 

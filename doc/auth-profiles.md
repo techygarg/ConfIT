@@ -398,5 +398,3 @@ TestHttpClient = TestHttpClient.Create(cfg.Api.Url!, cfg.ToAuthTokenProvider());
 // Custom C# — for cases the YAML types can't express
 TestHttpClient = TestHttpClient.Create(cfg.Api.Url!, new HmacAuthProvider(secret));
 ```
-
-📄 Live example: [`User.IntegrationTests/AuthTokenProvider.cs`](../example/User.IntegrationTests/AuthTokenProvider.cs)

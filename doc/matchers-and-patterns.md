@@ -54,7 +54,7 @@ Removes the listed fields from both the actual and expected response before the 
 
 The `id` field is present in the actual response but excluded from comparison. The remaining fields are diffed exactly.
 
-📄 Live example: [`User.IntegrationTests/TestCase/user.json` — `ShouldReturnUserForGivenId_V1`](../example/User.IntegrationTests/TestCase/user.json)
+📄 Live example: [`User.IntegrationTests/TestCase/03-response-matchers.yaml` — `GetUser_IgnoreMatcher`](../example/User.IntegrationTests/TestCase/03-response-matchers.yaml)
 
 ---
 
@@ -88,7 +88,7 @@ The field is removed from both actual and expected only if the regex matches. If
 }
 ```
 
-📄 Live example: [`User.IntegrationTests/TestCase/user.json` — `ShouldCreateAUser`](../example/User.IntegrationTests/TestCase/user.json)
+📄 Live example: [`User.IntegrationTests/TestCase/03-response-matchers.yaml` — `GetUser_PatternMatcher`](../example/User.IntegrationTests/TestCase/03-response-matchers.yaml)
 
 **Example — multiple pattern fields:**
 
@@ -101,7 +101,7 @@ The field is removed from both actual and expected only if the regex matches. If
 }
 ```
 
-📄 Live example: [`User.IntegrationTests/TestCase/user.json` — `ShouldReturnUserForGivenId_V2`](../example/User.IntegrationTests/TestCase/user.json)
+📄 Live example: [`User.IntegrationTests/TestCase/03-response-matchers.yaml` — `GetUser_PatternMatcher`](../example/User.IntegrationTests/TestCase/03-response-matchers.yaml)
 
 ---
 
@@ -241,8 +241,8 @@ The field must be a JSON number. Applying a numeric matcher to a string fails wi
 }
 ```
 
-📄 Live example (integration): [`User.IntegrationTests/TestCase/semanticMatchers.json`](../example/User.IntegrationTests/TestCase/semanticMatchers.json)  
-📄 Live example (component): [`User.ComponentTests/TestCase/user.json` — `ShouldValidateUserFieldsWithSemanticMatchers`](../example/User.ComponentTests/TestCase/user.json)
+📄 Live example (integration): [`User.IntegrationTests/TestCase/03-response-matchers.yaml` — `GetUser_SemanticMatcher`](../example/User.IntegrationTests/TestCase/03-response-matchers.yaml)  
+📄 Live example (component): [`User.ComponentTests/TestCase/03-response-matchers.yaml` — `GetUser_SemanticMatcher`](../example/User.ComponentTests/TestCase/03-response-matchers.yaml)
 
 ---
 
@@ -262,7 +262,7 @@ parent__child__field  →  parent.child.field
 }
 ```
 
-📄 Live example: [`User.IntegrationTests/TestCase/multiLevel.json` — `ShouldIgnoreFieldInMultiLevelParent`](../example/User.IntegrationTests/TestCase/multiLevel.json)
+📄 Live example: [`User.IntegrationTests/TestCase/06-nested-structures.yaml` — `GetNestedObject_IgnoreNestedFields`](../example/User.IntegrationTests/TestCase/06-nested-structures.yaml)
 
 **Example — `pattern` on a nested field:**
 
@@ -274,7 +274,7 @@ parent__child__field  →  parent.child.field
 }
 ```
 
-📄 Live example: [`User.IntegrationTests/TestCase/multiLevel.json` — `ShouldApplyMatcherInMultiLevelParent`](../example/User.IntegrationTests/TestCase/multiLevel.json)
+📄 Live example: [`User.IntegrationTests/TestCase/06-nested-structures.yaml` — `GetNestedObject_PatternOnNestedField`](../example/User.IntegrationTests/TestCase/06-nested-structures.yaml)
 
 **Example — `semantic` on a nested field:**
 
