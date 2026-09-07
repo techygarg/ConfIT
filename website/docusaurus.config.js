@@ -55,6 +55,23 @@ const config = {
     locales: ['en'],
   },
 
+  plugins: [
+    [
+      '@easyops-cn/docusaurus-search-local',
+      /** @type {import('@easyops-cn/docusaurus-search-local').PluginOptions} */
+      ({
+        hashed: true,
+        // Docs are read from the repo's ../doc folder (see presets.docs.path below),
+        // not the Docusaurus-default website/docs -- the hasher needs the real path.
+        docsDir: ['../doc'],
+        docsRouteBasePath: '/docs',
+        indexBlog: false, // blog is disabled (blog: false in the preset config)
+        language: 'en',
+        highlightSearchTermsOnTargetPage: true,
+      }),
+    ],
+  ],
+
   presets: [
     [
       'classic',
