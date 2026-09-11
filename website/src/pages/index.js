@@ -3,6 +3,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import NugetDownloads from '@site/src/components/NugetDownloads';
+import CreatorNote from '@site/src/components/CreatorNote';
 
 import Heading from '@theme/Heading';
 import styles from './index.module.css';
@@ -87,6 +88,7 @@ export default function Home() {
       <HomepageHeader />
       <main>
         <HomepageFeatures />
+        <CreatorNote />
       </main>
     </Layout>
   );
