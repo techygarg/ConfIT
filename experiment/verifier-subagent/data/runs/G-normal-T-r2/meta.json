@@ -1,0 +1,28 @@
+{
+  "runId": "G-normal-T-r2",
+  "arm": "T",
+  "scenario": "G",
+  "config": "normal",
+  "repeat": 2,
+  "sessionId": "70519770-b708-4cee-8b4c-755c02bd46ec",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "budgetUsd": 10.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/config/failure-hint.patch"
+  ],
+  "startEpoch": 1792581411,
+  "endEpoch": 1792581438,
+  "wallSeconds": 27,
+  "prewarmSeconds": 7,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "fixArm": true,
+  "finalStatus": "passed",
+  "netChangeFiles": [],
+  "netChangeLines": 0,
+  "testsEdited": false
+}

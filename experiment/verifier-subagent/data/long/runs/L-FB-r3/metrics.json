@@ -1,0 +1,78 @@
+{
+  "runId": "L-FB-r3",
+  "t1": {
+    "calls": 5,
+    "start": 107601,
+    "footprint": 7361,
+    "firstCallCacheWrite": 0,
+    "cost": 0.33530418500000003,
+    "warmCost": 0.33530418500000003,
+    "projected": 0.48252418500000005,
+    "opusCost": 0.2296416000000001,
+    "haikuCost": 0.003958485,
+    "sonnetCost": 0.1017041,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [
+      "code read"
+    ],
+    "briefs": [
+      "Repository: $WS/confit (ConfIT, a .NET API-testing library; read its CLAUDE.md for conventions).\n\nVerifier summary.json (run dir is relative to the repo root):\n{summary.json}\n\nBrief:\n- What changed: the user just pulled teammates' latest changes. The specifics aren't known, and the directory isn't a git repo, so there's no diff to read. The response-matching area (src/ConfIT/Matching/ResultMatcher.cs, SemanticMatcher.cs, DeltaFormatter.cs) is the likely area, but go by what the log says.\n- Intended behaviour change: the user said to treat the tests as the spec. Whatever the failing tests assert is the intended behaviour. Fix the production code under src/ConfIT so it meets them. Do not edit, weaken, skip or delete tests. If a failure looks like a genuinely broken or contradictory test, don't change it. Report it to me instead.\n- Keep fixes minimal and match the surrounding code style. Code must stay valid for net9.0 and net10.0.\n\nReport back: each failing test name, the root cause, and the exact files/lines you changed, plus anything you were unsure about or left unfixed."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 1,
+    "edits": [],
+    "durationSeconds": 86,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": false,
+    "noise": [],
+    "recheckFlaked": false,
+    "change": "4 changed lines in SemanticMatcher.cs"
+  },
+  "t2": {
+    "calls": 4,
+    "start": 116037,
+    "footprint": 4500,
+    "firstCallCacheWrite": 1075,
+    "cost": 0.23810649000000006,
+    "warmCost": 0.23810649000000006,
+    "projected": 0.32810649000000003,
+    "opusCost": 0.18462460000000003,
+    "haikuCost": 0.003010090000000001,
+    "sonnetCost": 0.05047179999999997,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "Repository: $WS/confit (ConfIT, a .NET API-testing library; read its CLAUDE.md for conventions).\n\nVerifier summary.json (run dir is relative to the repo root):\n{summary.json}\n\nBrief:\n- What changed: as a product decision, the user changed src/ConfIT/Matching/DeltaFormatter.cs. When a field is in the actual body but missing from the expected body (the 3-element delta case), the mismatch output now shows `<not present>` instead of `<absent>`.\n- Intended behaviour change: YES. The new `<not present>` wording is correct and must be kept. Do NOT revert or change DeltaFormatter's wording.\n- Expected fix: update tests that still assert the old `<absent>` sentinel so they assert `<not present>`. The likely one is test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs, `Format_FieldInActualNotInExpected_ShowsAbsentSentinel`. Rename it to match the new wording too, following the `Method_Condition_ExpectedOutcome` convention, e.g. `..._ShowsNotPresentSentinel`. Also check for other `<absent>` assertions, including in ResultMatcherTests.\n- Only change the sentinel expectations. Don't touch anything else, including SemanticMatcher.cs. If some failure has nothing to do with this wording change, don't fix it: report it to me with the test name and error message.\n\nReport back: each failing test name, the root cause, and the exact files/lines you changed, plus anything left unfixed."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 65,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false
+  }
+}

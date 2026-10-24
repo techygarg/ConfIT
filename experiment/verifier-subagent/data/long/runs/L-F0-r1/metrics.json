@@ -1,0 +1,76 @@
+{
+  "runId": "L-F0-r1",
+  "t1": {
+    "calls": 4,
+    "start": 107579,
+    "footprint": 4994,
+    "firstCallCacheWrite": 2949,
+    "cost": 0.30238904499999975,
+    "warmCost": 0.30238904499999975,
+    "projected": 0.4022690449999997,
+    "opusCost": 0.19888339999999993,
+    "haikuCost": 0.003979144999999999,
+    "sonnetCost": 0.09952649999999999,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "Repository: $WS/confit (ConfIT, a .NET library for declarative API integration testing; see CLAUDE.md for conventions).\n\nThe verifier run failed. Its summary.json (run dir is relative to the repo root):\n\n{summary.json}\n\nBrief: The user just pulled teammates' latest changes; I did not change any code. No behaviour change was intended by me. The user says: treat the tests as the spec \u2014 fix the production code to satisfy the tests, do not edit, weaken, or delete tests to make them pass. If the failure is not a test failure (e.g. a test-project compile error or tooling/environment problem) or a test looks genuinely self-contradictory, do not paper over it \u2014 stop and report exactly what you found instead.\n\nNote: the unit stage finished in ~1s with exit code 2, which may indicate it never ran tests (e.g. a test build error or make/tooling issue) \u2014 check the log for that first.\n\nReport back: the root cause, the exact files and changes you made (or why you made none), and which tests were failing."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 84,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false,
+    "change": "exact revert"
+  },
+  "t2": {
+    "calls": 4,
+    "start": 113637,
+    "footprint": 6438,
+    "firstCallCacheWrite": 1064,
+    "cost": 0.28934022500000034,
+    "warmCost": 0.28934022500000034,
+    "projected": 0.4181002250000003,
+    "opusCost": 0.20242780000000016,
+    "haikuCost": 0.0029561250000000013,
+    "sonnetCost": 0.08395629999999998,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "Repository: $WS/confit (ConfIT, a .NET library for declarative API integration testing; see CLAUDE.md for conventions).\n\nThe verifier run failed. Its summary.json (run dir is relative to the repo root):\n\n{summary.json}\n\nBrief \u2014 an INTENDED behaviour change was made:\n- Product decision: when a field is present in the actual response but missing on the expected side, the mismatch output (src/ConfIT/Matching/DeltaFormatter.cs, the 3-element-delta case) must now say `<not present>` instead of `<absent>`. The user has already made that change in DeltaFormatter.cs.\n- Keep the new wording. Do NOT revert DeltaFormatter to `<absent>`.\n- Tests that assert the old `<absent>` wording for this case are now out of date \u2014 update them to expect `<not present>` (e.g. likely test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs `Format_FieldInActualNotInExpected_ShowsAbsentSentinel`). Keep the update minimal; renaming that test to reflect the new sentinel is fine, following the repo's `Method_Condition_ExpectedOutcome` naming convention. Also update any comments/docs that describe this sentinel if they live next to the code.\n- Do not touch the `<missing>` sentinel (the opposite case) \u2014 it is unchanged.\n- If any failure is unrelated to this wording change, or if the user's DeltaFormatter edit itself looks broken (e.g. it changed something beyond the wording), do not paper over it \u2014 fix only what's clearly attributable or stop and report exactly what you found.\n\nReport back: which tests failed and why, the exact files and changes you made, and anything unresolved."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 120,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "runId": "R1-normal-C-r3",
+  "arm": "C",
+  "scenario": "R1",
+  "config": "normal",
+  "repeat": 3,
+  "sessionId": "1b533071-8a64-496f-96d4-97c532a5c066",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R1-few.patch"
+  ],
+  "startEpoch": 1792567293,
+  "endEpoch": 1792567323,
+  "wallSeconds": 30,
+  "prewarmSeconds": 7,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false
+}

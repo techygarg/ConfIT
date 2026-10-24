@@ -1,0 +1,117 @@
+{
+  "runId": "G-normal-C-r1",
+  "arm": "C",
+  "scenario": "G",
+  "config": "normal",
+  "repeat": 1,
+  "sessionId": "6aade716-3700-48a2-aec8-a820f3b43927",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch"
+  ],
+  "startEpoch": 1792566156,
+  "endEpoch": 1792566189,
+  "wallSeconds": 33,
+  "prewarmSeconds": 5,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 20,
+  "main": {
+    "calls": 2,
+    "contextFirst": 29379,
+    "contextLast": 30298,
+    "contextPeak": 30298,
+    "processed": 60265,
+    "output": 588,
+    "cacheRead": 58754,
+    "cacheWrite1h": 919,
+    "cacheWrite5m": 0,
+    "uncachedInput": 4,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 919,
+  "contextSeries": [
+    29379,
+    30298
+  ],
+  "mainTools": [
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "general-purpose"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 1485,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1485,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "general-purpose"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "general-purpose",
+      "calls": 3,
+      "contextFirst": 25415,
+      "contextLast": 27091,
+      "contextPeak": 27091,
+      "processed": 79493,
+      "output": 631,
+      "cacheRead": 51767,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 27089,
+      "uncachedInput": 6,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 79493,
+  "totalProcessed": 139758,
+  "verificationRuns": [],
+  "observedFailingTests": [],
+  "verifierFidelity": [],
+  "answer": "All checks pass. `make build && make unit && make component` exited 0, and no files were modified.\n\n| Stage | Result | Passed | Failed | Skipped |\n|---|---|---|---|---|\n| build | Passed | n/a | n/a | n/a |\n| unit | Passed | 272 | 0 | 0 |\n| component | Passed | 20 | 0 | 0 |\n\n- **Build:** it succeeded with warnings (12 in one build, 26 in the other). The subagent didn't check what they were.\n- **Unit:** 272 tests passed on each of net9.0 and net10.0. No skipped line appeared in the log.\n- **Error output:** the \"error\" blocks in the log come from the intentional error-path tests in `02-user-errors.yaml`, which passed.\n\nThe subagent saved the full log at `/tmp/confit_run.log`.",
+  "signals": {
+    "mentionsFailure": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.0946606,
+    "num_turns": 2,
+    "duration_ms": 31497,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

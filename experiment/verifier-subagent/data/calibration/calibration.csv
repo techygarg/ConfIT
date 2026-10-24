@@ -1,0 +1,10 @@
+scenario,verbosity,status,durationSeconds,rawBytes,rawLines,runnerStdoutBytes,summaryBytes,failureLines,uniqueFailingTests,firstFailureOffset,failureLinesOutsideCutZone,stageBytes
+G,quiet,passed,6,33313,153,981,1093,0,0,,0,"{""build"": 22881, ""unit"": 4783, ""component"": 5649}"
+G,normal,passed,7,144138,1440,981,1093,0,0,,0,"{""build"": 22881, ""unit"": 68391, ""component"": 52866}"
+G,detailed,passed,7,144503,1443,981,1093,0,0,,0,"{""build"": 22881, ""unit"": 68624, ""component"": 52998}"
+R1,quiet,failed,4,29666,152,852,957,2,1,27551,2,"{""build"": 22881, ""unit"": 6785}"
+R1,normal,failed,4,97591,774,852,957,3,2,67236,0,"{""build"": 22881, ""unit"": 74710}"
+R1,detailed,failed,4,95388,752,852,957,2,1,47836,0,"{""build"": 22881, ""unit"": 72507}"
+R3,quiet,failed,4,131532,924,852,957,78,39,27652,11,"{""build"": 22881, ""unit"": 108651}"
+R3,normal,failed,4,286437,1990,852,957,78,39,34733,0,"{""build"": 22881, ""unit"": 263556}"
+R3,detailed,failed,3,286688,1992,852,957,77,39,33024,0,"{""build"": 22881, ""unit"": 263807}"

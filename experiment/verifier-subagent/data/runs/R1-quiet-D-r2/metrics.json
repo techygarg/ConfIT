@@ -1,0 +1,146 @@
+{
+  "runId": "R1-quiet-D-r2",
+  "arm": "D",
+  "scenario": "R1",
+  "config": "quiet",
+  "repeat": 2,
+  "sessionId": "44c7ca3a-35a6-4656-a605-092239b63292",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/scenarios/R1-few.patch"
+  ],
+  "startEpoch": 1792567714,
+  "endEpoch": 1792567736,
+  "wallSeconds": 22,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 12,
+  "main": {
+    "calls": 3,
+    "contextFirst": 29370,
+    "contextLast": 32590,
+    "contextPeak": 32590,
+    "processed": 93119,
+    "output": 826,
+    "cacheRead": 89067,
+    "cacheWrite1h": 3220,
+    "cacheWrite5m": 0,
+    "uncachedInput": 6,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 3220,
+  "contextSeries": [
+    29370,
+    30333,
+    32590
+  ],
+  "mainTools": [
+    "Agent",
+    "Bash"
+  ],
+  "agentsSpawned": [
+    "lattice:verifier"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 1,
+  "biggestToolResultSeen": 3999,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1658,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "lattice:verifier"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 1,
+      "seenChars": 3999,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "tail -c 4000 tmp/verification/20261021T072840Z-5b9c58/unit.log"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "lattice:verifier",
+      "calls": 3,
+      "contextFirst": 12450,
+      "contextLast": 13887,
+      "contextPeak": 13887,
+      "processed": 40359,
+      "output": 788,
+      "cacheRead": 29069,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 10496,
+      "uncachedInput": 6,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 40359,
+  "totalProcessed": 133478,
+  "verificationRuns": [
+    {
+      "runId": "20261021T072840Z-5b9c58",
+      "overallStatus": "failed",
+      "headline": "Failed at unit: exit code 2; skipped: component"
+    }
+  ],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel"
+  ],
+  "verifierFidelity": [
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    }
+  ],
+  "answer": "**Not all checks pass.** The unit stage failed, and the run stopped there.\n\n| Stage | Result |\n|---|---|\n| build | passed |\n| unit | **failed** (exit code 2) |\n| component | skipped because the run stopped after the unit failure |\n\nIntegration and `make skills` aren't in the verifier's configured stages, so they didn't run.\n\n**Failing tests:** 1 test fails on both net10.0 and net9.0, so there are 2 failures in total. Everything else passed (271 of 272 per framework).\n\n**Cause:** `ConfIT.UnitTest.Util.DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel` (`DeltaFormatterTests.cs:53`) expects the formatted output to contain `<absent>`, but the formatter now writes `<not present>`. The assertion message was:\n\n```\nExpected result \"Response body mismatch:\n\ndebug\n  expected: <not present>\n  actual:   \"trace\"\" to contain \"<absent>\".\n```\n\nEither the formatter's sentinel text changed and the test is out of date, or the formatter was changed by mistake. I didn't check which, and I didn't modify any files.\n\nThe full log is at `tmp/verification/20261021T072840Z-5b9c58/unit.log`. The log also shows NU1902 warnings that `Scriban.Signed` 7.2.0 has known moderate-severity vulnerabilities. They didn't cause the failure.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesTest": true,
+    "quotesAssertion": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.0670976,
+    "num_turns": 3,
+    "duration_ms": 21204,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

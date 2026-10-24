@@ -1,0 +1,235 @@
+{
+  "runId": "R1-normal-T2-r1",
+  "arm": "T2",
+  "scenario": "R1",
+  "config": "normal",
+  "repeat": 1,
+  "sessionId": "542270c4-db8b-45e0-9c6a-39121aa1326b",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "budgetUsd": 10.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R1-few.patch",
+    "inputs/config/failure-hint.patch"
+  ],
+  "startEpoch": 1792583330,
+  "endEpoch": 1792583402,
+  "wallSeconds": 72,
+  "prewarmSeconds": 8,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "fixArm": true,
+  "finalStatus": "passed",
+  "netChangeFiles": [],
+  "netChangeLines": 0,
+  "testsEdited": false,
+  "longestGapSeconds": 24,
+  "main": {
+    "calls": 4,
+    "contextFirst": 29711,
+    "contextLast": 33355,
+    "contextPeak": 33355,
+    "processed": 127663,
+    "output": 1566,
+    "cacheRead": 113834,
+    "cacheWrite1h": 12255,
+    "cacheWrite5m": 0,
+    "uncachedInput": 8,
+    "models": [
+      "claude-opus-5-5"
+    ]
+  },
+  "footprint": 3644,
+  "contextSeries": [
+    29711,
+    30827,
+    32204,
+    33355
+  ],
+  "mainTools": [
+    "Agent",
+    "Agent",
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "verifier-haiku",
+    "fixer-sonnet",
+    "verifier-haiku"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 2009,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1954,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 1,
+      "seenChars": 1759,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "fixer-sonnet"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 2,
+      "seenChars": 2009,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "verifier-haiku",
+      "calls": 4,
+      "contextFirst": 12572,
+      "contextLast": 14640,
+      "contextPeak": 14640,
+      "processed": 55444,
+      "output": 1481,
+      "cacheRead": 39317,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 14638,
+      "uncachedInput": 8,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    },
+    {
+      "agentType": "verifier-haiku",
+      "calls": 4,
+      "contextFirst": 12568,
+      "contextLast": 14757,
+      "contextPeak": 14757,
+      "processed": 55408,
+      "output": 1339,
+      "cacheRead": 42820,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 11241,
+      "uncachedInput": 8,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    },
+    {
+      "agentType": "fixer-sonnet",
+      "calls": 5,
+      "contextFirst": 12892,
+      "contextLast": 18610,
+      "contextPeak": 18610,
+      "processed": 82197,
+      "output": 1261,
+      "cacheRead": 62318,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 18608,
+      "uncachedInput": 10,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Grep",
+        "Grep",
+        "Grep",
+        "Read",
+        "Edit"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": true
+    }
+  ],
+  "subagentProcessed": 193049,
+  "totalProcessed": 320712,
+  "verificationRuns": [
+    {
+      "runId": "20261021T114859Z-5bf7d9",
+      "overallStatus": "failed",
+      "headline": "Failed at unit: exit code 2; skipped: component"
+    },
+    {
+      "runId": "20261021T114945Z-ac1d69",
+      "overallStatus": "passed",
+      "headline": "All 3 stage(s) passed"
+    }
+  ],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel"
+  ],
+  "verifierFidelity": [
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    },
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    }
+  ],
+  "answer": "**Final status: passing.** On the second verification run (`20261021T114945Z-ac1d69`), all three configured stages passed: build, unit and component. It took one fix cycle.\n\n**What failed:** On the first run (`20261021T114859Z-5bf7d9`) the build passed but the unit stage failed (exit code 2), so the component stage was skipped. One test failed on both net9.0 and net10.0: `DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel`.\n\n**Root cause:** When the actual response has a field the expected body doesn't, the failure output is supposed to label it `<absent>`. The code in `src/ConfIT/Matching/DeltaFormatter.cs` used `<not present>` instead. The test was right, not the code: `doc/failure-output.md` and the matching spec both say `<absent>`.\n\n**What was changed:** One line in `src/ConfIT/Matching/DeltaFormatter.cs:69`:\n```diff\n-                expected = TestColor.Subtle(\"<not present>\");\n+                expected = TestColor.Subtle(\"<absent>\");\n```\nNo tests were modified.\n\nThe verifier only ran the stages configured in `.lattice/verification.yaml`. Integration tests and the skills check (`make integration` / `make skills`) aren't among them, so they weren't run. Nothing was committed.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesTest": true,
+    "quotesAssertion": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.223008445,
+    "num_turns": 4,
+    "duration_ms": 70323,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

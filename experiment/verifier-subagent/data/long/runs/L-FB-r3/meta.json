@@ -1,0 +1,37 @@
+{
+  "runId": "L-FB-r3",
+  "arm": "FB",
+  "repeat": 3,
+  "baseSessionId": "4f2f8f2d-8876-4a86-98b5-ddf4454fb9d1",
+  "sessionId": "c7848176-d767-4a45-aa5d-aca0e81e2a40",
+  "claudeVersion": "2.1.306",
+  "t1": {
+    "exitCode": 0,
+    "wallSeconds": 88,
+    "finalStatus": "passed",
+    "netChangeFiles": [
+      "src/ConfIT/Matching/SemanticMatcher.cs"
+    ],
+    "netChangeLines": 4,
+    "testsChanged": [],
+    "matcherRestored": false,
+    "filesBeyondRegression": []
+  },
+  "t2": {
+    "exitCode": 0,
+    "wallSeconds": 66,
+    "finalStatus": "passed",
+    "netChangeFiles": [
+      "src/ConfIT/Matching/DeltaFormatter.cs",
+      "src/ConfIT/Matching/SemanticMatcher.cs",
+      "test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs"
+    ],
+    "netChangeLines": 10,
+    "testsChanged": [
+      "test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs"
+    ],
+    "patchApplied": true,
+    "featureKept": true,
+    "testUpdated": true
+  }
+}

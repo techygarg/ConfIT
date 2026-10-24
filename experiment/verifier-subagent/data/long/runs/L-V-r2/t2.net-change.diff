@@ -1,0 +1,31 @@
+--- a/src/ConfIT/Matching/DeltaFormatter.cs
++++ b/src/ConfIT/Matching/DeltaFormatter.cs
+@@ -66,7 +66,7 @@
+                 break;
+             case 3: // field in actual, not in expected → [actualVal, 0, 0]
+                 actual = FormatValue(arr[0]);
+-                expected = TestColor.Subtle("<absent>");
++                expected = TestColor.Subtle("<not present>");
+                 break;
+             default:
+                 return;
+--- a/test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs
++++ b/test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs
+@@ -39,7 +39,7 @@
+     }
+ 
+     [Fact]
+-    public void Format_FieldInActualNotInExpected_ShowsAbsentSentinel()
++    public void Format_FieldInActualNotInExpected_ShowsNotPresentSentinel()
+     {
+         // Given — 3-element delta: [actualVal, 0, 0]
+         var delta = JObject.Parse(@"{""debug"": [""trace"", 0, 0]}");
+@@ -50,7 +50,7 @@
+         // Then
+         result.Should().Contain("debug");
+         result.Should().Contain("expected:");
+-        result.Should().Contain("<absent>");
++        result.Should().Contain("<not present>");
+         result.Should().Contain("actual:");
+         result.Should().Contain("\"trace\"");
+     }

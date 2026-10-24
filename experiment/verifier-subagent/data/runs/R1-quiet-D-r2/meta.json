@@ -1,0 +1,22 @@
+{
+  "runId": "R1-quiet-D-r2",
+  "arm": "D",
+  "scenario": "R1",
+  "config": "quiet",
+  "repeat": 2,
+  "sessionId": "44c7ca3a-35a6-4656-a605-092239b63292",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/scenarios/R1-few.patch"
+  ],
+  "startEpoch": 1792567714,
+  "endEpoch": 1792567736,
+  "wallSeconds": 22,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false
+}

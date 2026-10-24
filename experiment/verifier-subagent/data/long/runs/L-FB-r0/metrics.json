@@ -1,0 +1,74 @@
+{
+  "runId": "L-FB-r0",
+  "t1": {
+    "calls": 5,
+    "start": 107601,
+    "footprint": 5389,
+    "firstCallCacheWrite": 2971,
+    "cost": 0.350726565,
+    "warmCost": 0.350726565,
+    "projected": 0.458506565,
+    "opusCost": 0.22642680000000004,
+    "haikuCost": 0.004470665,
+    "sonnetCost": 0.11982910000000001,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [
+      "code read"
+    ],
+    "briefs": [
+      "Repository: $WS/confit (ConfIT, a .NET declarative API testing library; see CLAUDE.md for conventions).\n\nVerifier summary.json (run dir tmp/verification/20261023T082645Z-51a2f6, relative to the repo root):\n{summary.json}\n\nBrief:\n- What changed: the user just pulled teammates' latest changes. The exact contents are unknown (the directory isn't a git repo, so there's no diff to look at). Before the pull, the matching area (src/ConfIT/Matching/ResultMatcher.cs, DeltaFormatter.cs, SemanticMatcher.cs, BaseTest.Verify) and its tests (test/ConfIT.UnitTest/Util/ResultMatcherTests.cs, DeltaFormatterTests.cs, SemanticMatcherTests.cs) were consistent. The failure could be anywhere, though.\n- Intended behaviour change: the user says to treat the tests as the spec. If a test expects new behaviour, implement it in src/, and don't edit or weaken the test to make it pass. Only touch a test if it is itself broken in a way that is clearly not a behaviour spec (for example, it won't compile because of a typo). If you do, flag it explicitly.\n- Keep changes minimal and match the surrounding code style. The code must work on both net9.0 and net10.0. Don't build or run tests.\n\nReport back: which tests failed and their error messages, the root cause, every file you changed and what you changed in it, and anything you were unsure about or deliberately left alone."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 1,
+    "edits": [],
+    "durationSeconds": 153,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false,
+    "change": "exact revert"
+  },
+  "t2": {
+    "calls": 5,
+    "start": 113923,
+    "footprint": 6033,
+    "firstCallCacheWrite": 933,
+    "cost": 0.29975109499999997,
+    "warmCost": 0.29975109499999997,
+    "projected": 0.42041109499999996,
+    "opusCost": 0.22003579999999978,
+    "haikuCost": 0.0029682949999999993,
+    "sonnetCost": 0.076747,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "Repository: $WS/confit (ConfIT, a .NET declarative API testing library; see CLAUDE.md for conventions).\n\nVerifier summary.json:\n{summary.json}\n\nBrief:\n- What changed: by product decision, the user edited src/ConfIT/Matching/DeltaFormatter.cs. When a field is in the actual body but missing from the expected one (the 3-element `[actualVal, 0, 0]` delta), the sentinel now reads `<not present>` instead of `<absent>`.\n- Intended behaviour change: YES. Keep the `<not present>` wording in DeltaFormatter and don't revert it. Any test, doc or other reference that asserts the old `<absent>` sentinel for this case is now out of date and should be updated to `<not present>` (for example, test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs `Format_FieldInActualNotInExpected_ShowsAbsentSentinel`; rename the test to fit the new wording if that's appropriate, following the `Method_Condition_ExpectedOutcome` convention).\n- Don't touch the separate `<missing>` sentinel (a field in expected but not in actual). Also leave alone unrelated uses of the word \"absent\", for example SemanticMatcher's \"was absent from the response\" exception and the test that asserts `*absent*` on it. Those are a different message.\n- If any failure is NOT explained by the wording change, report it rather than guessing.\n- Keep changes minimal. Don't build or run tests.\n\nReport back: the failing tests and their error messages, the root cause, every file changed and what changed in it, and anything you left alone on purpose."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 132,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false
+  }
+}

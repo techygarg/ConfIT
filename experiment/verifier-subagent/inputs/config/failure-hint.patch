@@ -1,0 +1,10 @@
+--- a/.lattice/verification.yaml	2026-10-21 12:30:01
++++ b/.lattice/verification.yaml	2026-10-21 12:30:01
+@@ -4,6 +4,7 @@
+ # TEST_OPTS default (see config/verbosity-*.patch), so every arm runs
+ # byte-identical commands and only the repository decides how loud they are.
+ runsDir: tmp/verification
++failureHint: Search a failed stage's log rather than reading it whole. grep -c '^ *Failed ' <logFile> counts the failing tests, grep '^ *Failed ' <logFile> names them, and grep -m 5 -A4 'Error Message:' <logFile> shows the first error messages.
+ stages:
+   - name: build
+     command: make build

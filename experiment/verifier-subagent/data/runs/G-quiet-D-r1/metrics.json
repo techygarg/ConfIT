@@ -1,0 +1,127 @@
+{
+  "runId": "G-quiet-D-r1",
+  "arm": "D",
+  "scenario": "G",
+  "config": "quiet",
+  "repeat": 1,
+  "sessionId": "d0108e11-9e25-43df-9ef8-4cf78aac960d",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [],
+  "startEpoch": 1792567536,
+  "endEpoch": 1792567567,
+  "wallSeconds": 31,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 17,
+  "main": {
+    "calls": 2,
+    "contextFirst": 29370,
+    "contextLast": 30458,
+    "contextPeak": 30458,
+    "processed": 60309,
+    "output": 481,
+    "cacheRead": 58736,
+    "cacheWrite1h": 1088,
+    "cacheWrite5m": 0,
+    "uncachedInput": 4,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 1088,
+  "contextSeries": [
+    29370,
+    30458
+  ],
+  "mainTools": [
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "lattice:verifier"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 1859,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1859,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "lattice:verifier"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "lattice:verifier",
+      "calls": 3,
+      "contextFirst": 12466,
+      "contextLast": 14192,
+      "contextPeak": 14192,
+      "processed": 41132,
+      "output": 1039,
+      "cacheRead": 29286,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 10801,
+      "uncachedInput": 6,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 41132,
+  "totalProcessed": 101441,
+  "verificationRuns": [
+    {
+      "runId": "20261021T072549Z-87ea21",
+      "overallStatus": "passed",
+      "headline": "All 3 stage(s) passed"
+    }
+  ],
+  "observedFailingTests": [],
+  "verifierFidelity": [
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    }
+  ],
+  "answer": "All checks pass. The verifier ran 3 stages, and none failed:\n\n| Stage | Command | Result | Duration |\n|---|---|---|---|\n| build | `make build` | passed (exit 0) | 2s |\n| unit | `make unit` | passed (exit 0) | 3s |\n| component | `make component` | passed (exit 0) | 2s |\n\nThe whole run took 7 seconds. It didn't stop early, and no stages are listed as failed.\n\nThe run covers only these three stages. The `make integration` and `make skills` targets aren't in the configured verification stages, so they didn't run. Their status is unknown.\n\nI didn't open any logs, since nothing failed, and I didn't modify any files. The logs are in `tmp/verification/20261021T072549Z-87ea21/`.",
+  "signals": {
+    "mentionsFailure": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.0553767,
+    "num_turns": 2,
+    "duration_ms": 29958,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

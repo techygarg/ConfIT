@@ -1,0 +1,107 @@
+{
+  "runId": "G-normal-B-r2",
+  "arm": "B",
+  "scenario": "G",
+  "config": "normal",
+  "repeat": 2,
+  "sessionId": "b9641e23-a044-4334-957e-677c381cbebf",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch"
+  ],
+  "startEpoch": 1792566626,
+  "endEpoch": 1792566645,
+  "wallSeconds": 19,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 8,
+  "main": {
+    "calls": 3,
+    "contextFirst": 29407,
+    "contextLast": 30836,
+    "contextPeak": 30836,
+    "processed": 90799,
+    "output": 431,
+    "cacheRead": 88933,
+    "cacheWrite1h": 1429,
+    "cacheWrite5m": 0,
+    "uncachedInput": 6,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 1429,
+  "contextSeries": [
+    29407,
+    30125,
+    30836
+  ],
+  "mainTools": [
+    "Bash",
+    "Read"
+  ],
+  "agentsSpawned": [],
+  "verificationCommands": 1,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 1132,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Bash",
+      "callIndex": 0,
+      "seenChars": 980,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "bash .lattice/scripts/run-verification.sh .lattice/verification.yaml"
+      }
+    },
+    {
+      "tool": "Read",
+      "callIndex": 1,
+      "seenChars": 1132,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "file_path": "$WS/confit/tmp/verification/20261021T071033Z-630091/summary.json"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [],
+  "subagentProcessed": 0,
+  "totalProcessed": 90799,
+  "verificationRuns": [
+    {
+      "runId": "20261021T071033Z-630091",
+      "overallStatus": "passed",
+      "headline": "All 3 stage(s) passed"
+    }
+  ],
+  "observedFailingTests": [],
+  "verifierFidelity": [],
+  "answer": "All checks pass. `summary.json` for run `20261021T071033Z-630091` reports `overallStatus: \"passed\"` and the headline \"All 3 stage(s) passed\". Nothing halted early.\n\n| Stage | Command | Result | Duration |\n|---|---|---|---|\n| build | `make build` | passed (exit 0) | 3s |\n| unit | `make unit` | passed (exit 0) | 2s |\n| component | `make component` | passed (exit 0) | 2s |\n\nThe stages ran quickly, 2\u20133s each. I didn't open the logs, so I haven't checked the test counts, and nothing in `summary.json` shows how many tests ran. I didn't modify any files.",
+  "signals": {
+    "mentionsFailure": false,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.018931299999999998,
+    "num_turns": 3,
+    "duration_ms": 17569,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

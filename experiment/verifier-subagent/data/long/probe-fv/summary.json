@@ -1,0 +1,25 @@
+{
+  "purpose": "Mechanics check before Part 3b (not counted): can the fixer spawn verifier-haiku itself, and does the stream record it?",
+  "claudeVersion": "2.1.306",
+  "agents": "inputs/config/agents-long-fv.json",
+  "scenario": "G (unchanged code), with the verbosity and failure-hint config patches",
+  "agentSpawns": [
+    {
+      "spawnedBy": "orchestrator",
+      "agent": "fixer-sonnet"
+    },
+    {
+      "spawnedBy": "fixer-sonnet",
+      "agent": "verifier-haiku"
+    }
+  ],
+  "modelsUsed": [
+    "claude-haiku-5-5",
+    "claude-opus-5-5",
+    "claude-sonnet-5-5"
+  ],
+  "costUsd": 0.3015,
+  "exitCode": 0,
+  "wallSeconds": 29,
+  "finalAnswer": "The fixer said it spawned verifier-haiku once and got this back:\n\n- **overallStatus:** passed\n- **headline:** All 3 stage(s) passed\n\nIt also said the build, unit and component stages all passed, and that it didn't read any logs or change any files. All of that comes from the fixer's report; I didn't run or check anything myself."
+}

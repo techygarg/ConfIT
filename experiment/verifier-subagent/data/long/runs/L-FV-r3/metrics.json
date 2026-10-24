@@ -1,0 +1,80 @@
+{
+  "runId": "L-FV-r3",
+  "t1": {
+    "calls": 4,
+    "start": 107641,
+    "footprint": 4055,
+    "firstCallCacheWrite": 0,
+    "cost": 0.3003224549999999,
+    "warmCost": 0.3003224549999999,
+    "projected": 0.3814224549999999,
+    "opusCost": 0.16909399999999986,
+    "haikuCost": 0.004913855,
+    "sonnetCost": 0.1263146,
+    "agents": {
+      "verifier-haiku": 1,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "The verification run for $WS/confit failed. Here is the verifier's summary.json, verbatim:\n\n{summary.json}\n\nBrief:\n- What changed: the user just pulled their teammates' latest changes. I don't know which files changed. The directory isn't a git repo, so there's no diff to look at. Work it out from the failing tests and the code they exercise. The likely area is response matching and mismatch output: src/ConfIT/Matching/ResultMatcher.cs, DeltaFormatter.cs and SemanticMatcher.cs, plus BaseTest.Verify. The tests for these are in test/ConfIT.UnitTest/Util/.\n- Was a behaviour change intended: the user says to treat the tests as the spec. Make the source code satisfy the tests as they are. Don't weaken, delete or rewrite tests, unless a test is clearly broken on its own terms (for example, it doesn't compile or contradicts itself). If you hit that case, stop and report it instead of changing the test.\n- Constraints: don't run git commit, push or any other git write. Follow the repo's CLAUDE.md conventions (#region instead of comment banners; code must work on net9.0 and net10.0).\n- When you're done, report: which tests failed, the root cause, the exact files and changes you made, and the final result of re-checking with verifier-haiku."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 90,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component"
+    ],
+    "fixerVerifies": 1,
+    "nestedVerdicts": [
+      "All 3 stage(s) passed"
+    ],
+    "correct": true,
+    "exact": false,
+    "noise": [
+      "flaky test"
+    ],
+    "recheckFlaked": false,
+    "change": "2 changed lines in SemanticMatcher.cs"
+  },
+  "t2": {
+    "calls": 4,
+    "start": 112749,
+    "footprint": 3719,
+    "firstCallCacheWrite": 1053,
+    "cost": 0.26799058,
+    "warmCost": 0.26799058,
+    "projected": 0.34237058,
+    "opusCost": 0.1741607999999999,
+    "haikuCost": 0.003979980000000001,
+    "sonnetCost": 0.08984980000000001,
+    "agents": {
+      "verifier-haiku": 1,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "The verification run for $WS/confit failed. Here is the verifier's summary.json, verbatim:\n\n{summary.json}\n\nBrief:\n- What changed: the user deliberately changed src/ConfIT/Matching/DeltaFormatter.cs. When a field is in the actual response but missing on the expected side (the 3-element delta case), the mismatch output now says `<not present>` instead of `<absent>`. This is an intended product decision, so behaviour was meant to change.\n- What to do: keep the new `<not present>` wording in DeltaFormatter.cs. Don't revert it. Tests that still assert the old `<absent>` sentinel are out of date. Update them to expect `<not present>`; the likely one is `Format_FieldInActualNotInExpected_ShowsAbsentSentinel` in test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs. If the test name mentions \"Absent\", you may rename it to match the new wording (e.g. `..._ShowsNotPresentSentinel`), following the `Method_Condition_ExpectedOutcome` convention. Also check for anything else that depends on the literal `<absent>`: other unit tests, example test cases, docs, and tools/ scripts. Don't touch the `<missing>` sentinel (the field is in expected but not in actual); that wording is unchanged.\n- If a failing test turns out to be unrelated to this wording change, fix the source rather than weakening the test, and report it separately.\n- Constraints: don't run git commit, push or any other git write. Follow the CLAUDE.md conventions in the repo.\n- When you're done, report: which tests failed, the cause, the exact files and changes you made, and the final result of re-checking with verifier-haiku."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 81,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component"
+    ],
+    "fixerVerifies": 1,
+    "nestedVerdicts": [
+      "All 3 stage(s) passed"
+    ],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "runId": "20261021T071924Z-c13e4d",
+  "runDir": "tmp/verification/20261021T071924Z-c13e4d",
+  "configFile": ".lattice/verification.yaml",
+  "startedAt": "2026-10-21T07:19:24Z",
+  "finishedAt": "2026-10-21T07:19:29Z",
+  "durationSeconds": 5,
+  "haltedEarly": true,
+  "failureHint": "",
+  "overallStatus": "failed",
+  "failedStages": ["unit"],
+  "headline": "Failed at unit: exit code 2; skipped: component",
+  "stages": [{"name":"build","status":"passed","exitCode":0,"durationSeconds":2,"wallStart":"2026-10-21T07:19:24Z","wallEnd":"2026-10-21T07:19:26Z","command":"make build","logFile":"tmp/verification/20261021T071924Z-c13e4d/build.log"},{"name":"unit","status":"failed","exitCode":2,"durationSeconds":3,"wallStart":"2026-10-21T07:19:26Z","wallEnd":"2026-10-21T07:19:29Z","command":"make unit","logFile":"tmp/verification/20261021T071924Z-c13e4d/unit.log"},{"name":"component","status":"skipped","command":"make component"}]
+}

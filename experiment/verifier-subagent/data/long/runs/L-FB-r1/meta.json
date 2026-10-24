@@ -1,0 +1,42 @@
+{
+  "runId": "L-FB-r1",
+  "arm": "FB",
+  "repeat": 1,
+  "baseSessionId": "4f2f8f2d-8876-4a86-98b5-ddf4454fb9d1",
+  "sessionId": "17e0e09a-67e0-430b-995c-8c490767e493",
+  "claudeVersion": "2.1.306",
+  "t1": {
+    "exitCode": 0,
+    "wallSeconds": 109,
+    "finalStatus": "passed",
+    "netChangeFiles": [
+      "src/ConfIT/Matching/SemanticMatcher.cs"
+    ],
+    "netChangeLines": 29,
+    "testsChanged": [],
+    "matcherRestored": false,
+    "filesBeyondRegression": []
+  },
+  "t2": {
+    "exitCode": 0,
+    "wallSeconds": 201,
+    "finalStatus": "passed",
+    "netChangeFiles": [
+      "doc/failure-output.md",
+      "skills/confit-component-tests/references/writing-tests.md",
+      "skills/confit-integration-tests/references/writing-tests.md",
+      "src/ConfIT/Matching/DeltaFormatter.cs",
+      "src/ConfIT/Matching/SemanticMatcher.cs",
+      "test/ConfIT.UnitTest/Server/Http/AppLauncherTests.cs",
+      "test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs"
+    ],
+    "netChangeLines": 55,
+    "testsChanged": [
+      "test/ConfIT.UnitTest/Server/Http/AppLauncherTests.cs",
+      "test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs"
+    ],
+    "patchApplied": true,
+    "featureKept": true,
+    "testUpdated": true
+  }
+}

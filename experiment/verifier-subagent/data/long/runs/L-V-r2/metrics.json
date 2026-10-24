@@ -1,0 +1,85 @@
+{
+  "runId": "L-V-r2",
+  "t1": {
+    "calls": 6,
+    "start": 107583,
+    "footprint": 11457,
+    "firstCallCacheWrite": 0,
+    "cost": 0.27932596000000043,
+    "warmCost": 0.27932596000000043,
+    "projected": 0.5084659600000004,
+    "opusCost": 0.2753216000000003,
+    "haikuCost": 0.004004359999999999,
+    "sonnetCost": 0,
+    "agents": {
+      "verifier-haiku": 2
+    },
+    "actions": [
+      "log read",
+      "code read",
+      "edit SemanticMatcher.cs",
+      "edit SemanticMatcher.cs"
+    ],
+    "briefs": [],
+    "briefCarriesIntent": null,
+    "ranChecksItself": false,
+    "logReads": 1,
+    "codeReads": 1,
+    "edits": [
+      "SemanticMatcher.cs",
+      "SemanticMatcher.cs"
+    ],
+    "durationSeconds": 164,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false,
+    "change": "exact revert"
+  },
+  "t2": {
+    "calls": 5,
+    "start": 119954,
+    "footprint": 4920,
+    "firstCallCacheWrite": 914,
+    "cost": 0.21157764999999995,
+    "warmCost": 0.21157764999999995,
+    "projected": 0.30997764999999994,
+    "opusCost": 0.20864879999999997,
+    "haikuCost": 0.00292885,
+    "sonnetCost": 0,
+    "agents": {
+      "verifier-haiku": 2
+    },
+    "actions": [
+      "log read",
+      "edit DeltaFormatterTests.cs",
+      "edit DeltaFormatterTests.cs"
+    ],
+    "briefs": [],
+    "briefCarriesIntent": null,
+    "ranChecksItself": false,
+    "logReads": 1,
+    "codeReads": 0,
+    "edits": [
+      "DeltaFormatterTests.cs",
+      "DeltaFormatterTests.cs"
+    ],
+    "durationSeconds": 58,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false
+  }
+}

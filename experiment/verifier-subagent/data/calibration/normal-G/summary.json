@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "runId": "20261021T063514Z-ca66da",
+  "runDir": "tmp/verification/20261021T063514Z-ca66da",
+  "configFile": ".lattice/verification.yaml",
+  "startedAt": "2026-10-21T06:35:14Z",
+  "finishedAt": "2026-10-21T06:35:21Z",
+  "durationSeconds": 7,
+  "haltedEarly": false,
+  "failureHint": "",
+  "overallStatus": "passed",
+  "failedStages": [],
+  "headline": "All 3 stage(s) passed",
+  "stages": [{"name":"build","status":"passed","exitCode":0,"durationSeconds":2,"wallStart":"2026-10-21T06:35:14Z","wallEnd":"2026-10-21T06:35:16Z","command":"make build","logFile":"tmp/verification/20261021T063514Z-ca66da/build.log"},{"name":"unit","status":"passed","exitCode":0,"durationSeconds":2,"wallStart":"2026-10-21T06:35:16Z","wallEnd":"2026-10-21T06:35:18Z","command":"make unit","logFile":"tmp/verification/20261021T063514Z-ca66da/unit.log"},{"name":"component","status":"passed","exitCode":0,"durationSeconds":3,"wallStart":"2026-10-21T06:35:18Z","wallEnd":"2026-10-21T06:35:21Z","command":"make component","logFile":"tmp/verification/20261021T063514Z-ca66da/component.log"}]
+}

@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="426" viewBox="0 0 800 426" font-family='system-ui, -apple-system, "Segoe UI", sans-serif' role="img" aria-label="What a failing run costs at each step">
+<rect width="800" height="426" fill="#fcfcfb"/>
+<title>What a failing run costs at each step</title>
+<desc>API-equivalent cost per run, subagents included: bar = median, dots = runs. With tiered models the split fixes the bug for less than Opus alone; all on Opus, it costs the most. The tightened row's higher cost on 1 failing test is mostly a cold prompt cache (two of three runs).</desc>
+<text x="16" y="26" font-size="15" font-weight="600" fill="#0b0b0b">What a failing run costs at each step</text>
+<text x="16" y="46" font-size="12" fill="#52514e">API-equivalent cost per run, subagents included: bar = median, dots = runs.</text>
+<text x="16" y="62" font-size="12" fill="#52514e">With tiered models the split fixes the bug for less than Opus alone; all on Opus, it costs the most.</text>
+<text x="16" y="78" font-size="12" fill="#52514e">The tightened row's higher cost on 1 failing test is mostly a cold prompt cache (two of three runs).</text>
+<text x="16" y="138" font-size="11" font-weight="600" fill="#52514e">Diagnose only · Sonnet 5.5</text>
+<text x="26" y="163" font-size="12" fill="#52514e">Raw test command</text>
+<text x="26" y="193" font-size="12" fill="#52514e">Verifier</text>
+<text x="26" y="223" font-size="12" fill="#52514e">Verifier + hint</text>
+<line x1="16" y1="240" x2="776" y2="240" stroke="#e1e0d9" stroke-width="1"/>
+<text x="16" y="256" font-size="11" font-weight="600" fill="#52514e">Diagnose, fix, re-verify · Opus 5.5</text>
+<text x="26" y="281" font-size="12" fill="#52514e">Opus alone</text>
+<text x="26" y="311" font-size="12" fill="#52514e">Same split, all on Opus</text>
+<text x="26" y="341" font-size="12" fill="#52514e">Verifier + hint + fixer</text>
+<text x="26" y="371" font-size="12" fill="#52514e">… with tightened instructions</text>
+<text x="252" y="110" font-size="12" font-weight="600" fill="#0b0b0b">1 failing test</text>
+<line x1="252.0" y1="116" x2="252.0" y2="386" stroke="#c3c2b7" stroke-width="1"/>
+<text x="252.0" y="401" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">$0</text>
+<line x1="311.0" y1="116" x2="311.0" y2="386" stroke="#e1e0d9" stroke-width="1"/>
+<text x="311.0" y="401" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">$0.2</text>
+<line x1="370.0" y1="116" x2="370.0" y2="386" stroke="#e1e0d9" stroke-width="1"/>
+<text x="370.0" y="401" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">$0.4</text>
+<line x1="429.0" y1="116" x2="429.0" y2="386" stroke="#e1e0d9" stroke-width="1"/>
+<text x="429.0" y="401" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">$0.6</text>
+<line x1="488.0" y1="116" x2="488.0" y2="386" stroke="#e1e0d9" stroke-width="1"/>
+<text x="488.0" y="401" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">$0.8</text>
+<path d="M252.0,152.0 H263.6 Q267.6,152.0 267.6,156.0 V164.0 Q267.6,168.0 263.6,168.0 H252.0 Z" fill="#c3c2b7"><title>Raw test command, R1: median $0.05</title></path>
+<circle cx="267.5" cy="160" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-A-r1: $0.05</title></circle>
+<circle cx="267.6" cy="160" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-A-r2: $0.05</title></circle>
+<circle cx="268.0" cy="160" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-A-r3: $0.05</title></circle>
+<text x="276.0" y="164" font-size="11" fill="#52514e">$0.05</text>
+<path d="M252.0,182.0 H273.8 Q277.8,182.0 277.8,186.0 V194.0 Q277.8,198.0 273.8,198.0 H252.0 Z" fill="#86b6ef"><title>Verifier, R1: median $0.09</title></path>
+<circle cx="276.6" cy="190" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-D-r1: $0.08</title></circle>
+<circle cx="277.8" cy="190" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-D-r2: $0.09</title></circle>
+<circle cx="298.5" cy="190" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-D-r3: $0.16</title></circle>
+<text x="306.5" y="194" font-size="11" fill="#52514e">$0.09</text>
+<path d="M252.0,212.0 H270.3 Q274.3,212.0 274.3,216.0 V224.0 Q274.3,228.0 270.3,228.0 H252.0 Z" fill="#3987e5"><title>Verifier + hint, R1: median $0.08</title></path>
+<circle cx="275.6" cy="220" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-H-r1: $0.08</title></circle>
+<circle cx="274.3" cy="220" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-H-r2: $0.08</title></circle>
+<circle cx="274.3" cy="220" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-H-r3: $0.08</title></circle>
+<text x="283.6" y="224" font-size="11" fill="#52514e">$0.08</text>
+<path d="M252.0,270.0 H332.8 Q336.8,270.0 336.8,274.0 V282.0 Q336.8,286.0 332.8,286.0 H252.0 Z" fill="#c3c2b7"><title>Opus alone, R1: median $0.29</title></path>
+<circle cx="363.9" cy="278" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-S-r1: $0.38</title></circle>
+<circle cx="309.7" cy="278" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-S-r2: $0.20</title></circle>
+<text x="371.9" y="282" font-size="11" fill="#52514e">$0.29</text>
+<path d="M252.0,300.0 H382.3 Q386.3,300.0 386.3,304.0 V312.0 Q386.3,316.0 382.3,316.0 H252.0 Z" fill="#c3c2b7"><title>Same split, all on Opus, R1: median $0.46</title></path>
+<circle cx="379.8" cy="308" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-O-r1: $0.43</title></circle>
+<circle cx="392.8" cy="308" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-O-r2: $0.48</title></circle>
+<text x="400.8" y="312" font-size="11" fill="#52514e">$0.46</text>
+<path d="M252.0,330.0 H292.8 Q296.8,330.0 296.8,334.0 V342.0 Q296.8,346.0 292.8,346.0 H252.0 Z" fill="#1c5cab"><title>Verifier + hint + fixer, R1: median $0.15</title></path>
+<circle cx="293.8" cy="338" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T-r1: $0.14</title></circle>
+<circle cx="296.8" cy="338" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T-r2: $0.15</title></circle>
+<circle cx="297.8" cy="338" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T-r3: $0.16</title></circle>
+<text x="305.8" y="342" font-size="11" fill="#52514e">$0.15</text>
+<path d="M252.0,360.0 H313.8 Q317.8,360.0 317.8,364.0 V372.0 Q317.8,376.0 313.8,376.0 H252.0 Z" fill="#1c5cab"><title>… with tightened instructions, R1: median $0.22</title></path>
+<circle cx="317.8" cy="368" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T2-r1: $0.22</title></circle>
+<circle cx="319.7" cy="368" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T2-r2: $0.23</title></circle>
+<circle cx="303.6" cy="368" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T2-r3: $0.17</title></circle>
+<text x="327.7" y="372" font-size="11" fill="#52514e">$0.22</text>
+<text x="524" y="110" font-size="12" font-weight="600" fill="#0b0b0b">39 failing tests</text>
+<line x1="524.0" y1="116" x2="524.0" y2="386" stroke="#c3c2b7" stroke-width="1"/>
+<text x="524.0" y="401" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">$0</text>
+<line x1="583.0" y1="116" x2="583.0" y2="386" stroke="#e1e0d9" stroke-width="1"/>
+<text x="583.0" y="401" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">$0.2</text>
+<line x1="642.0" y1="116" x2="642.0" y2="386" stroke="#e1e0d9" stroke-width="1"/>
+<text x="642.0" y="401" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">$0.4</text>
+<line x1="701.0" y1="116" x2="701.0" y2="386" stroke="#e1e0d9" stroke-width="1"/>
+<text x="701.0" y="401" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">$0.6</text>
+<line x1="760.0" y1="116" x2="760.0" y2="386" stroke="#e1e0d9" stroke-width="1"/>
+<text x="760.0" y="401" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">$0.8</text>
+<path d="M524.0,152.0 H544.5 Q548.5,152.0 548.5,156.0 V164.0 Q548.5,168.0 544.5,168.0 H524.0 Z" fill="#c3c2b7"><title>Raw test command, R3: median $0.08</title></path>
+<circle cx="548.6" cy="160" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-A-r1: $0.08</title></circle>
+<circle cx="547.5" cy="160" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-A-r2: $0.08</title></circle>
+<circle cx="548.5" cy="160" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-A-r3: $0.08</title></circle>
+<text x="556.6" y="164" font-size="11" fill="#52514e">$0.08</text>
+<path d="M524.0,182.0 H558.8 Q562.8,182.0 562.8,186.0 V194.0 Q562.8,198.0 558.8,198.0 H524.0 Z" fill="#86b6ef"><title>Verifier, R3: median $0.13</title></path>
+<circle cx="566.5" cy="190" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-D-r1: $0.14</title></circle>
+<circle cx="562.8" cy="190" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-D-r2: $0.13</title></circle>
+<circle cx="559.2" cy="190" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-D-r3: $0.12</title></circle>
+<text x="574.5" y="194" font-size="11" fill="#52514e">$0.13</text>
+<path d="M524.0,212.0 H548.5 Q552.5,212.0 552.5,216.0 V224.0 Q552.5,228.0 548.5,228.0 H524.0 Z" fill="#3987e5"><title>Verifier + hint, R3: median $0.10</title></path>
+<circle cx="552.8" cy="220" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-H-r1: $0.10</title></circle>
+<circle cx="550.5" cy="220" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-H-r2: $0.09</title></circle>
+<circle cx="552.5" cy="220" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-H-r3: $0.10</title></circle>
+<text x="560.8" y="224" font-size="11" fill="#52514e">$0.10</text>
+<path d="M524.0,270.0 H614.8 Q618.8,270.0 618.8,274.0 V282.0 Q618.8,286.0 614.8,286.0 H524.0 Z" fill="#c3c2b7"><title>Opus alone, R3: median $0.32</title></path>
+<circle cx="604.4" cy="278" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-S-r1: $0.27</title></circle>
+<circle cx="633.2" cy="278" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-S-r2: $0.37</title></circle>
+<text x="641.2" y="282" font-size="11" fill="#52514e">$0.32</text>
+<path d="M524.0,300.0 H691.6 Q695.6,300.0 695.6,304.0 V312.0 Q695.6,316.0 691.6,316.0 H524.0 Z" fill="#c3c2b7"><title>Same split, all on Opus, R3: median $0.58</title></path>
+<circle cx="720.2" cy="308" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-O-r1: $0.67</title></circle>
+<circle cx="671.1" cy="308" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-O-r2: $0.50</title></circle>
+<text x="728.2" y="312" font-size="11" fill="#52514e">$0.58</text>
+<path d="M524.0,330.0 H576.8 Q580.8,330.0 580.8,334.0 V342.0 Q580.8,346.0 576.8,346.0 H524.0 Z" fill="#1c5cab"><title>Verifier + hint + fixer, R3: median $0.19</title></path>
+<circle cx="584.5" cy="338" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T-r1: $0.20</title></circle>
+<circle cx="580.8" cy="338" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T-r2: $0.19</title></circle>
+<circle cx="580.4" cy="338" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T-r3: $0.19</title></circle>
+<text x="592.5" y="342" font-size="11" fill="#52514e">$0.19</text>
+<path d="M524.0,360.0 H580.7 Q584.7,360.0 584.7,364.0 V372.0 Q584.7,376.0 580.7,376.0 H524.0 Z" fill="#1c5cab"><title>… with tightened instructions, R3: median $0.21</title></path>
+<circle cx="589.0" cy="368" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T2-r1: $0.22</title></circle>
+<circle cx="584.7" cy="368" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T2-r2: $0.21</title></circle>
+<circle cx="579.6" cy="368" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T2-r3: $0.19</title></circle>
+<text x="597.0" y="372" font-size="11" fill="#52514e">$0.21</text>
+</svg>

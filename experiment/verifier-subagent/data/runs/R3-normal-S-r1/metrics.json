@@ -1,0 +1,227 @@
+{
+  "runId": "R3-normal-S-r1",
+  "arm": "S",
+  "scenario": "R3",
+  "config": "normal",
+  "repeat": 1,
+  "sessionId": "f6964686-f7e4-4c12-a12c-166c01434512",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "budgetUsd": 10.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R3-many.patch"
+  ],
+  "startEpoch": 1792580877,
+  "endEpoch": 1792580932,
+  "wallSeconds": 55,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "fixArm": true,
+  "finalStatus": "passed",
+  "netChangeFiles": [],
+  "netChangeLines": 0,
+  "testsEdited": false,
+  "longestGapSeconds": 10,
+  "main": {
+    "calls": 7,
+    "contextFirst": 29422,
+    "contextLast": 49992,
+    "contextPeak": 49992,
+    "processed": 299856,
+    "output": 2635,
+    "cacheRead": 276637,
+    "cacheWrite1h": 20570,
+    "cacheWrite5m": 0,
+    "uncachedInput": 14,
+    "models": [
+      "claude-opus-5-5"
+    ]
+  },
+  "footprint": 20570,
+  "contextSeries": [
+    29422,
+    35348,
+    41129,
+    45624,
+    47338,
+    48368,
+    49992
+  ],
+  "mainTools": [
+    "Bash",
+    "Bash",
+    "Read",
+    "Grep",
+    "Edit",
+    "Edit",
+    "Bash",
+    "Bash"
+  ],
+  "agentsSpawned": [],
+  "verificationCommands": 4,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 11057,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Bash",
+      "callIndex": 0,
+      "seenChars": 11057,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "make build 2>&1 | tail -30 && make unit 2>&1 | tail -40"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 1,
+      "seenChars": 9768,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "make unit 2>&1 | grep -E \"^\\s+Failed \" | sort -u | head -50; make unit 2>&1 | grep -A15 -m3 \"Error Message\""
+      }
+    },
+    {
+      "tool": "Read",
+      "callIndex": 2,
+      "seenChars": 10809,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "file_path": "$WS/confit/src/ConfIT/Matching/SemanticMatcher.cs"
+      }
+    },
+    {
+      "tool": "Grep",
+      "callIndex": 3,
+      "seenChars": 2459,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "pattern": "(?i)case|ToLower|IsUUID|ISUUID|isuuid\\b",
+        "path": "$WS/confit/test/ConfIT.UnitTest/Util"
+      }
+    },
+    {
+      "tool": "Edit",
+      "callIndex": 4,
+      "seenChars": 209,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "file_path": "$WS/confit/src/ConfIT/Matching/SemanticMatcher.cs"
+      }
+    },
+    {
+      "tool": "Edit",
+      "callIndex": 4,
+      "seenChars": 209,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "file_path": "$WS/confit/src/ConfIT/Matching/SemanticMatcher.cs"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 4,
+      "seenChars": 73,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "make build 2>&1 | grep -E \"error|Error\\(s\\)|\u2713\"; make unit 2>&1 | grep -E \"^\\s+Failed |Total tests|Passed:|Failed:\" | sort -u; make unit 2>&1 | grep -A12 -m2 \"Fa"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 5,
+      "seenChars": 2552,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "make component 2>&1 | grep -E \"^\\s+Failed |Total tests|Passed:|Failed:|error|\u2713\" | sort -u; echo \"exit: ${pipestatus[1]}\""
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [],
+  "subagentProcessed": 0,
+  "totalProcessed": 299856,
+  "verificationRuns": [],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Server.Http.HttpReadinessProbeTests.TryProbe_ServerReturns500_ReturnsFalse",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_AllThreeMatcherTypes_EachApplied",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_CustomMatcher_PassesForValidValue",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherFails_ReturnedDescriptionNamesField",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherValid_PassesAndRemovesField",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_CustomMatcherName_DelegatesToCustomFunc",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithNonNumericValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAboveThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthOnArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithExactMatch_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithMismatch_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithinInclusiveRange_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithValidEmail_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyObject_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyString_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithDateOnly_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00+05:30\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00.123Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithDateTime_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithValidDate_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyArray_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyString_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithNonEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithPresentValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNonNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNullValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"A1B2C3D4-E5F6-7890-ABCD-EF1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueBelowThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NestedFieldPath_PassesForValidValue",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NullExpected_DoesNotThrow"
+  ],
+  "verifierFidelity": [],
+  "answer": "`make build`, `make unit` and `make component` all pass now. It took one fix, on the second attempt.\n\n**Final status**\n- `make build`: 0 errors. The 26 warnings are NuGet vulnerability notices for package dependencies (Scriban.Signed, SQLitePCLRaw, System.Security.Cryptography.Pkcs), not build problems.\n- `make unit`: 272 of 272 passed.\n- `make component`: 20 of 20 passed.\n\n**What failed**\nOn the first run, 39 of 272 unit tests failed. Almost all were in `SemanticMatcherTests` and `ResultMatcherTests`, failing with errors like `ArgumentException: Unknown semantic matcher 'isnull' for field 'deletedAt'`. Any test using a named matcher (`isUuid`, `isNull`, `greaterThan(...)`, `hasLength(...)`, or a custom matcher) failed this way.\n\nOne more test, `HttpReadinessProbeTests.TryProbe_ServerReturns500_ReturnsFalse`, failed on the first run but passed on the rerun. I didn't change anything related to it and didn't look into it further. It's probably timing- or port-sensitive, so it may fail intermittently.\n\n**Root cause**\nIn `src/ConfIT/Matching/SemanticMatcher.cs`, `ParseSpec` converted the matcher name to lowercase (`spec.ToLowerInvariant()`). The built-in matchers are stored under camelCase names (`isUuid`, `isNull`, \u2026) and looked up case-sensitively, as are custom matchers in `SuiteConfig.CustomMatchers`. So `isUuid` became `isuuid`, nothing matched, and every named matcher threw \"unknown matcher\". The tests and docs all use camelCase names and none expect case-insensitive matching, so the lowercasing was the bug.\n\n**What was changed**\nI removed the two `.ToLowerInvariant()` calls in `ParseSpec` (`src/ConfIT/Matching/SemanticMatcher.cs:85` and `:91`), so matcher names are passed through as written. I didn't touch any tests, and nothing was committed.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesCause": true,
+    "count39or78": true,
+    "mentionsFlakyProbe": true
+  },
+  "streamReported": {
+    "total_cost_usd": 0.27264340000000004,
+    "num_turns": 9,
+    "duration_ms": 53024,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

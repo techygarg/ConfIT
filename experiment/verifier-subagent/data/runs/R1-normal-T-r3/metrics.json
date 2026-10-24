@@ -1,0 +1,236 @@
+{
+  "runId": "R1-normal-T-r3",
+  "arm": "T",
+  "scenario": "R1",
+  "config": "normal",
+  "repeat": 3,
+  "sessionId": "75aa7138-da77-48ae-914e-8cec7849569d",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "budgetUsd": 10.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R1-few.patch",
+    "inputs/config/failure-hint.patch"
+  ],
+  "startEpoch": 1792581452,
+  "endEpoch": 1792581523,
+  "wallSeconds": 71,
+  "prewarmSeconds": 7,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "fixArm": true,
+  "finalStatus": "passed",
+  "netChangeFiles": [],
+  "netChangeLines": 0,
+  "testsEdited": false,
+  "longestGapSeconds": 24,
+  "main": {
+    "calls": 4,
+    "contextFirst": 29804,
+    "contextLast": 33758,
+    "contextPeak": 33758,
+    "processed": 128683,
+    "output": 1741,
+    "cacheRead": 122980,
+    "cacheWrite1h": 3954,
+    "cacheWrite5m": 0,
+    "uncachedInput": 8,
+    "models": [
+      "claude-opus-5-5"
+    ]
+  },
+  "footprint": 3954,
+  "contextSeries": [
+    29804,
+    30897,
+    32483,
+    33758
+  ],
+  "mainTools": [
+    "Agent",
+    "Agent",
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "verifier-haiku",
+    "fixer-sonnet",
+    "verifier-haiku"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 2298,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1925,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 1,
+      "seenChars": 1962,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "fixer-sonnet"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 2,
+      "seenChars": 2298,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "verifier-haiku",
+      "calls": 4,
+      "contextFirst": 12471,
+      "contextLast": 14681,
+      "contextPeak": 14681,
+      "processed": 55183,
+      "output": 1484,
+      "cacheRead": 51481,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 2210,
+      "uncachedInput": 8,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    },
+    {
+      "agentType": "verifier-haiku",
+      "calls": 4,
+      "contextFirst": 12471,
+      "contextLast": 14613,
+      "contextPeak": 14613,
+      "processed": 54944,
+      "output": 1334,
+      "cacheRead": 42403,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 11199,
+      "uncachedInput": 8,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    },
+    {
+      "agentType": "fixer-sonnet",
+      "calls": 6,
+      "contextFirst": 12956,
+      "contextLast": 17767,
+      "contextPeak": 17767,
+      "processed": 94047,
+      "output": 1667,
+      "cacheRead": 78156,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 14212,
+      "uncachedInput": 12,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Grep",
+        "Read",
+        "Grep",
+        "Grep",
+        "Read",
+        "Grep",
+        "Edit"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 204174,
+  "totalProcessed": 332857,
+  "verificationRuns": [
+    {
+      "runId": "20261021T111739Z-662527",
+      "overallStatus": "failed",
+      "headline": "Failed at unit: exit code 2; skipped: component"
+    },
+    {
+      "runId": "20261021T111825Z-dd1bde",
+      "overallStatus": "passed",
+      "headline": "All 3 stage(s) passed"
+    }
+  ],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel"
+  ],
+  "verifierFidelity": [
+    {
+      "verbatim": false,
+      "reason": "final message is not bare JSON"
+    },
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    }
+  ],
+  "answer": "**Final status: passing.** One fix was needed. On the second run, build, unit and component tests all passed (run `20261021T111825Z-dd1bde`, summary at `tmp/verification/20261021T111825Z-dd1bde/summary.json`).\n\n**What failed:** On the first run the build passed but the unit tests failed. Component tests were skipped because of that. One unit test failed on both net9.0 and net10.0: `DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel`. It was a failed assertion, not a compile error. The test expected `<absent>` in the output but got `expected: <not present>`.\n\n**Root cause:** `src/ConfIT/Matching/DeltaFormatter.cs` used the wrong placeholder text. When a field is in the actual response but not in the expected one, it printed `<not present>`. The docs (`doc/failure-output.md`, `CHANGELOG.md`, the skills' `writing-tests.md` and the `.lattice` context doc) all say `<absent>`. The test was right and the code was wrong.\n\n**What changed:** One string at `src/ConfIT/Matching/DeltaFormatter.cs:69`: `TestColor.Subtle(\"<not present>\")` became `TestColor.Subtle(\"<absent>\")`. The test files were not touched.\n\nThe verification config only runs build, unit and component tests, so integration tests and `make skills` (both part of `make ci`) were not run. Nothing has been committed.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesTest": true,
+    "quotesAssertion": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.155145165,
+    "num_turns": 4,
+    "duration_ms": 69326,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

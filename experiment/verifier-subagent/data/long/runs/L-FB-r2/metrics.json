@@ -1,0 +1,78 @@
+{
+  "runId": "L-FB-r2",
+  "t1": {
+    "calls": 4,
+    "start": 107601,
+    "footprint": 5056,
+    "firstCallCacheWrite": 0,
+    "cost": 0.30425793499999965,
+    "warmCost": 0.30425793499999965,
+    "projected": 0.40537793499999963,
+    "opusCost": 0.17576440000000004,
+    "haikuCost": 0.0030421349999999996,
+    "sonnetCost": 0.1254514,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [
+      "code read"
+    ],
+    "briefs": [
+      "Repository: $WS/confit (a .NET library, ConfIT; core matching code in src/ConfIT/Matching/, unit tests in test/ConfIT.UnitTest/).\n\nVerifier summary.json (run dir is relative to the repo root):\n{summary.json}\n\nBrief:\n- What changed: the user just pulled teammates' latest changes. I don't know which files changed (the directory isn't a git repo, so there's no diff to look at). Find the cause from the failing tests and the code they exercise.\n- Was a behaviour change intended: the user said to treat the tests as the spec. Fix the production code so it satisfies the tests. Do not weaken, delete, skip, or rewrite test assertions to make them pass. The one exception: if a test is clearly broken by itself (it won't compile, or it contradicts other tests), stop and report it rather than editing it.\n- Keep fixes minimal and match the surrounding code style. Code must work on both net9.0 and net10.0.\n- Don't build or run tests (the verifier re-checks afterwards). Don't commit anything.\n\nReport back: which tests failed, the root cause (file:line), exactly what you changed (file:line plus a short before/after), and anything you were unsure of."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 1,
+    "edits": [],
+    "durationSeconds": 93,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false,
+    "change": "revert, one space dropped"
+  },
+  "t2": {
+    "calls": 4,
+    "start": 113674,
+    "footprint": 4649,
+    "firstCallCacheWrite": 1017,
+    "cost": 0.23952244499999975,
+    "warmCost": 0.23952244499999975,
+    "projected": 0.33250244499999976,
+    "opusCost": 0.18164519999999995,
+    "haikuCost": 0.0030079449999999997,
+    "sonnetCost": 0.05486930000000001,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "Repository: $WS/confit (a .NET library, ConfIT; matching code in src/ConfIT/Matching/, unit tests in test/ConfIT.UnitTest/).\n\nVerifier summary.json (run dir is relative to the repo root):\n{summary.json}\n\nBrief:\n- What changed: the user deliberately changed src/ConfIT/Matching/DeltaFormatter.cs. When a field is in the actual response but missing on the expected side, the mismatch output now says `<not present>` instead of `<absent>`. This is an intended product decision. Keep the new wording, and don't revert or modify the DeltaFormatter change.\n- Behaviour change intended: yes, but only that wording. Tests that assert the old `<absent>` sentinel for this case are now out of date. Update those assertions to `<not present>` and change nothing else in them.\n- If a failure has a different cause (anything not explained by the `<absent>` \u2192 `<not present>` wording), don't paper over it. Fix the production code only if the cause is clear; otherwise stop and report it.\n- Don't touch the `<missing>` sentinel (the field is expected but not in actual). It isn't part of this change.\n- Also check for the old wording outside the unit tests: docs (doc/), example test cases, and tools/ scripts. Report what you find. Only edit unit tests that assert the old wording, and list any other places that should change, without editing them.\n- Keep edits minimal and match the existing style. Don't build, run tests or commit.\n\nReport back: which tests failed and why, exactly what you changed (file:line, before/after), and any other references to `<absent>` you found."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 74,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false
+  }
+}

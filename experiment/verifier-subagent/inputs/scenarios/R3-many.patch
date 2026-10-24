@@ -1,0 +1,18 @@
+--- a/src/ConfIT/Matching/SemanticMatcher.cs	2026-10-21 12:01:20
++++ b/src/ConfIT/Matching/SemanticMatcher.cs	2026-10-21 12:01:20
+@@ -82,13 +82,13 @@
+     {
+         var parenIdx = spec.IndexOf('(');
+         if (parenIdx == -1)
+-            return (spec, null);
++            return (spec.ToLowerInvariant(), null);
+ 
+         if (!spec.EndsWith(')'))
+             throw new ArgumentException(
+                 $"Malformed matcher spec '{spec}' for field '{fieldPath}': missing closing parenthesis");
+ 
+-        return (spec[..parenIdx], spec[(parenIdx + 1)..^1]);
++        return (spec[..parenIdx].ToLowerInvariant(), spec[(parenIdx + 1)..^1]);
+     }
+ 
+     private static string? CheckIsUuid(JToken value)

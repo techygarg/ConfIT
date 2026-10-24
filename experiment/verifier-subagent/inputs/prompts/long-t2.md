@@ -1,0 +1,1 @@
+Product decision: when a field is missing on the expected side, the mismatch output should now say `<not present>` instead of `<absent>`. I've just made that change in DeltaFormatter. Run the checks and get them green, keeping the new wording.

@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="486" viewBox="0 0 800 486" font-family='system-ui, -apple-system, "Segoe UI", sans-serif' role="img" aria-label="Where the orchestrator's context went on a failing run">
+<rect width="800" height="486" fill="#fcfcfb"/>
+<title>Where the orchestrator's context went on a failing run</title>
+<desc>Tokens each kind of step added to the orchestrator's context; one bar per run. Each step's share includes the model's own reasoning around it.</desc>
+<text x="16" y="26" font-size="15" font-weight="600" fill="#0b0b0b">Where the orchestrator's context went on a failing run</text>
+<text x="16" y="46" font-size="12" fill="#52514e">Tokens each kind of step added to the orchestrator's context; one bar per run.</text>
+<text x="16" y="62" font-size="12" fill="#52514e">Each step's share includes the model's own reasoning around it.</text>
+<rect x="16" y="86" width="12" height="12" rx="2" fill="#2a78d6"/>
+<text x="33" y="96" font-size="12" fill="#52514e">Verdicts and reports</text>
+<rect x="183" y="86" width="12" height="12" rx="2" fill="#eb6834"/>
+<text x="200" y="96" font-size="12" fill="#52514e">Test output</text>
+<rect x="292" y="86" width="12" height="12" rx="2" fill="#1baf7a"/>
+<text x="309" y="96" font-size="12" fill="#52514e">Reading logs and code</text>
+<rect x="465" y="86" width="12" height="12" rx="2" fill="#eda100"/>
+<text x="482" y="96" font-size="12" fill="#52514e">Running the tests again</text>
+<rect x="651" y="86" width="12" height="12" rx="2" fill="#c3c2b7"/>
+<text x="668" y="96" font-size="12" fill="#52514e">Other</text>
+<text x="16" y="156" font-size="11" font-weight="600" fill="#52514e">Diagnose only · Sonnet 5.5</text>
+<text x="26" y="181" font-size="12" fill="#52514e">Raw test command</text>
+<text x="26" y="223" font-size="12" fill="#52514e">Verifier</text>
+<text x="26" y="265" font-size="12" fill="#52514e">Verifier + hint</text>
+<line x1="16" y1="294" x2="776" y2="294" stroke="#e1e0d9" stroke-width="1"/>
+<text x="16" y="310" font-size="11" font-weight="600" fill="#52514e">Diagnose, fix, re-verify · Opus 5.5</text>
+<text x="26" y="335" font-size="12" fill="#52514e">Opus alone</text>
+<text x="26" y="377" font-size="12" fill="#52514e">Verifier + hint + fixer</text>
+<text x="26" y="419" font-size="12" fill="#52514e">… with tightened instructions</text>
+<text x="252" y="128" font-size="12" font-weight="600" fill="#0b0b0b">1 failing test</text>
+<line x1="252.0" y1="134" x2="252.0" y2="446" stroke="#c3c2b7" stroke-width="1"/>
+<text x="252.0" y="461" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">0</text>
+<line x1="311.0" y1="134" x2="311.0" y2="446" stroke="#e1e0d9" stroke-width="1"/>
+<text x="311.0" y="461" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">10K</text>
+<line x1="370.0" y1="134" x2="370.0" y2="446" stroke="#e1e0d9" stroke-width="1"/>
+<text x="370.0" y="461" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">20K</text>
+<line x1="429.0" y1="134" x2="429.0" y2="446" stroke="#e1e0d9" stroke-width="1"/>
+<text x="429.0" y="461" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">30K</text>
+<line x1="488.0" y1="134" x2="488.0" y2="446" stroke="#e1e0d9" stroke-width="1"/>
+<text x="488.0" y="461" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">40K</text>
+<path d="M252.0,171.0 H281.8 Q281.8,171.0 281.8,171.0 V178.0 Q281.8,178.0 281.8,178.0 H252.0 Z" fill="#eb6834"><title>R1-normal-A-r1: Test output 5,382 tokens</title></path>
+<path d="M283.8,171.0 H288.6 Q288.6,171.0 288.6,171.0 V178.0 Q288.6,178.0 288.6,178.0 H283.8 Z" fill="#1baf7a"><title>R1-normal-A-r1: Reading logs and code 1,157 tokens</title></path>
+<path d="M290.6,171.0 H292.5 Q294.5,171.0 294.5,173.0 V176.0 Q294.5,178.0 292.5,178.0 H290.6 Z" fill="#eda100"><title>R1-normal-A-r1: Running the tests again 667 tokens</title></path>
+<path d="M252.0,181.0 H281.8 Q281.8,181.0 281.8,181.0 V188.0 Q281.8,188.0 281.8,188.0 H252.0 Z" fill="#eb6834"><title>R1-normal-A-r2: Test output 5,387 tokens</title></path>
+<path d="M283.8,181.0 H288.5 Q288.5,181.0 288.5,181.0 V188.0 Q288.5,188.0 288.5,188.0 H283.8 Z" fill="#1baf7a"><title>R1-normal-A-r2: Reading logs and code 1,139 tokens</title></path>
+<path d="M290.5,181.0 H292.3 Q294.1,181.0 294.1,182.8 V186.2 Q294.1,188.0 292.3,188.0 H290.5 Z" fill="#eda100"><title>R1-normal-A-r2: Running the tests again 607 tokens</title></path>
+<path d="M252.0,191.0 H281.8 Q281.8,191.0 281.8,191.0 V198.0 Q281.8,198.0 281.8,198.0 H252.0 Z" fill="#eb6834"><title>R1-normal-A-r3: Test output 5,382 tokens</title></path>
+<path d="M283.8,191.0 H291.3 Q291.3,191.0 291.3,191.0 V198.0 Q291.3,198.0 291.3,198.0 H283.8 Z" fill="#1baf7a"><title>R1-normal-A-r3: Reading logs and code 1,619 tokens</title></path>
+<path d="M293.3,191.0 H294.8 Q296.3,191.0 296.3,192.5 V196.5 Q296.3,198.0 294.8,198.0 H293.3 Z" fill="#eda100"><title>R1-normal-A-r3: Running the tests again 515 tokens</title></path>
+<text x="304.3" y="189.0" font-size="11" fill="#52514e">median 7.2K</text>
+<path d="M252.0,213.0 H255.7 Q255.7,213.0 255.7,213.0 V220.0 Q255.7,220.0 255.7,220.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-D-r1: Verdicts and reports 958 tokens</title></path>
+<path d="M257.7,213.0 H306.9 Q310.4,213.0 310.4,216.5 V216.5 Q310.4,220.0 306.9,220.0 H257.7 Z" fill="#1baf7a"><title>R1-normal-D-r1: Reading logs and code 8,943 tokens</title></path>
+<path d="M252.0,223.0 H255.7 Q255.7,223.0 255.7,223.0 V230.0 Q255.7,230.0 255.7,230.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-D-r2: Verdicts and reports 962 tokens</title></path>
+<path d="M257.7,223.0 H286.5 Q290.0,223.0 290.0,226.5 V226.5 Q290.0,230.0 286.5,230.0 H257.7 Z" fill="#1baf7a"><title>R1-normal-D-r2: Reading logs and code 5,478 tokens</title></path>
+<path d="M252.0,233.0 H255.9 Q255.9,233.0 255.9,233.0 V240.0 Q255.9,240.0 255.9,240.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-D-r3: Verdicts and reports 993 tokens</title></path>
+<path d="M257.9,233.0 H388.6 Q392.1,233.0 392.1,236.5 V236.5 Q392.1,240.0 388.6,240.0 H257.9 Z" fill="#1baf7a"><title>R1-normal-D-r3: Reading logs and code 22,750 tokens</title></path>
+<text x="400.1" y="231.0" font-size="11" fill="#52514e">median 9.9K</text>
+<path d="M252.0,255.0 H256.2 Q256.2,255.0 256.2,255.0 V262.0 Q256.2,262.0 256.2,262.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-H-r1: Verdicts and reports 1,044 tokens</title></path>
+<path d="M258.2,255.0 H272.8 Q276.3,255.0 276.3,258.5 V258.5 Q276.3,262.0 272.8,262.0 H258.2 Z" fill="#1baf7a"><title>R1-normal-H-r1: Reading logs and code 3,068 tokens</title></path>
+<path d="M252.0,265.0 H256.2 Q256.2,265.0 256.2,265.0 V272.0 Q256.2,272.0 256.2,272.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-H-r2: Verdicts and reports 1,058 tokens</title></path>
+<path d="M258.2,265.0 H270.1 Q273.6,265.0 273.6,268.5 V268.5 Q273.6,272.0 270.1,272.0 H258.2 Z" fill="#1baf7a"><title>R1-normal-H-r2: Reading logs and code 2,602 tokens</title></path>
+<path d="M252.0,275.0 H256.0 Q256.0,275.0 256.0,275.0 V282.0 Q256.0,282.0 256.0,282.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-H-r3: Verdicts and reports 1,010 tokens</title></path>
+<path d="M258.0,275.0 H269.2 Q272.7,275.0 272.7,278.5 V278.5 Q272.7,282.0 269.2,282.0 H258.0 Z" fill="#1baf7a"><title>R1-normal-H-r3: Reading logs and code 2,495 tokens</title></path>
+<text x="284.3" y="273.0" font-size="11" fill="#52514e">median 3.7K</text>
+<path d="M252.0,325.0 H284.9 Q284.9,325.0 284.9,325.0 V332.0 Q284.9,332.0 284.9,332.0 H252.0 Z" fill="#eb6834"><title>R1-normal-S-r1: Test output 5,920 tokens</title></path>
+<path d="M286.9,325.0 H336.3 Q336.3,325.0 336.3,325.0 V332.0 Q336.3,332.0 336.3,332.0 H286.9 Z" fill="#1baf7a"><title>R1-normal-S-r1: Reading logs and code 8,709 tokens</title></path>
+<path d="M338.3,325.0 H366.6 Q366.6,325.0 366.6,325.0 V332.0 Q366.6,332.0 366.6,332.0 H338.3 Z" fill="#eda100"><title>R1-normal-S-r1: Running the tests again 5,134 tokens</title></path>
+<path d="M368.6,325.0 H369.1 Q369.5,325.0 369.5,325.5 V331.5 Q369.5,332.0 369.1,332.0 H368.6 Z" fill="#c3c2b7"><title>R1-normal-S-r1: Other 158 tokens</title></path>
+<path d="M252.0,335.0 H284.7 Q284.7,335.0 284.7,335.0 V342.0 Q284.7,342.0 284.7,342.0 H252.0 Z" fill="#eb6834"><title>R1-normal-S-r2: Test output 5,889 tokens</title></path>
+<path d="M286.7,335.0 H294.8 Q294.8,335.0 294.8,335.0 V342.0 Q294.8,342.0 294.8,342.0 H286.7 Z" fill="#1baf7a"><title>R1-normal-S-r2: Reading logs and code 1,700 tokens</title></path>
+<path d="M296.8,335.0 H328.1 Q328.1,335.0 328.1,335.0 V342.0 Q328.1,342.0 328.1,342.0 H296.8 Z" fill="#eda100"><title>R1-normal-S-r2: Running the tests again 5,652 tokens</title></path>
+<path d="M330.1,335.0 H330.4 Q330.8,335.0 330.8,335.3 V341.7 Q330.8,342.0 330.4,342.0 H330.1 Z" fill="#c3c2b7"><title>R1-normal-S-r2: Other 109 tokens</title></path>
+<text x="377.5" y="338.0" font-size="11" fill="#52514e">median 16.6K</text>
+<path d="M252.0,367.0 H270.0 Q273.5,367.0 273.5,370.5 V370.5 Q273.5,374.0 270.0,374.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-T-r1: Verdicts and reports 3,642 tokens</title></path>
+<path d="M252.0,377.0 H271.3 Q274.8,377.0 274.8,380.5 V380.5 Q274.8,384.0 271.3,384.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-T-r2: Verdicts and reports 3,865 tokens</title></path>
+<path d="M252.0,387.0 H271.8 Q275.3,387.0 275.3,390.5 V390.5 Q275.3,394.0 271.8,394.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-T-r3: Verdicts and reports 3,954 tokens</title></path>
+<text x="283.3" y="385.0" font-size="11" fill="#52514e">median 3.9K</text>
+<path d="M252.0,409.0 H270.0 Q273.5,409.0 273.5,412.5 V412.5 Q273.5,416.0 270.0,416.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-T2-r1: Verdicts and reports 3,644 tokens</title></path>
+<path d="M252.0,419.0 H271.5 Q275.0,419.0 275.0,422.5 V422.5 Q275.0,426.0 271.5,426.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-T2-r2: Verdicts and reports 3,903 tokens</title></path>
+<path d="M252.0,429.0 H274.4 Q277.9,429.0 277.9,432.5 V432.5 Q277.9,436.0 274.4,436.0 H252.0 Z" fill="#2a78d6"><title>R1-normal-T2-r3: Verdicts and reports 4,386 tokens</title></path>
+<text x="285.9" y="427.0" font-size="11" fill="#52514e">median 3.9K</text>
+<text x="524" y="128" font-size="12" font-weight="600" fill="#0b0b0b">39 failing tests</text>
+<line x1="524.0" y1="134" x2="524.0" y2="446" stroke="#c3c2b7" stroke-width="1"/>
+<text x="524.0" y="461" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">0</text>
+<line x1="583.0" y1="134" x2="583.0" y2="446" stroke="#e1e0d9" stroke-width="1"/>
+<text x="583.0" y="461" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">10K</text>
+<line x1="642.0" y1="134" x2="642.0" y2="446" stroke="#e1e0d9" stroke-width="1"/>
+<text x="642.0" y="461" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">20K</text>
+<line x1="701.0" y1="134" x2="701.0" y2="446" stroke="#e1e0d9" stroke-width="1"/>
+<text x="701.0" y="461" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">30K</text>
+<line x1="760.0" y1="134" x2="760.0" y2="446" stroke="#e1e0d9" stroke-width="1"/>
+<text x="760.0" y="461" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">40K</text>
+<path d="M524.0,171.0 H553.7 Q553.7,171.0 553.7,171.0 V178.0 Q553.7,178.0 553.7,178.0 H524.0 Z" fill="#eb6834"><title>R3-normal-A-r1: Test output 5,376 tokens</title></path>
+<path d="M555.7,171.0 H573.0 Q573.0,171.0 573.0,171.0 V178.0 Q573.0,178.0 573.0,178.0 H555.7 Z" fill="#1baf7a"><title>R3-normal-A-r1: Reading logs and code 3,263 tokens</title></path>
+<path d="M575.0,171.0 H594.2 Q597.7,171.0 597.7,174.5 V174.5 Q597.7,178.0 594.2,178.0 H575.0 Z" fill="#eda100"><title>R3-normal-A-r1: Running the tests again 3,845 tokens</title></path>
+<path d="M524.0,181.0 H552.5 Q552.5,181.0 552.5,181.0 V188.0 Q552.5,188.0 552.5,188.0 H524.0 Z" fill="#eb6834"><title>R3-normal-A-r2: Test output 5,175 tokens</title></path>
+<path d="M554.5,181.0 H562.8 Q562.8,181.0 562.8,181.0 V188.0 Q562.8,188.0 562.8,188.0 H554.5 Z" fill="#1baf7a"><title>R3-normal-A-r2: Reading logs and code 1,732 tokens</title></path>
+<path d="M564.8,181.0 H585.3 Q588.8,181.0 588.8,184.5 V184.5 Q588.8,188.0 585.3,188.0 H564.8 Z" fill="#eda100"><title>R3-normal-A-r2: Running the tests again 4,072 tokens</title></path>
+<path d="M524.0,191.0 H553.8 Q553.8,191.0 553.8,191.0 V198.0 Q553.8,198.0 553.8,198.0 H524.0 Z" fill="#eb6834"><title>R3-normal-A-r3: Test output 5,384 tokens</title></path>
+<path d="M555.8,191.0 H564.8 Q564.8,191.0 564.8,191.0 V198.0 Q564.8,198.0 564.8,198.0 H555.8 Z" fill="#1baf7a"><title>R3-normal-A-r3: Reading logs and code 1,876 tokens</title></path>
+<path d="M566.8,191.0 H589.9 Q593.4,191.0 593.4,194.5 V194.5 Q593.4,198.0 589.9,198.0 H566.8 Z" fill="#eda100"><title>R3-normal-A-r3: Running the tests again 4,511 tokens</title></path>
+<text x="605.7" y="189.0" font-size="11" fill="#52514e">median 11.8K</text>
+<path d="M524.0,213.0 H527.3 Q527.3,213.0 527.3,213.0 V220.0 Q527.3,220.0 527.3,220.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-D-r1: Verdicts and reports 896 tokens</title></path>
+<path d="M529.3,213.0 H597.9 Q601.4,213.0 601.4,216.5 V216.5 Q601.4,220.0 597.9,220.0 H529.3 Z" fill="#1baf7a"><title>R3-normal-D-r1: Reading logs and code 12,224 tokens</title></path>
+<path d="M524.0,223.0 H527.6 Q527.6,223.0 527.6,223.0 V230.0 Q527.6,230.0 527.6,230.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-D-r2: Verdicts and reports 955 tokens</title></path>
+<path d="M529.6,223.0 H596.3 Q599.8,223.0 599.8,226.5 V226.5 Q599.8,230.0 596.3,230.0 H529.6 Z" fill="#1baf7a"><title>R3-normal-D-r2: Reading logs and code 11,898 tokens</title></path>
+<path d="M524.0,233.0 H527.5 Q527.5,233.0 527.5,233.0 V240.0 Q527.5,240.0 527.5,240.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-D-r3: Verdicts and reports 937 tokens</title></path>
+<path d="M529.5,233.0 H582.5 Q586.0,233.0 586.0,236.5 V236.5 Q586.0,240.0 582.5,240.0 H529.5 Z" fill="#1baf7a"><title>R3-normal-D-r3: Reading logs and code 9,573 tokens</title></path>
+<text x="609.4" y="231.0" font-size="11" fill="#52514e">median 12.9K</text>
+<path d="M524.0,255.0 H528.2 Q528.2,255.0 528.2,255.0 V262.0 Q528.2,262.0 528.2,262.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-H-r1: Verdicts and reports 1,059 tokens</title></path>
+<path d="M530.2,255.0 H560.1 Q563.6,255.0 563.6,258.5 V258.5 Q563.6,262.0 560.1,262.0 H530.2 Z" fill="#1baf7a"><title>R3-normal-H-r1: Reading logs and code 5,649 tokens</title></path>
+<path d="M524.0,265.0 H528.1 Q528.1,265.0 528.1,265.0 V272.0 Q528.1,272.0 528.1,272.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-H-r2: Verdicts and reports 1,028 tokens</title></path>
+<path d="M530.1,265.0 H554.8 Q558.3,265.0 558.3,268.5 V268.5 Q558.3,272.0 554.8,272.0 H530.1 Z" fill="#1baf7a"><title>R3-normal-H-r2: Reading logs and code 4,786 tokens</title></path>
+<path d="M524.0,275.0 H528.3 Q528.3,275.0 528.3,275.0 V282.0 Q528.3,282.0 528.3,282.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-H-r3: Verdicts and reports 1,060 tokens</title></path>
+<path d="M530.3,275.0 H558.9 Q562.4,275.0 562.4,278.5 V278.5 Q562.4,282.0 558.9,282.0 H530.3 Z" fill="#1baf7a"><title>R3-normal-H-r3: Reading logs and code 5,440 tokens</title></path>
+<text x="571.6" y="273.0" font-size="11" fill="#52514e">median 6.5K</text>
+<path d="M524.0,325.0 H557.0 Q557.0,325.0 557.0,325.0 V332.0 Q557.0,332.0 557.0,332.0 H524.0 Z" fill="#eb6834"><title>R3-normal-S-r1: Test output 5,926 tokens</title></path>
+<path d="M559.0,325.0 H593.6 Q593.6,325.0 593.6,325.0 V332.0 Q593.6,332.0 593.6,332.0 H559.0 Z" fill="#1baf7a"><title>R3-normal-S-r1: Reading logs and code 6,209 tokens</title></path>
+<path d="M595.6,325.0 H638.2 Q638.2,325.0 638.2,325.0 V332.0 Q638.2,332.0 638.2,332.0 H595.6 Z" fill="#eda100"><title>R3-normal-S-r1: Running the tests again 7,558 tokens</title></path>
+<path d="M640.2,325.0 H642.8 Q645.4,325.0 645.4,327.6 V329.4 Q645.4,332.0 642.8,332.0 H640.2 Z" fill="#c3c2b7"><title>R3-normal-S-r1: Other 877 tokens</title></path>
+<path d="M524.0,335.0 H565.2 Q565.2,335.0 565.2,335.0 V342.0 Q565.2,342.0 565.2,342.0 H524.0 Z" fill="#eb6834"><title>R3-normal-S-r2: Test output 7,328 tokens</title></path>
+<path d="M567.2,335.0 H596.9 Q596.9,335.0 596.9,335.0 V342.0 Q596.9,342.0 596.9,342.0 H567.2 Z" fill="#1baf7a"><title>R3-normal-S-r2: Reading logs and code 5,366 tokens</title></path>
+<path d="M598.9,335.0 H670.3 Q670.3,335.0 670.3,335.0 V342.0 Q670.3,342.0 670.3,342.0 H598.9 Z" fill="#eda100"><title>R3-normal-S-r2: Running the tests again 12,443 tokens</title></path>
+<path d="M672.3,335.0 H674.4 Q676.4,335.0 676.4,337.1 V339.9 Q676.4,342.0 674.4,342.0 H672.3 Z" fill="#c3c2b7"><title>R3-normal-S-r2: Other 701 tokens</title></path>
+<text x="684.4" y="338.0" font-size="11" fill="#52514e">median 23.2K</text>
+<path d="M524.0,367.0 H548.2 Q551.7,367.0 551.7,370.5 V370.5 Q551.7,374.0 548.2,374.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-T-r1: Verdicts and reports 4,688 tokens</title></path>
+<path d="M524.0,377.0 H545.6 Q549.1,377.0 549.1,380.5 V380.5 Q549.1,384.0 545.6,384.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-T-r2: Verdicts and reports 4,257 tokens</title></path>
+<path d="M524.0,387.0 H545.8 Q549.3,387.0 549.3,390.5 V390.5 Q549.3,394.0 545.8,394.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-T-r3: Verdicts and reports 4,289 tokens</title></path>
+<text x="559.7" y="385.0" font-size="11" fill="#52514e">median 4.3K</text>
+<path d="M524.0,409.0 H546.7 Q550.2,409.0 550.2,412.5 V412.5 Q550.2,416.0 546.7,416.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-T2-r1: Verdicts and reports 4,445 tokens</title></path>
+<path d="M524.0,419.0 H546.4 Q549.9,419.0 549.9,422.5 V422.5 Q549.9,426.0 546.4,426.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-T2-r2: Verdicts and reports 4,397 tokens</title></path>
+<path d="M524.0,429.0 H547.6 Q551.1,429.0 551.1,432.5 V432.5 Q551.1,436.0 547.6,436.0 H524.0 Z" fill="#2a78d6"><title>R3-normal-T2-r3: Verdicts and reports 4,591 tokens</title></path>
+<text x="559.1" y="427.0" font-size="11" fill="#52514e">median 4.4K</text>
+</svg>

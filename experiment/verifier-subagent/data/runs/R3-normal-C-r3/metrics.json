@@ -1,0 +1,132 @@
+{
+  "runId": "R3-normal-C-r3",
+  "arm": "C",
+  "scenario": "R3",
+  "config": "normal",
+  "repeat": 3,
+  "sessionId": "57ee6c59-d4b3-4ede-be7c-f416bad6014c",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R3-many.patch"
+  ],
+  "startEpoch": 1792567448,
+  "endEpoch": 1792567502,
+  "wallSeconds": 54,
+  "prewarmSeconds": 7,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 37,
+  "main": {
+    "calls": 2,
+    "contextFirst": 29379,
+    "contextLast": 31476,
+    "contextPeak": 31476,
+    "processed": 62178,
+    "output": 1323,
+    "cacheRead": 58754,
+    "cacheWrite1h": 2097,
+    "cacheWrite5m": 0,
+    "uncachedInput": 4,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 2097,
+  "contextSeries": [
+    29379,
+    31476
+  ],
+  "mainTools": [
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "general-purpose"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 4063,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 4063,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "general-purpose"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "general-purpose",
+      "calls": 5,
+      "contextFirst": 25404,
+      "contextLast": 41379,
+      "contextPeak": 41379,
+      "processed": 174748,
+      "output": 2550,
+      "cacheRead": 139715,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 32473,
+      "uncachedInput": 10,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Bash",
+        "Bash",
+        "Bash"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 174748,
+  "totalProcessed": 236926,
+  "verificationRuns": [],
+  "observedFailingTests": [
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"CreateUser\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"01-user-lifecycle.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"CreateUserMutation\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"05-graphql.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"CreateUser_JsonFormat\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"json-format-reference.json\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_CombinedMatchers\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_IgnoreMatcher\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_PatternMatcher\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_SemanticMatcher\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"ShouldCreateUser_ForDependsDemo\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"04-depends.yaml\")"
+  ],
+  "verifierFidelity": [],
+  "answer": "**Not everything passes.** The build succeeds, but the unit and component tests fail. I didn't modify any files.\n\n| Stage | Result |\n|---|---|\n| `make build` | Passed, with 26 NU1902/NU1903 vulnerable-package warnings and no errors |\n| `make unit` | Failed: 233 passed, 39 failed, out of 272 |\n| `make component` | Failed: 8 failed out of 20 |\n\n`make unit` stopped with an error, so the subagent ran `make component` separately.\n\n**Cause 1: unknown semantic matcher (39 unit tests, 5 component tests)**\n\nAll 39 unit failures are in `SemanticMatcherTests` (29) and `ResultMatcherTests` (10). They throw this error:\n\n`System.ArgumentException : Unknown semantic matcher 'isuuid' for field 'id'`\n\nIt comes from `SemanticMatcher.ValidateSpecs` at `src/ConfIT/Matching/SemanticMatcher.cs:40`. The same error appears with the other lower-cased built-in names the subagent saw:\n- `isisodatetime`\n- `isisodate`\n- `isemail`\n- `isnull`\n- `isnotnull`\n- `isnotempty`\n- `isdomainid`\n- `haslength`\n- `greaterthan`\n- `lessthan`\n\nThe matcher names appear to be lower-cased before the lookup, and the lookup then fails to match them. The subagent didn't confirm why.\n\nThe same error fails 5 component tests, thrown at `BaseTest.cs:127` before any request is made:\n- `CreateUser`, `ShouldCreateUser_ForDependsDemo`, `CreateUserMutation` and `CreateUser_JsonFormat` fail on `'greaterthan'`.\n- `GetUser_SemanticMatcher` fails on `'isemail'`.\n\n**Cause 2: follow-on from cause 1 (2 component tests)**\n\n`GetUser_IgnoreMatcher` and `GetUser_PatternMatcher` fail with `Expected response.StatusCode to be HttpStatusCode.OK {value: 200}, but found HttpStatusCode.NotFound {value: 404}.` The user was never created, because the create step failed on the matcher error.\n\n**Unconfirmed (1 component test)**\n\n`GetUser_CombinedMatchers` also failed, and the subagent didn't read its error. It is probably caused by one of the two causes above.\n\nThe 8 skipped component tests were skipped because the tests they depend on failed. They are `GetUserById`, `GetUserByEmail`, `ShouldGetUserById_WhenDependsOnCreate`, `ShouldGetUserByEmail_CascadingDependency`, `GetUserById_InlineQuery`, `GetUserById_QueryFromFile`, `GetUserById_JsonFormat` and `GetUserByEmail_JsonFormat`.\n\nThe component tests that don't use semantic matchers passed. Full logs are in `/tmp/unit.log` and `/tmp/comp.log`.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesCause": true,
+    "count39or78": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.1481754,
+    "num_turns": 2,
+    "duration_ms": 52875,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

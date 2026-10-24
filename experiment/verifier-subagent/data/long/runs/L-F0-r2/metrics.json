@@ -1,0 +1,76 @@
+{
+  "runId": "L-F0-r2",
+  "t1": {
+    "calls": 4,
+    "start": 107579,
+    "footprint": 4833,
+    "firstCallCacheWrite": 0,
+    "cost": 0.2784124400000001,
+    "warmCost": 0.2784124400000001,
+    "projected": 0.37507244000000006,
+    "opusCost": 0.1747124,
+    "haikuCost": 0.0038793400000000002,
+    "sonnetCost": 0.09982070000000001,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "Repo: $WS/confit (ConfIT .NET library; see CLAUDE.md for conventions).\n\nThe verifier's summary.json:\n{summary.json}\n\nBrief: the user just pulled teammates' latest changes; no behaviour change was intended by us. Treat the tests as the spec \u2014 fix the production code (not the tests) so failing tests pass, unless a test itself is clearly broken (e.g. doesn't compile for a reason unrelated to behaviour), in which case explain. Matching/mismatch-output code lives in src/ConfIT/Matching/ (ResultMatcher.cs, DeltaFormatter.cs, SemanticMatcher.cs); tests in test/ConfIT.UnitTest/Util/. Do not commit. Report: which tests failed, the root cause, and exactly which files/lines you changed and why."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 116,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": false,
+    "noise": [],
+    "recheckFlaked": false,
+    "change": "2 changed lines in SemanticMatcher.cs"
+  },
+  "t2": {
+    "calls": 4,
+    "start": 113537,
+    "footprint": 4450,
+    "firstCallCacheWrite": 1125,
+    "cost": 0.2547172150000001,
+    "warmCost": 0.2547172150000001,
+    "projected": 0.3437172150000001,
+    "opusCost": 0.1807472000000001,
+    "haikuCost": 0.002953114999999999,
+    "sonnetCost": 0.07101689999999997,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "Repo: $WS/confit (ConfIT .NET library; see CLAUDE.md for conventions).\n\nThe verifier's summary.json:\n{summary.json}\n\nBrief: INTENDED behaviour change. Product decision: when a field is present in actual but missing on the expected side, the mismatch output now says `<not present>` instead of `<absent>`. The user has already changed src/ConfIT/Matching/DeltaFormatter.cs to emit `<not present>` \u2014 that new wording is correct and must be kept; do NOT revert it. Here the production change is the spec: tests (e.g. test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs, Format_FieldInActualNotInExpected_ShowsAbsentSentinel) still asserting the old `<absent>` wording should be updated to the new wording, renamed to match if the name references the old sentinel (naming convention Method_Condition_ExpectedOutcome). Also check for other references to `<absent>` (tests, docs under doc/, skills/, tools/, example/) and update them to `<not present>`. If a failure has a different cause unrelated to this wording change, fix it with the production code as spec otherwise, and explain. Do not commit. Report: which tests failed, the root cause, and exactly which files/lines you changed and why."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 164,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false
+  }
+}

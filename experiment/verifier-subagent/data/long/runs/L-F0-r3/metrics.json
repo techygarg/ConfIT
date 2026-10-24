@@ -1,0 +1,76 @@
+{
+  "runId": "L-F0-r3",
+  "t1": {
+    "calls": 5,
+    "start": 107579,
+    "footprint": 5220,
+    "firstCallCacheWrite": 0,
+    "cost": 0.28552986999999974,
+    "warmCost": 0.28552986999999974,
+    "projected": 0.38992986999999973,
+    "opusCost": 0.198507,
+    "haikuCost": 0.003991270000000001,
+    "sonnetCost": 0.0830316,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "Repository: $WS/confit\n\nThe verification run failed. Here is the verifier's summary.json verbatim:\n\n{summary.json}\n\nBrief: The user just pulled teammates' latest changes; I made no changes myself. Treat the tests as the spec \u2014 fix the library source under src/ConfIT to satisfy the failing tests; do not weaken, delete, or rewrite tests. If the failure is not a test failure (e.g. a test project compile error or environment/tooling problem), fix it minimally and say exactly what it was. No behaviour change is intended beyond what the tests require. Keep edits matching surrounding code style (use #region, no comment banners). Do not run builds or tests and do not run git commands.\n\nReport back: which tests/stage failed, the root cause, and every file and change you made (with line references)."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 107,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false,
+    "change": "exact revert"
+  },
+  "t2": {
+    "calls": 5,
+    "start": 113740,
+    "footprint": 5327,
+    "firstCallCacheWrite": 941,
+    "cost": 0.2938973899999999,
+    "warmCost": 0.2938973899999999,
+    "projected": 0.4004373899999999,
+    "opusCost": 0.21892200000000006,
+    "haikuCost": 0.00312779,
+    "sonnetCost": 0.0718476,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "Repository: $WS/confit\n\nThe verification run failed. Here is the verifier's summary.json verbatim:\n\n{summary.json}\n\nBrief \u2014 an INTENDED behaviour change was just made:\n- Product decision: when a field is present in the actual response but missing on the expected side, the mismatch output must now say `<not present>` instead of `<absent>`. The user has already edited src/ConfIT/Matching/DeltaFormatter.cs to emit `<not present>`. That new wording is the spec and must be kept \u2014 do NOT revert it back to `<absent>`.\n- So any test failing only because it asserts the old `<absent>` text is out of date: update that assertion to `<not present>` (e.g. test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs, Format_FieldInActualNotInExpected_ShowsAbsentSentinel). Keep the test's intent; renaming the test method to reflect the new sentinel is fine if it follows the Method_Condition_ExpectedOutcome convention. Also update any doc/example/comment references to `<absent>` as the expected-side sentinel only if they are directly affected (grep for `<absent>`), and tell me which.\n- If a failure has some other cause unrelated to the wording change, fix it in the library source to satisfy the tests and explain it separately. Don't weaken or delete tests otherwise. Do not touch the `<missing>` sentinel.\n- Match surrounding code style. Do not run builds, tests, or git commands.\n\nReport back: which tests failed, the root cause of each, and every file and change you made (with line references)."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 86,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false
+  }
+}

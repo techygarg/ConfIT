@@ -1,0 +1,11 @@
+--- a/src/ConfIT/Matching/SemanticMatcher.cs
++++ b/src/ConfIT/Matching/SemanticMatcher.cs
+@@ -6,7 +6,7 @@
+ public static class SemanticMatcher
+ {
+     private static readonly IReadOnlyDictionary<string, SemanticMatcherFunc> BuiltIns =
+-        new Dictionary<string, SemanticMatcherFunc>
++        new Dictionary<string, SemanticMatcherFunc>(StringComparer.OrdinalIgnoreCase)
+         {
+             ["isUuid"]        = (v, _) => CheckIsUuid(v),
+             ["isIsoDate"]     = (v, _) => CheckIsIsoDate(v),

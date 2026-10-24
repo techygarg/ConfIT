@@ -1,0 +1,119 @@
+{
+  "runId": "G-quiet-A-r1",
+  "arm": "A",
+  "scenario": "G",
+  "config": "quiet",
+  "repeat": 1,
+  "sessionId": "78c1d61e-1506-428c-b17f-63a842a7526f",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [],
+  "startEpoch": 1792567511,
+  "endEpoch": 1792567530,
+  "wallSeconds": 19,
+  "prewarmSeconds": 7,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 8,
+  "main": {
+    "calls": 3,
+    "contextFirst": 29354,
+    "contextLast": 35002,
+    "contextPeak": 35002,
+    "processed": 95517,
+    "output": 590,
+    "cacheRead": 89273,
+    "cacheWrite1h": 5648,
+    "cacheWrite5m": 0,
+    "uncachedInput": 6,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 5648,
+  "contextSeries": [
+    29354,
+    30571,
+    35002
+  ],
+  "mainTools": [
+    "Bash",
+    "Bash"
+  ],
+  "agentsSpawned": [],
+  "verificationCommands": 1,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 8376,
+  "mainSpill": {
+    "spilled": [
+      {
+        "tool": "Bash",
+        "size": 33313,
+        "previewChars": 2119
+      }
+    ],
+    "readsOfSpilledFiles": [
+      {
+        "tool": "Bash",
+        "input": {
+          "command": "cd ~/.claude/projects/<claude-project>/78c1d61e-1506-428c-b17f-63a842a7526f/tool-results/; grep -vE \"warning NU1902\" bozofpyaw.txt | tail -60; grep -nE \"Failed|error|Passed!|Failed!\" bozofpyaw.txt | grep -v NU1902 | head -40"
+        },
+        "seenChars": 8376
+      }
+    ]
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Bash",
+      "callIndex": 0,
+      "seenChars": 2119,
+      "isError": false,
+      "spilled": true,
+      "cut": false,
+      "input": {
+        "command": "make build && make unit && make component 2>&1 | tail -150"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 1,
+      "seenChars": 8376,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "cd ~/.claude/projects/<claude-project>/78c1d61e-1506-428c-b17f-63a842a7526f/tool-results/; grep -vE "
+      }
+    }
+  ],
+  "truncationHintInMain": true,
+  "seenShorterThanFull": [
+    [
+      "Bash",
+      2119,
+      29998
+    ]
+  ],
+  "subagents": [],
+  "subagentProcessed": 0,
+  "totalProcessed": 95517,
+  "verificationRuns": [],
+  "observedFailingTests": [],
+  "verifierFidelity": [],
+  "answer": "All checks pass. I ran `make build && make unit && make component` and no files were modified.\n\n- **Build:** succeeded with 0 errors and 26 warnings. The warnings are NuGet vulnerability advisories (NU1902, NU1903), not compile problems:\n  - `Scriban.Signed` 7.2.0 in the library (moderate severity).\n  - `SQLitePCLRaw.lib.e_sqlite3` 2.1.11 and `System.Security.Cryptography.Pkcs` 9.0.0 in the example `User.Api` (high severity).\n- **Unit tests:** 272 passed and 0 failed on each of net10.0 and net9.0.\n- **Component tests:** 20 passed and 0 failed. They ran on net10.0 only, which is the only framework that run reported.",
+  "signals": {
+    "mentionsFailure": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.0374313,
+    "num_turns": 3,
+    "duration_ms": 17797,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

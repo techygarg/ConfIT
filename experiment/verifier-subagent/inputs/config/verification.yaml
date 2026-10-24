@@ -1,0 +1,13 @@
+version: 1
+# What /lattice-init Step 8 would write for ConfIT: one stage per make target,
+# cheapest first. Verbosity is not set here. It comes from the Makefile's
+# TEST_OPTS default (see config/verbosity-*.patch), so every arm runs
+# byte-identical commands and only the repository decides how loud they are.
+runsDir: tmp/verification
+stages:
+  - name: build
+    command: make build
+  - name: unit
+    command: make unit
+  - name: component
+    command: make component

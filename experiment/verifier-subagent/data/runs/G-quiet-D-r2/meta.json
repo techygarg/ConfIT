@@ -1,0 +1,20 @@
+{
+  "runId": "G-quiet-D-r2",
+  "arm": "D",
+  "scenario": "G",
+  "config": "quiet",
+  "repeat": 2,
+  "sessionId": "1be596fb-83e4-4b16-92f8-a2ea6b0564b5",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [],
+  "startEpoch": 1792567632,
+  "endEpoch": 1792567656,
+  "wallSeconds": 24,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false
+}

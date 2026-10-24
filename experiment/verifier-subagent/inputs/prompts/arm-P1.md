@@ -1,0 +1,1 @@
+Run this exact command from the repository root: `python3 -c "import sys; [print(f'MARK-{i:05d} ' + 'x' * 40) for i in range(2500)]"`. Then tell me the lowest and highest MARK number you can see in its output, and whether any MARK lines in between are missing. Do not run anything else.

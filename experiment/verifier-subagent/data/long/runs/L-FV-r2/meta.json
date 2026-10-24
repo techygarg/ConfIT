@@ -1,0 +1,40 @@
+{
+  "runId": "L-FV-r2",
+  "arm": "FV",
+  "repeat": 2,
+  "baseSessionId": "4f2f8f2d-8876-4a86-98b5-ddf4454fb9d1",
+  "sessionId": "be039cda-b0d3-4cea-8e4b-3fd44a85ad21",
+  "claudeVersion": "2.1.306",
+  "t1": {
+    "exitCode": 0,
+    "wallSeconds": 103,
+    "finalStatus": "passed",
+    "netChangeFiles": [
+      "src/ConfIT/Matching/SemanticMatcher.cs"
+    ],
+    "netChangeLines": 29,
+    "testsChanged": [],
+    "matcherRestored": false,
+    "filesBeyondRegression": []
+  },
+  "t2": {
+    "exitCode": 0,
+    "wallSeconds": 86,
+    "finalStatus": "passed",
+    "netChangeFiles": [
+      "doc/failure-output.md",
+      "skills/confit-component-tests/references/writing-tests.md",
+      "skills/confit-integration-tests/references/writing-tests.md",
+      "src/ConfIT/Matching/DeltaFormatter.cs",
+      "src/ConfIT/Matching/SemanticMatcher.cs",
+      "test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs"
+    ],
+    "netChangeLines": 49,
+    "testsChanged": [
+      "test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs"
+    ],
+    "patchApplied": true,
+    "featureKept": true,
+    "testUpdated": true
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "runId": "R3-normal-C-r2",
+  "arm": "C",
+  "scenario": "R3",
+  "config": "normal",
+  "repeat": 2,
+  "sessionId": "7adb03b0-be51-4aba-a8f3-71a98e290681",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R3-many.patch"
+  ],
+  "startEpoch": 1792566894,
+  "endEpoch": 1792566941,
+  "wallSeconds": 47,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 35,
+  "main": {
+    "calls": 2,
+    "contextFirst": 29379,
+    "contextLast": 31147,
+    "contextPeak": 31147,
+    "processed": 61896,
+    "output": 1370,
+    "cacheRead": 58754,
+    "cacheWrite1h": 1768,
+    "cacheWrite5m": 0,
+    "uncachedInput": 4,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 1768,
+  "contextSeries": [
+    29379,
+    31147
+  ],
+  "mainTools": [
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "general-purpose"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 3406,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 3406,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "general-purpose"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "general-purpose",
+      "calls": 5,
+      "contextFirst": 25411,
+      "contextLast": 36968,
+      "contextPeak": 36968,
+      "processed": 159147,
+      "output": 2342,
+      "cacheRead": 128733,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 28062,
+      "uncachedInput": 10,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Bash",
+        "Bash"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 159147,
+  "totalProcessed": 221043,
+  "verificationRuns": [],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_CustomMatcherName_DelegatesToCustomFunc",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithNonNumericValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAboveThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthOnArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithExactMatch_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithinInclusiveRange_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithValidEmail_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyObject_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithDateOnly_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00+05:30\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00.123Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithDateTime_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithValidDate_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyArray_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyString_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithPresentValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNonNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNullValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"A1B2C3D4-E5F6-7890-ABCD-EF1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueBelowThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NullExpected_DoesNotThrow",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"CreateUser\", sourceFile: \"01-user-lifecycle.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"CreateUser\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"01-user-lifecycle.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"CreateUserMutation\", sourceFile: \"05-graphql.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"CreateUserMutation\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"05-graphql.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"CreateUser_JsonFormat\", sourceFile: \"json-format-reference.json\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"CreateUser_JsonFormat\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"json-format-reference.json\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_CombinedMatchers\", sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_CombinedMatchers\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_IgnoreMatcher\", sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_IgnoreMatcher\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_PatternMatcher\", sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_PatternMatcher\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_SemanticMatcher\", sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"GetUser_SemanticMatcher\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"03-response-matchers.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"ShouldCreateUser_ForDependsDemo\", sourceFile: \"04-depends.yaml\")",
+    "User.ComponentTests.UserComponentTests.ExecuteTest(testName: \"ShouldCreateUser_ForDependsDemo\", test: [[[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]], [[\u00b7\u00b7\u00b7]]], sourceFile: \"04-depends.yaml\")"
+  ],
+  "verifierFidelity": [],
+  "answer": "**Not everything passes.** `make build` succeeds, but `make unit` and `make component` both fail. The `&&` chain would have stopped at `make unit`, so the subagent ran each step separately. I didn't modify any files.\n\n| Step | Result |\n|---|---|\n| `make build` | Passes: 0 errors, 26 NuGet vulnerability warnings (NU1902/NU1903). |\n| `make unit` | Fails: 233 passed and 39 failed of 272, on each of net9.0 and net10.0. |\n| `make component` | Fails: 12 passed and 8 failed of 20. |\n\n**Unit failures (39 per framework, one cause).** `SemanticMatcher` rejects lowercased matcher names:\n\n```\nSystem.ArgumentException : Unknown semantic matcher 'isnull' for field 'deletedAt'\n  at ConfIT.Matching.SemanticMatcher.Apply(...) in src/ConfIT/Matching/SemanticMatcher.cs:line 61\n```\n\n- Most failures are in `SemanticMatcherTests`. They cover `isnull`, `isuuid`, `isemail`, `greaterthan`, `hasLength` and `isIsoDate`, among others.\n- `ResultMatcherTests.MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow` fails with `Did not expect any exception, but found System.ArgumentException: Unknown semantic matcher 'isuuid' for field 'id'`.\n- Two tests expect `InvalidOperationException` but get `ArgumentException`. One is `Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException`.\n- The subagent's reading is that the name is lowercased before lookup and the lookup table doesn't match that casing. It didn't open the source to confirm.\n\n**Component failures (8, two causes).**\n1. Six tests fail with the same `Unknown semantic matcher` error, thrown from `SemanticMatcher.ValidateSpecs` (`SemanticMatcher.cs:40`) via `BaseTest.RunTest` (`BaseTest.cs:127`):\n   - `CreateUser`, `ShouldCreateUser_ForDependsDemo`, `CreateUser_JsonFormat` and `GetUser_CombinedMatchers` fail on `'greaterthan' for field 'id'`.\n   - `CreateUserMutation` fails on `'greaterthan' for field 'data__createUser__id'`.\n   - `GetUser_SemanticMatcher` fails on `'isemail' for field 'email'`.\n2. `GetUser_IgnoreMatcher` and `GetUser_PatternMatcher` in `03-response-matchers.yaml` fail with `Expected response.StatusCode to be HttpStatusCode.OK {value: 200}, but found HttpStatusCode.NotFound {value: 404}.` (`BaseTest.cs:179`). They are probably knock-on failures, since `CreateUser` failed and the user was never created.\n\nThe full logs are in `/tmp/b.log`, `/tmp/u.log` and `/tmp/c.log`.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesCause": true,
+    "count39or78": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.1331237,
+    "num_turns": 2,
+    "duration_ms": 45254,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

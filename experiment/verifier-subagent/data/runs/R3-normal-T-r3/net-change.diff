@@ -1,0 +1,11 @@
+--- a/src/ConfIT/Matching/SemanticMatcher.cs
++++ b/src/ConfIT/Matching/SemanticMatcher.cs
+@@ -19,7 +19,7 @@
+             ["greaterThan"]   = CheckGreaterThan,
+             ["lessThan"]      = CheckLessThan,
+             ["hasLength"]     = CheckHasLength
+-        };
++        }.ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+ 
+     public static void ValidateSpecs(
+         Dictionary<string, string>? semantic,

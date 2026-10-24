@@ -1,0 +1,91 @@
+{
+  "runId": "L-V-r3",
+  "t1": {
+    "calls": 7,
+    "start": 107583,
+    "footprint": 17797,
+    "firstCallCacheWrite": 0,
+    "cost": 0.3636730499999994,
+    "warmCost": 0.3636730499999994,
+    "projected": 0.7196130499999993,
+    "opusCost": 0.3597451999999999,
+    "haikuCost": 0.00392785,
+    "sonnetCost": 0,
+    "agents": {
+      "verifier-haiku": 2
+    },
+    "actions": [
+      "log read",
+      "code read",
+      "edit SemanticMatcher.cs",
+      "edit SemanticMatcher.cs"
+    ],
+    "briefs": [],
+    "briefCarriesIntent": null,
+    "ranChecksItself": false,
+    "logReads": 1,
+    "codeReads": 1,
+    "edits": [
+      "SemanticMatcher.cs",
+      "SemanticMatcher.cs"
+    ],
+    "durationSeconds": 74,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": true,
+    "change": "exact revert"
+  },
+  "t2": {
+    "calls": 10,
+    "start": 126304,
+    "footprint": 8955,
+    "firstCallCacheWrite": 924,
+    "cost": 0.4219857300000003,
+    "warmCost": 0.4219857300000003,
+    "projected": 0.6010857300000003,
+    "opusCost": 0.4154732000000001,
+    "haikuCost": 0.006512529999999999,
+    "sonnetCost": 0,
+    "agents": {
+      "verifier-haiku": 3
+    },
+    "actions": [
+      "log read",
+      "edit DeltaFormatterTests.cs",
+      "edit DeltaFormatterTests.cs",
+      "log read",
+      "log read",
+      "log read"
+    ],
+    "briefs": [],
+    "briefCarriesIntent": null,
+    "ranChecksItself": false,
+    "logReads": 4,
+    "codeReads": 0,
+    "edits": [
+      "DeltaFormatterTests.cs",
+      "DeltaFormatterTests.cs"
+    ],
+    "durationSeconds": 106,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "Failed at build: exit code 2; skipped: unit,component",
+      "Failed at build: exit code 2; skipped: unit,component"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [
+      "transient build failure"
+    ],
+    "recheckFlaked": false
+  }
+}

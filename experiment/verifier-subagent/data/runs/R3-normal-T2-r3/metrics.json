@@ -1,0 +1,273 @@
+{
+  "runId": "R3-normal-T2-r3",
+  "arm": "T2",
+  "scenario": "R3",
+  "config": "normal",
+  "repeat": 3,
+  "sessionId": "f49fe659-b43e-48e9-8b22-ea296b655b6c",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "budgetUsd": 10.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R3-many.patch",
+    "inputs/config/failure-hint.patch"
+  ],
+  "startEpoch": 1792592584,
+  "endEpoch": 1792592663,
+  "wallSeconds": 79,
+  "prewarmSeconds": 7,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "fixArm": true,
+  "finalStatus": "passed",
+  "netChangeFiles": [],
+  "netChangeLines": 0,
+  "testsEdited": false,
+  "longestGapSeconds": 23,
+  "main": {
+    "calls": 4,
+    "contextFirst": 29804,
+    "contextLast": 34395,
+    "contextPeak": 34395,
+    "processed": 130262,
+    "output": 1985,
+    "cacheRead": 123678,
+    "cacheWrite1h": 4591,
+    "cacheWrite5m": 0,
+    "uncachedInput": 8,
+    "models": [
+      "claude-opus-5-5"
+    ]
+  },
+  "footprint": 4591,
+  "contextSeries": [
+    29804,
+    30847,
+    33231,
+    34395
+  ],
+  "mainTools": [
+    "Agent",
+    "Agent",
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "verifier-haiku",
+    "fixer-sonnet",
+    "verifier-haiku"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 3370,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1833,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 1,
+      "seenChars": 3370,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "fixer-sonnet"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 2,
+      "seenChars": 2034,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "verifier-haiku",
+      "calls": 4,
+      "contextFirst": 12577,
+      "contextLast": 14802,
+      "contextPeak": 14802,
+      "processed": 55522,
+      "output": 1326,
+      "cacheRead": 51963,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 2225,
+      "uncachedInput": 8,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    },
+    {
+      "agentType": "fixer-sonnet",
+      "calls": 5,
+      "contextFirst": 13061,
+      "contextLast": 24473,
+      "contextPeak": 24473,
+      "processed": 101281,
+      "output": 2342,
+      "cacheRead": 78081,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 20848,
+      "uncachedInput": 10,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Grep",
+        "Read",
+        "Read",
+        "Grep",
+        "Edit",
+        "Edit"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": true
+    },
+    {
+      "agentType": "verifier-haiku",
+      "calls": 3,
+      "contextFirst": 12577,
+      "contextLast": 14500,
+      "contextPeak": 14500,
+      "processed": 41958,
+      "output": 1231,
+      "cacheRead": 29737,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 10984,
+      "uncachedInput": 6,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 198761,
+  "totalProcessed": 329023,
+  "verificationRuns": [
+    {
+      "runId": "20261021T142313Z-143e24",
+      "overallStatus": "failed",
+      "headline": "Failed at unit: exit code 2; skipped: component"
+    },
+    {
+      "runId": "20261021T142402Z-c047dc",
+      "overallStatus": "passed",
+      "headline": "All 3 stage(s) passed"
+    }
+  ],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_AllThreeMatcherTypes_EachApplied",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_CustomMatcher_PassesForValidValue",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherFails_ReturnedDescriptionNamesField",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherValid_PassesAndRemovesField",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_CustomMatcherName_DelegatesToCustomFunc",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithNonNumericValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAboveThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthOnArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithExactMatch_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithMismatch_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithinInclusiveRange_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithValidEmail_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyObject_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyString_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithDateOnly_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00+05:30\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00.123Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithDateTime_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithValidDate_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyArray_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyString_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithNonEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithPresentValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNonNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNullValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"A1B2C3D4-E5F6-7890-ABCD-EF1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueBelowThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NestedFieldPath_PassesForValidValue",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NullExpected_DoesNotThrow"
+  ],
+  "verifierFidelity": [
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    },
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    }
+  ],
+  "answer": "**Final status: passed.** The second verification run (`tmp/verification/20261021T142402Z-c047dc`) passed build, unit and component. One fix cycle was enough.\n\n**What failed:** The first run passed build but failed the unit stage with exit code 2, so component was skipped. These were assertion failures, not a compile error. The fixer looked at the first 40 failures, and every one threw `ArgumentException: Unknown semantic matcher 'isuuid' ...`, with the name in lowercase. Most were in `SemanticMatcherTests` (e.g. `Apply_IsNullWithNullValue_Passes`, `Apply_IsEmailWithValidEmail_Passes`, `Apply_CustomMatcherName_DelegatesToCustomFunc`), plus one in `ResultMatcherTests` (`MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow`).\n\n**Root cause:** In `src/ConfIT/Matching/SemanticMatcher.cs`, `ParseSpec` lowercased the matcher name (`ToLowerInvariant()`). But the `BuiltIns` dictionary uses camelCase keys like `isUuid` and `greaterThan`, and its lookups are case-sensitive. So no built-in matcher could ever be found, and neither could a custom matcher with uppercase letters in its name.\n\n**What was changed:** Only `ParseSpec` in `SemanticMatcher.cs`: the fixer removed the two `ToLowerInvariant()` calls (around lines 85 and 91), so names are looked up exactly as written. No tests were edited.\n\n**Notes:**\n- **Case-sensitivity:** Matcher names are now case-sensitive. If names were meant to work in any case (e.g. `isuuid`), the right fix is a case-insensitive comparer on `BuiltIns` and on the custom-matcher lookup. That change wasn't made.\n- **Not covered:** The checks that ran were build, unit and component. Integration tests and `make skills` aren't among them, so those weren't checked.\n\nNothing was committed.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesCause": true,
+    "count39or78": false,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.18831172500000004,
+    "num_turns": 4,
+    "duration_ms": 77063,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

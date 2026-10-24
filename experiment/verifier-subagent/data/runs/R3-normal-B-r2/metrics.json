@@ -1,0 +1,189 @@
+{
+  "runId": "R3-normal-B-r2",
+  "arm": "B",
+  "scenario": "R3",
+  "config": "normal",
+  "repeat": 2,
+  "sessionId": "531210de-f06e-4528-95f3-49cc3df02f65",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R3-many.patch"
+  ],
+  "startEpoch": 1792566851,
+  "endEpoch": 1792566888,
+  "wallSeconds": 37,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 9,
+  "main": {
+    "calls": 6,
+    "contextFirst": 29407,
+    "contextLast": 35755,
+    "contextPeak": 35755,
+    "processed": 195866,
+    "output": 1704,
+    "cacheRead": 187802,
+    "cacheWrite1h": 6348,
+    "cacheWrite5m": 0,
+    "uncachedInput": 12,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 6348,
+  "contextSeries": [
+    29407,
+    30069,
+    30727,
+    33169,
+    35035,
+    35755
+  ],
+  "mainTools": [
+    "Bash",
+    "Bash",
+    "Bash",
+    "Bash",
+    "Bash"
+  ],
+  "agentsSpawned": [],
+  "verificationCommands": 1,
+  "mainTouchedLogs": 3,
+  "biggestToolResultSeen": 3999,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Bash",
+      "callIndex": 0,
+      "seenChars": 863,
+      "isError": true,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "bash .lattice/scripts/run-verification.sh .lattice/verification.yaml"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 1,
+      "seenChars": 988,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "cat tmp/verification/20261021T071415Z-4ffb6f/summary.json; ls tmp/verification/20261021T071415Z-4ffb6f"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 2,
+      "seenChars": 3999,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "tail -c 4000 tmp/verification/20261021T071415Z-4ffb6f/unit.log"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 3,
+      "seenChars": 2934,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "cd tmp/verification/20261021T071415Z-4ffb6f; grep -E '^\\s+Failed ' unit.log | sed -E 's/ \\[.*//' | awk '{print $2}' | sed -E 's/\\.[^.]+$//' | sort | uniq -c; gr"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 4,
+      "seenChars": 626,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "cd $WS/confit/tmp/verification/20261021T071415Z-4ffb6f; grep -A1 'Error Message' unit.log | grep -v -E 'Er"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [],
+  "subagentProcessed": 0,
+  "totalProcessed": 195866,
+  "verificationRuns": [
+    {
+      "runId": "20261021T071415Z-4ffb6f",
+      "overallStatus": "failed",
+      "headline": "Failed at unit: exit code 2; skipped: component"
+    }
+  ],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_AllThreeMatcherTypes_EachApplied",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_CustomMatcher_PassesForValidValue",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherFails_ReturnedDescriptionNamesField",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherValid_PassesAndRemovesField",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_CustomMatcherName_DelegatesToCustomFunc",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithNonNumericValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAboveThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthOnArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithExactMatch_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithMismatch_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithinInclusiveRange_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithValidEmail_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyObject_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyString_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithDateOnly_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00+05:30\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00.123Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithDateTime_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithValidDate_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyArray_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyString_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithNonEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithPresentValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNonNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNullValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"A1B2C3D4-E5F6-7890-ABCD-EF1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueBelowThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NestedFieldPath_PassesForValidValue",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NullExpected_DoesNotThrow"
+  ],
+  "verifierFidelity": [],
+  "answer": "Not all checks pass. The build stage passed, but the unit stage failed (`make unit`, exit 2), so the component stage was skipped and never ran. I changed no files.\n\n**Unit stage:** 39 of 272 tests failed and 233 passed. The log shows 78 failure lines, which is 39 twice, probably once per target framework (net9.0 and net10.0).\n\n**Failures, grouped by cause:** all 39 trace back to one cause.\n- **Cause:** `SemanticMatcher.Apply` throws `ArgumentException` for every built-in matcher name. The exception is thrown at `src/ConfIT/Matching/SemanticMatcher.cs:61`, and the matcher name in the message is lowercased: `isnull`, `isuuid`, `isnotnull`, `greaterthan`, `lessthan`, `isemail`.\n- **Quoted error:** `System.ArgumentException : Unknown semantic matcher 'isuuid' for field 'id'`\n- **`SemanticMatcherTests`:** 34 failures (68 log lines), all with that message. Examples are `Apply_IsNullWithNullValue_Passes`, `Apply_IsUuidWithInvalidValue_ReturnsFailure` and `Apply_LessThanWithValueBelowThreshold_Passes`.\n- **`ResultMatcherTests`:** 5 failures (10 log lines) from the same exception, reaching the tests in two forms:\n  - `Did not expect any exception, but found System.ArgumentException: Unknown semantic matcher \u2026`. This is `MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow`.\n  - `Expected a <System.InvalidOperationException> to be thrown, but found <System.ArgumentException>:`. This one makes up two of the log lines.\n  - `MatchResponseBody_AllThreeMatcherTypes_EachApplied` and `MatchResponseBody_SemanticMatcherFails_ReturnedDescriptionNamesField` also fail.\n\nI haven't opened `SemanticMatcher.cs`, so I don't know the underlying bug. The lowercased names suggest the lookup is case-sensitive against differently cased registered names, or the names are normalised on only one side.\n\nThe logs are in `tmp/verification/20261021T071415Z-4ffb6f/`. The unit log is `unit.log`.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesCause": true,
+    "count39or78": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.061236200000000005,
+    "num_turns": 6,
+    "duration_ms": 34658,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

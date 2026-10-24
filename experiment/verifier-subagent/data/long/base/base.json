@@ -1,0 +1,12 @@
+{
+  "sessionId": "4f2f8f2d-8876-4a86-98b5-ddf4454fb9d1",
+  "claudeVersion": "2.1.306",
+  "exitCode": 0,
+  "wallSeconds": 126,
+  "lastContextTokens": 104630,
+  "filesChangedBySession": [
+    ".lattice/verification.yaml",
+    "Makefile"
+  ],
+  "costUsd": 1.1657
+}

@@ -1,0 +1,122 @@
+{
+  "runId": "R1-normal-C-r3",
+  "arm": "C",
+  "scenario": "R1",
+  "config": "normal",
+  "repeat": 3,
+  "sessionId": "1b533071-8a64-496f-96d4-97c532a5c066",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R1-few.patch"
+  ],
+  "startEpoch": 1792567293,
+  "endEpoch": 1792567323,
+  "wallSeconds": 30,
+  "prewarmSeconds": 7,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 20,
+  "main": {
+    "calls": 2,
+    "contextFirst": 29379,
+    "contextLast": 30640,
+    "contextPeak": 30640,
+    "processed": 60891,
+    "output": 872,
+    "cacheRead": 58754,
+    "cacheWrite1h": 1261,
+    "cacheWrite5m": 0,
+    "uncachedInput": 4,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 1261,
+  "contextSeries": [
+    29379,
+    30640
+  ],
+  "mainTools": [
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "general-purpose"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 2209,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 2209,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "general-purpose"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "general-purpose",
+      "calls": 5,
+      "contextFirst": 25400,
+      "contextLast": 38945,
+      "contextPeak": 38945,
+      "processed": 163202,
+      "output": 1296,
+      "cacheRead": 131857,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 30039,
+      "uncachedInput": 10,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Bash",
+        "Bash"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 163202,
+  "totalProcessed": 224093,
+  "verificationRuns": [],
+  "observedFailingTests": [],
+  "verifierFidelity": [],
+  "answer": "Not everything passes. The build succeeded, but `make unit` failed, so `make component` never ran. That means I have no component-test result.\n\n| Step | Result |\n|---|---|\n| `make build` | Passed with 0 errors and 26 warnings. The warnings are NuGet vulnerability notices (NU1902/NU1903) for Scriban.Signed, System.Security.Cryptography.Pkcs and SQLitePCLRaw.lib.e_sqlite3. |\n| `make unit` | Failed (make exit 2). |\n| `make component` | Not run, because it comes after `make unit` in the `&&` chain. |\n\n**Unit tests:** net9.0 and net10.0 each ran 272 tests, with 271 passing and 1 failing. No skips were reported.\n\n**The one failure** has a single cause. It fails in both runs: `ConfIT.UnitTest.Util.DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel` (`test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs:53`).\n\n```\nExpected result \"[1;31mResponse body mismatch:[0m\n\n[1mdebug[0m\n  [32mexpected:[0m [90m<not present>[0m\n  [31mactual:[0m   \"trace\"\" to contain \"<absent>\".\n```\n\nThe test expects the output to contain `<absent>`, but the formatter now prints `<not present>`. Either the test or the formatter's sentinel text is out of date. The sibling test `Format_FieldInExpectedNotInActual_ShowsMissingSentinel` passes.\n\nI didn't modify any files. The subagent saved the full unit output at `/tmp/unit.log`.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesTest": true,
+    "quotesAssertion": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.1209106,
+    "num_turns": 2,
+    "duration_ms": 27977,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

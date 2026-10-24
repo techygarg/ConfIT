@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="320" viewBox="0 0 800 320" font-family='system-ui, -apple-system, "Segoe UI", sans-serif' role="img" aria-label="How the orchestrator's context grew, call by call, with one failing test">
+<rect width="800" height="320" fill="#fcfcfb"/>
+<title>How the orchestrator's context grew, call by call, with one failing test</title>
+<desc>Context added since the first model call; one line per run. Blue: the verifier path. Grey: for comparison.</desc>
+<text x="16" y="26" font-size="15" font-weight="600" fill="#0b0b0b">How the orchestrator's context grew, call by call, with one failing test</text>
+<text x="16" y="46" font-size="12" fill="#52514e">Context added since the first model call; one line per run. Blue: the verifier path. Grey: for comparison.</text>
+<text x="44" y="272.0" font-size="11" fill="#898781" text-anchor="end" style="font-variant-numeric: tabular-nums">0</text>
+<text x="44" y="222.0" font-size="11" fill="#898781" text-anchor="end" style="font-variant-numeric: tabular-nums">10K</text>
+<text x="44" y="172.0" font-size="11" fill="#898781" text-anchor="end" style="font-variant-numeric: tabular-nums">20K</text>
+<text x="44" y="122.0" font-size="11" fill="#898781" text-anchor="end" style="font-variant-numeric: tabular-nums">30K</text>
+<text x="52" y="84" font-size="11" font-weight="600" fill="#52514e">Diagnose only · Sonnet 5.5</text>
+<line x1="52" y1="90" x2="471" y2="90" stroke="#c3c2b7" stroke-width="1"/>
+<text x="505" y="84" font-size="11" font-weight="600" fill="#52514e">Diagnose, fix, re-verify · Opus 5.5</text>
+<line x1="505" y1="90" x2="779" y2="90" stroke="#c3c2b7" stroke-width="1"/>
+<text x="52" y="106" font-size="12" font-weight="600" fill="#0b0b0b">Raw test command</text>
+<line x1="52" y1="268.0" x2="181" y2="268.0" stroke="#c3c2b7" stroke-width="1"/>
+<line x1="52" y1="218.0" x2="181" y2="218.0" stroke="#e1e0d9" stroke-width="1"/>
+<line x1="52" y1="168.0" x2="181" y2="168.0" stroke="#e1e0d9" stroke-width="1"/>
+<line x1="52" y1="118.0" x2="181" y2="118.0" stroke="#e1e0d9" stroke-width="1"/>
+<path d="M52.0,268.0 H73.5 V241.1 H95.0 V237.8 H116.5 V232.0" fill="none" stroke="#898781" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="116.5" cy="232.0" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>Raw test command: 7,206 tokens after 4 calls</title></circle>
+<path d="M52.0,268.0 H73.5 V241.1 H95.0 V238.0 H116.5 V232.3" fill="none" stroke="#898781" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="116.5" cy="232.3" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>Raw test command: 7,133 tokens after 4 calls</title></circle>
+<path d="M52.0,268.0 H73.5 V241.1 H95.0 V238.5 H116.5 V230.4" fill="none" stroke="#898781" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="116.5" cy="230.4" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>Raw test command: 7,516 tokens after 4 calls</title></circle>
+<text x="116.5" y="286" font-size="11" fill="#898781" text-anchor="middle">model calls 1–7</text>
+<text x="197" y="106" font-size="12" font-weight="600" fill="#0b0b0b">Verifier</text>
+<line x1="197" y1="268.0" x2="326" y2="268.0" stroke="#c3c2b7" stroke-width="1"/>
+<line x1="197" y1="218.0" x2="326" y2="218.0" stroke="#e1e0d9" stroke-width="1"/>
+<line x1="197" y1="168.0" x2="326" y2="168.0" stroke="#e1e0d9" stroke-width="1"/>
+<line x1="197" y1="118.0" x2="326" y2="118.0" stroke="#e1e0d9" stroke-width="1"/>
+<path d="M197.0,268.0 H218.5 V263.2 H240.0 V245.3 H261.5 V227.0 H283.0 V218.5" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="283.0" cy="218.5" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>Verifier: 9,901 tokens after 5 calls</title></circle>
+<path d="M197.0,268.0 H218.5 V263.2 H240.0 V245.5 H261.5 V235.8" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="261.5" cy="235.8" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>Verifier: 6,440 tokens after 4 calls</title></circle>
+<path d="M197.0,268.0 H218.5 V263.0 H240.0 V151.4 H261.5 V149.3" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="261.5" cy="149.3" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>Verifier: 23,743 tokens after 4 calls</title></circle>
+<text x="261.5" y="286" font-size="11" fill="#898781" text-anchor="middle">model calls 1–7</text>
+<text x="342" y="106" font-size="12" font-weight="600" fill="#0b0b0b">Verifier + hint</text>
+<line x1="342" y1="268.0" x2="471" y2="268.0" stroke="#c3c2b7" stroke-width="1"/>
+<line x1="342" y1="218.0" x2="471" y2="218.0" stroke="#e1e0d9" stroke-width="1"/>
+<line x1="342" y1="168.0" x2="471" y2="168.0" stroke="#e1e0d9" stroke-width="1"/>
+<line x1="342" y1="118.0" x2="471" y2="118.0" stroke="#e1e0d9" stroke-width="1"/>
+<path d="M342.0,268.0 H363.5 V262.8 H385.0 V255.2 H406.5 V247.4" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="406.5" cy="247.4" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>Verifier + hint: 4,112 tokens after 4 calls</title></circle>
+<path d="M342.0,268.0 H363.5 V262.7 H385.0 V257.0 H406.5 V249.7" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="406.5" cy="249.7" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>Verifier + hint: 3,660 tokens after 4 calls</title></circle>
+<path d="M342.0,268.0 H363.5 V262.9 H385.0 V257.7 H406.5 V250.5" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="406.5" cy="250.5" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>Verifier + hint: 3,505 tokens after 4 calls</title></circle>
+<text x="406.5" y="286" font-size="11" fill="#898781" text-anchor="middle">model calls 1–7</text>
+<text x="505" y="106" font-size="12" font-weight="600" fill="#0b0b0b">Opus alone</text>
+<line x1="505" y1="268.0" x2="634" y2="268.0" stroke="#c3c2b7" stroke-width="1"/>
+<line x1="505" y1="218.0" x2="634" y2="218.0" stroke="#e1e0d9" stroke-width="1"/>
+<line x1="505" y1="168.0" x2="634" y2="168.0" stroke="#e1e0d9" stroke-width="1"/>
+<line x1="505" y1="118.0" x2="634" y2="118.0" stroke="#e1e0d9" stroke-width="1"/>
+<path d="M505.0,268.0 H526.5 V238.4 H548.0 V220.2 H569.5 V213.8 H591.0 V206.4 H612.5 V176.6 H634.0 V168.4" fill="none" stroke="#898781" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="634.0" cy="168.4" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>Opus alone: 19,921 tokens after 7 calls</title></circle>
+<path d="M505.0,268.0 H526.5 V238.6 H548.0 V219.6 H569.5 V216.8 H591.0 V211.1 H612.5 V202.8 H634.0 V201.2" fill="none" stroke="#898781" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="634.0" cy="201.2" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>Opus alone: 13,350 tokens after 7 calls</title></circle>
+<text x="569.5" y="286" font-size="11" fill="#898781" text-anchor="middle">model calls 1–7</text>
+<text x="650" y="106" font-size="12" font-weight="600" fill="#0b0b0b">Verifier + hint + fixer</text>
+<line x1="650" y1="268.0" x2="779" y2="268.0" stroke="#c3c2b7" stroke-width="1"/>
+<line x1="650" y1="218.0" x2="779" y2="218.0" stroke="#e1e0d9" stroke-width="1"/>
+<line x1="650" y1="168.0" x2="779" y2="168.0" stroke="#e1e0d9" stroke-width="1"/>
+<line x1="650" y1="118.0" x2="779" y2="118.0" stroke="#e1e0d9" stroke-width="1"/>
+<path d="M650.0,268.0 H671.5 V262.4 H693.0 V255.8 H714.5 V249.8" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="714.5" cy="249.8" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>Verifier + hint + fixer: 3,642 tokens after 4 calls</title></circle>
+<path d="M650.0,268.0 H671.5 V262.6 H693.0 V254.3 H714.5 V248.7" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="714.5" cy="248.7" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>Verifier + hint + fixer: 3,865 tokens after 4 calls</title></circle>
+<path d="M650.0,268.0 H671.5 V262.5 H693.0 V254.6 H714.5 V248.2" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+<circle cx="714.5" cy="248.2" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>Verifier + hint + fixer: 3,954 tokens after 4 calls</title></circle>
+<text x="714.5" y="286" font-size="11" fill="#898781" text-anchor="middle">model calls 1–7</text>
+</svg>

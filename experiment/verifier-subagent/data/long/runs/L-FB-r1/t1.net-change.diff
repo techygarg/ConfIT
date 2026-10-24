@@ -1,0 +1,68 @@
+--- a/src/ConfIT/Matching/SemanticMatcher.cs
++++ b/src/ConfIT/Matching/SemanticMatcher.cs
+@@ -6,7 +6,7 @@
+ public static class SemanticMatcher
+ {
+     private static readonly IReadOnlyDictionary<string, SemanticMatcherFunc> BuiltIns =
+-        new Dictionary<string, SemanticMatcherFunc>
++        new Dictionary<string, SemanticMatcherFunc>(StringComparer.OrdinalIgnoreCase)
+         {
+             ["isUuid"]        = (v, _) => CheckIsUuid(v),
+             ["isIsoDate"]     = (v, _) => CheckIsIsoDate(v),
+@@ -36,7 +36,7 @@
+         foreach (var (fieldPath, spec) in semantic)
+         {
+             var (name, _) = ParseSpec(spec, fieldPath);
+-            if (!BuiltIns.ContainsKey(name) && (customMatchers == null || !customMatchers.ContainsKey(name)))
++            if (!BuiltIns.ContainsKey(name) && !TryGetCustom(customMatchers, name, out _))
+                 throw new ArgumentException(
+                     $"Unknown semantic matcher '{name}' for field '{fieldPath}'");
+         }
+@@ -57,7 +57,7 @@
+             var (name, param) = ParseSpec(matcherSpec, fieldPath);
+ 
+             if (!BuiltIns.TryGetValue(name, out var fn))
+-                if (customMatchers == null || !customMatchers.TryGetValue(name, out fn!))
++                if (!TryGetCustom(customMatchers, name, out fn!))
+                     throw new ArgumentException(
+                         $"Unknown semantic matcher '{name}' for field '{fieldPath}'");
+ 
+@@ -78,17 +78,36 @@
+         return null;
+     }
+ 
++    // Spec names are lowercased by ParseSpec, so custom names are matched case-insensitively.
++    private static bool TryGetCustom(
++        IReadOnlyDictionary<string, SemanticMatcherFunc>? customMatchers,
++        string name,
++        out SemanticMatcherFunc? fn)
++    {
++        fn = null;
++        if (customMatchers == null) return false;
++
++        foreach (var (key, value) in customMatchers)
++        {
++            if (!string.Equals(key, name, StringComparison.OrdinalIgnoreCase)) continue;
++            fn = value;
++            return true;
++        }
++
++        return false;
++    }
++
+     private static (string name, string? param) ParseSpec(string spec, string fieldPath)
+     {
+         var parenIdx = spec.IndexOf('(');
+         if (parenIdx == -1)
+-            return (spec, null);
++            return (spec.ToLowerInvariant(), null);
+ 
+         if (!spec.EndsWith(')'))
+             throw new ArgumentException(
+                 $"Malformed matcher spec '{spec}' for field '{fieldPath}': missing closing parenthesis");
+ 
+-        return (spec[..parenIdx], spec[(parenIdx + 1)..^1]);
++        return (spec[..parenIdx].ToLowerInvariant(), spec[(parenIdx + 1)..^1]);
+     }
+ 
+     private static string? CheckIsUuid(JToken value)

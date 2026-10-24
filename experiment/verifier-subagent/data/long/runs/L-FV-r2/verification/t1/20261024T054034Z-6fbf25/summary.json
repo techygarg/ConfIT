@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "runId": "20261024T054034Z-6fbf25",
+  "runDir": "tmp/verification/20261024T054034Z-6fbf25",
+  "configFile": "$WS/confit/.lattice/verification.yaml",
+  "startedAt": "2026-10-24T05:40:34Z",
+  "finishedAt": "2026-10-24T05:40:38Z",
+  "durationSeconds": 4,
+  "haltedEarly": true,
+  "failureHint": "Search a failed stage's log rather than reading it whole. grep -c '^ *Failed ' <logFile> counts the failing tests, grep '^ *Failed ' <logFile> names them, and grep -m 5 -A4 'Error Message:' <logFile> shows the first error messages.",
+  "overallStatus": "failed",
+  "failedStages": ["unit"],
+  "headline": "Failed at unit: exit code 2; skipped: component",
+  "stages": [{"name":"build","status":"passed","exitCode":0,"durationSeconds":2,"wallStart":"2026-10-24T05:40:34Z","wallEnd":"2026-10-24T05:40:36Z","command":"make build","logFile":"tmp/verification/20261024T054034Z-6fbf25/build.log"},{"name":"unit","status":"failed","exitCode":2,"durationSeconds":2,"wallStart":"2026-10-24T05:40:36Z","wallEnd":"2026-10-24T05:40:38Z","command":"make unit","logFile":"tmp/verification/20261024T054034Z-6fbf25/unit.log"},{"name":"component","status":"skipped","command":"make component"}]
+}

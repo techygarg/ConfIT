@@ -1,0 +1,162 @@
+{
+  "runId": "R3-normal-C-r1",
+  "arm": "C",
+  "scenario": "R3",
+  "config": "normal",
+  "repeat": 1,
+  "sessionId": "60c9e8bd-8a07-4955-850e-c71491a256fd",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R3-many.patch"
+  ],
+  "startEpoch": 1792566419,
+  "endEpoch": 1792566477,
+  "wallSeconds": 58,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 38,
+  "main": {
+    "calls": 2,
+    "contextFirst": 29379,
+    "contextLast": 31279,
+    "contextPeak": 31279,
+    "processed": 62049,
+    "output": 1391,
+    "cacheRead": 58754,
+    "cacheWrite1h": 1900,
+    "cacheWrite5m": 0,
+    "uncachedInput": 4,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 1900,
+  "contextSeries": [
+    29379,
+    31279
+  ],
+  "mainTools": [
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "general-purpose"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 3810,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 3810,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "general-purpose"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "general-purpose",
+      "calls": 5,
+      "contextFirst": 25415,
+      "contextLast": 39116,
+      "contextPeak": 39116,
+      "processed": 163853,
+      "output": 2051,
+      "cacheRead": 131582,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 30210,
+      "uncachedInput": 10,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Bash",
+        "Bash"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 163853,
+  "totalProcessed": 225902,
+  "verificationRuns": [],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_AllThreeMatcherTypes_EachApplied",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_CustomMatcher_PassesForValidValue",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherFails_ReturnedDescriptionNamesField",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherValid_PassesAndRemovesField",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_CustomMatcherName_DelegatesToCustomFunc",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithNonNumericValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAboveThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthOnArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithExactMatch_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithMismatch_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithinInclusiveRange_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithValidEmail_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyObject_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyString_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithDateOnly_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00+05:30\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00.123Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithDateTime_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithValidDate_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyArray_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyString_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithNonEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithPresentValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNonNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNullValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"A1B2C3D4-E5F6-7890-ABCD-EF1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueBelowThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NestedFieldPath_PassesForValidValue",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NullExpected_DoesNotThrow"
+  ],
+  "verifierFidelity": [],
+  "answer": "The checks do not all pass. `make build` succeeded, but `make unit` failed, so `make component` never ran. `make` exited with status 2 (`make: *** [unit] Error 1`). The subagent changed no files, and its full output is in `/tmp/confit_run.log`.\n\n**Build:** it succeeded on net9.0 and net10.0. The only warnings were NU1902, because `Scriban.Signed` 7.2.0 has known moderate-severity vulnerabilities.\n\n**Unit tests:** 39 tests fail on each of net9.0 and net10.0, so 78 failures in total. On each framework, 233 of 272 pass. The failures are all in `SemanticMatcherTests` and `ResultMatcherTests`, and they have two causes:\n\n1. **Matcher names not found (about 38 tests per framework).**\n   - These tests throw `System.ArgumentException : Unknown semantic matcher '<name>' for field '<field>'` at `src/ConfIT/Matching/SemanticMatcher.cs:61`.\n   - The names in the messages are all lowercase, for example:\n     - `'isuuid' for field 'id'`\n     - `'isisodatetime' for field 'createdAt'`\n     - `'lessthan' for field 'age'`\n     - `'isnull' for field 'deletedAt'`\n     - `'isdomainid' for field 'code'`, which is a custom matcher\n   - This covers the `Apply_*` cases in `SemanticMatcherTests` for IsUuid, IsEmail, IsNull, IsNotNull, IsEmpty, IsNotEmpty, HasLength, GreaterThan, LessThan, IsIsoDate and IsIsoDateTime. It also covers the custom-matcher and nested-path cases.\n   - Four tests in `ResultMatcherTests` fail the same way: `MatchResponseBody_SemanticMatcherValid_PassesAndRemovesField`, `MatchResponseBody_SemanticMatcherFails_ReturnedDescriptionNamesField`, `MatchResponseBody_AllThreeMatcherTypes_EachApplied` and `MatchResponseBody_CustomMatcher_PassesForValidValue`.\n   - `Apply_NullExpected_DoesNotThrow` and `MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow` also fail. The log doesn't show their messages, so I haven't confirmed they share this cause.\n   - The subagent's guess is a case-sensitivity mismatch: the matcher name is lowercased before the lookup, but the `BuiltIns` keys may not be. It did not open `BuiltIns`, so this is unverified.\n\n2. **Wrong exception type (1 test per framework).**\n   - `Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException` fails with `Expected a <System.InvalidOperationException> to be thrown, but found <System.ArgumentException>:`.\n   - This follows from cause 1. The unknown-matcher `ArgumentException` is thrown before the code reaches the \"field absent from the response\" check.\n\nSo the component tests are unverified. The unit failures need fixing before `make component` can run.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesCause": true,
+    "count39or78": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.13660660000000002,
+    "num_turns": 2,
+    "duration_ms": 56400,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

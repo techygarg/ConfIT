@@ -1,0 +1,276 @@
+{
+  "runId": "R3-normal-T2-r2",
+  "arm": "T2",
+  "scenario": "R3",
+  "config": "normal",
+  "repeat": 2,
+  "sessionId": "1641ef3f-f2dc-477f-a280-6c68afa7d163",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "budgetUsd": 10.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R3-many.patch",
+    "inputs/config/failure-hint.patch"
+  ],
+  "startEpoch": 1792592253,
+  "endEpoch": 1792592327,
+  "wallSeconds": 74,
+  "prewarmSeconds": 8,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "fixArm": true,
+  "finalStatus": "passed",
+  "netChangeFiles": [],
+  "netChangeLines": 0,
+  "testsEdited": false,
+  "longestGapSeconds": 21,
+  "main": {
+    "calls": 4,
+    "contextFirst": 29804,
+    "contextLast": 34201,
+    "contextPeak": 34201,
+    "processed": 129830,
+    "output": 1906,
+    "cacheRead": 123519,
+    "cacheWrite1h": 4397,
+    "cacheWrite5m": 0,
+    "uncachedInput": 8,
+    "models": [
+      "claude-opus-5-5"
+    ]
+  },
+  "footprint": 4397,
+  "contextSeries": [
+    29804,
+    30898,
+    33021,
+    34201
+  ],
+  "mainTools": [
+    "Agent",
+    "Agent",
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "verifier-haiku",
+    "fixer-sonnet",
+    "verifier-haiku"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 3216,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1954,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 1,
+      "seenChars": 3216,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "fixer-sonnet"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 2,
+      "seenChars": 2058,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "verifier-haiku",
+      "calls": 4,
+      "contextFirst": 12568,
+      "contextLast": 14811,
+      "contextPeak": 14811,
+      "processed": 55532,
+      "output": 1365,
+      "cacheRead": 51916,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 2243,
+      "uncachedInput": 8,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    },
+    {
+      "agentType": "verifier-haiku",
+      "calls": 4,
+      "contextFirst": 12568,
+      "contextLast": 14627,
+      "contextPeak": 14627,
+      "processed": 55288,
+      "output": 1364,
+      "cacheRead": 42805,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 11111,
+      "uncachedInput": 8,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    },
+    {
+      "agentType": "fixer-sonnet",
+      "calls": 5,
+      "contextFirst": 12931,
+      "contextLast": 30792,
+      "contextPeak": 30792,
+      "processed": 126344,
+      "output": 2601,
+      "cacheRead": 96566,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 27167,
+      "uncachedInput": 10,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Grep",
+        "Grep",
+        "Read",
+        "Grep",
+        "Grep",
+        "Edit",
+        "Edit"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": true
+    }
+  ],
+  "subagentProcessed": 237164,
+  "totalProcessed": 366994,
+  "verificationRuns": [
+    {
+      "runId": "20261021T141742Z-7ca267",
+      "overallStatus": "failed",
+      "headline": "Failed at unit: exit code 2; skipped: component"
+    },
+    {
+      "runId": "20261021T141827Z-9baf83",
+      "overallStatus": "passed",
+      "headline": "All 3 stage(s) passed"
+    }
+  ],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Server.Http.HttpReadinessProbeTests.TryProbe_ServerReturns500_ReturnsFalse",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_AllThreeMatcherTypes_EachApplied",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_CustomMatcher_PassesForValidValue",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherFails_ReturnedDescriptionNamesField",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherValid_PassesAndRemovesField",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_CustomMatcherName_DelegatesToCustomFunc",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithNonNumericValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAboveThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthOnArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithExactMatch_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithMismatch_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithinInclusiveRange_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithValidEmail_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyObject_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyString_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithDateOnly_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00+05:30\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00.123Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithDateTime_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithValidDate_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyArray_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyString_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithNonEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithPresentValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNonNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNullValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"A1B2C3D4-E5F6-7890-ABCD-EF1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueBelowThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NestedFieldPath_PassesForValidValue",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NullExpected_DoesNotThrow"
+  ],
+  "verifierFidelity": [
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    },
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    }
+  ],
+  "answer": "**Final status: passing.** On the re-run (`20261021T141827Z-9baf83`), all three configured stages passed: build, unit and component. It took one fix cycle.\n\n**What failed:** In the first run (`20261021T141742Z-7ca267`) the build passed, but the unit stage exited with code 2. The component stage was skipped because the run stopped early. The fixer read the log and found about 40 failing tests, each reported twice because the tests run on both net9.0 and net10.0:\n- almost all of the `SemanticMatcherTests.Apply_*` tests;\n- five `ResultMatcherTests` tests that use semantic matchers;\n- every one failed with `ArgumentException: Unknown semantic matcher 'isuuid' for field 'id'`, or the same error for `isnull`, `greaterthan`, `isdomainid` and others.\n\n**Root cause:** `ParseSpec` in `src/ConfIT/Matching/SemanticMatcher.cs` converted matcher names to lowercase with `ToLowerInvariant()`. The built-in matchers are stored under camelCase names (`isUuid`, `greaterThan`) and custom matcher names are case-sensitive. As a result, no semantic matcher name could ever be found.\n\n**What changed:** `fixer-sonnet` removed the two `ToLowerInvariant()` calls in `ParseSpec`, so the name is passed through exactly as written. No test files were changed.\n\n```diff\n-            return (spec.ToLowerInvariant(), null);\n+            return (spec, null);\n...\n-        return (spec[..parenIdx].ToLowerInvariant(), spec[(parenIdx + 1)..^1]);\n+        return (spec[..parenIdx], spec[(parenIdx + 1)..^1]);\n```\n\n**Possible flaky test:** In the first run, `HttpReadinessProbeTests.TryProbe_ServerReturns500_ReturnsFalse` also failed, with \"Address already in use\" when the test shuts down its listener (`AppLauncherTests.cs:183`). It passed on the other framework in the same run and passed in the re-run. The fixer thinks the two framework runs, executing in parallel, tried to use the same port. Nothing was changed for it. If it keeps failing now and then, the fix belongs in the test: give each test its own port or run them one at a time.\n\nThe configured stages don't include the integration tests or the `skills` check, so neither has been run.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesCause": true,
+    "count39or78": false,
+    "mentionsFlakyProbe": true
+  },
+  "streamReported": {
+    "total_cost_usd": 0.20561846,
+    "num_turns": 4,
+    "duration_ms": 73125,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

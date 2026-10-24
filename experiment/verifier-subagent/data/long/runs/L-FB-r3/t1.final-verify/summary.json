@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "runId": "20261023T091127Z-cfe25b",
+  "runDir": "tmp/verification/20261023T091127Z-cfe25b",
+  "configFile": ".lattice/verification.yaml",
+  "startedAt": "2026-10-23T09:11:27Z",
+  "finishedAt": "2026-10-23T09:11:34Z",
+  "durationSeconds": 7,
+  "haltedEarly": false,
+  "failureHint": "Search a failed stage's log rather than reading it whole. grep -c '^ *Failed ' <logFile> counts the failing tests, grep '^ *Failed ' <logFile> names them, and grep -m 5 -A4 'Error Message:' <logFile> shows the first error messages.",
+  "overallStatus": "passed",
+  "failedStages": [],
+  "headline": "All 3 stage(s) passed",
+  "stages": [{"name":"build","status":"passed","exitCode":0,"durationSeconds":2,"wallStart":"2026-10-23T09:11:27Z","wallEnd":"2026-10-23T09:11:30Z","command":"make build","logFile":"tmp/verification/20261023T091127Z-cfe25b/build.log"},{"name":"unit","status":"passed","exitCode":0,"durationSeconds":2,"wallStart":"2026-10-23T09:11:30Z","wallEnd":"2026-10-23T09:11:32Z","command":"make unit","logFile":"tmp/verification/20261023T091127Z-cfe25b/unit.log"},{"name":"component","status":"passed","exitCode":0,"durationSeconds":2,"wallStart":"2026-10-23T09:11:32Z","wallEnd":"2026-10-23T09:11:34Z","command":"make component","logFile":"tmp/verification/20261023T091127Z-cfe25b/component.log"}]
+}

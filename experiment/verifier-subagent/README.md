@@ -1,0 +1,206 @@
+# Verifier subagent experiment
+
+This experiment measures what a coding agent's "did my change work?" step puts into its main session, and what that step costs. The step here is the build and test run. It compares four ways of handling it:
+- running the tests directly;
+- [Lattice](https://github.com/techygarg/lattice)'s verifier subagent;
+- the verifier with a one-line failure hint;
+- a split workflow, where a verifier and a separate diagnose-and-fix agent run on different models.
+
+A third part then asks, inside a long-running session, who should fix a failing check: the orchestrator itself, or a separate fixer.
+
+It was run against this repository at commit `a4f219e`, with Claude Code 2.1.306 and Lattice 2.1.0. Parts 1 and 2 ran on 21 October 2026: 72 measured sessions, plus 9 pilot sessions and 2 probes. Part 3 ran on 23 October: 9 runs forked from one long base session, 18 turns, plus 1 pilot. Part 3b ran on 24 October: 3 more forks, 6 turns, plus 1 probe.
+
+**Start with [RESULTS.md](RESULTS.md)** for the findings. [PROTOCOL.md](PROTOCOL.md) has the design, the predictions written down before the runs, and every deviation from the plan.
+
+## Headline
+
+Median orchestrator context and cost on failing runs (R1: 1 failing test; R3: 39 failing tests):
+
+| Setup | Orchestrator context, R1 / R3 | Cost per run, R1 / R3 |
+|---|---|---|
+| Raw test command in the main session | 7.2K / 11.8K tokens | $0.05 / $0.08 |
+| Verifier subagent | 9.9K / 12.9K | $0.09 / $0.13 |
+| Verifier + failure hint | 3.7K / 6.5K | $0.08 / $0.10 |
+| Opus orchestrator + Haiku verifier + Sonnet diagnose-and-fix | 3.9K / 4.3K | $0.15 / $0.19 |
+| The same split with every role on Opus | 3.7K / 4.4K | $0.46 / $0.58 |
+| Opus alone, diagnosing and fixing | 16.6K / 23.2K | $0.29 / $0.32 |
+
+The first three rows only diagnose, on Sonnet 5.5. The last three also fix the code and re-verify it, with Opus 5.5 as the main session. These findings stand out:
+- **Splitting the work saves context.** With verification separate from diagnosis and fixing, the orchestrator stayed near 4K tokens whatever the failure, and the suite ran exactly twice.
+- **Matching each job to a model saves money.** The split costs more than Opus alone when every role is Opus, and 40–47% less when the roles are tiered.
+- **Explicit agent instructions remove the reliability slips.** These were format slips in the verifier and an unrequested change by the fixer.
+- **In a long session, handing a failure to the fixer still pays** (Part 3).
+  - In a 105K-token session, a 39-test failure left 5K tokens in the orchestrator instead of 12K, and cost 10–16% less per turn.
+  - The orchestrator passed the user's intent on to the fixer even when its rules didn't ask for a brief (the fixer's description invites one).
+  - The fixer's weakness was precision: it widened the fix in 3 of 6 runs. The orchestrator flagged each one to the user, but sent none back.
+  - Letting the fixer confirm its own fix (Part 3b) worked as well, but no better at this size: every first fix worked, and the orchestrator spent the call it saved on checking the change.
+
+## Folder map
+
+| Path | What it holds |
+|---|---|
+| `README.md` | this page |
+| `PROTOCOL.md` | design, frozen predictions, deviation log |
+| `RESULTS.md` | the findings: the answer, the ladder, six contrasts, figures, predictions against outcomes, limits |
+| `inputs/config/` | `verification.yaml` (three stages: `make build`, `make unit`, `make component`); the test-verbosity patches; the `failureHint` patch; the agent definitions for Part 2 (`agents-tiered.json`), Part 2b (`agents-tiered-opus.json`, `agents-tiered-v2.json`) Part 3 (`agents-long.json`) and Part 3b (`agents-long-fv.json`) |
+| `inputs/scenarios/` | the two regression patches (R1, R3) and `ground-truth/`, the tests each scenario is known to fail |
+| `inputs/prompts/` | one prompt per arm, plus the two probe prompts; for Part 3, the base-session prompt (`long-base.md`), the two turn prompts (`long-t1.md`, `long-t2.md`) and each arm's rules (`long-rules-<arm>.md`) |
+| `harness/` | the scripts that ran and analysed everything (see below) |
+| `data/calibration/` | measurements taken with no agent: output size per scenario and verbosity, the flaky-test check, and the component-stage ground truth for R3 |
+| `data/runs/<scenario>-<config>-<arm>-r<n>/` | one folder per session: `meta.json`, `metrics.json`, the verification summaries, and for fix runs `net-change.diff` and `final-verify/` (the harness's own re-check) |
+| `data/batch-logs/` | the one-line-per-session log of each batch as it ran |
+| `data/long/` | Part 3: `base/base.json` (the shared base session), `batch.sh` and `batch.log` (and `batch-fv.sh`, `batch-fv.log` and the probe's `probe-fv/summary.json` for Part 3b), and one folder per run, `runs/L-<arm>-r<n>/`. Each holds `meta.json`, `metrics.json`, each turn's `net-change.diff` and `final-verify/` re-check, and the verification summaries |
+| `results/` | generated by `harness/report.py`: `tables.md`, `predictions.md`, `answers.md`, `runs.csv`, and `figures/` (SVG, 800 px wide); `figures/png/` holds 1600 px PNG copies made by `harness/export_png.py`. `long-session.md` and `long-session.csv` (Part 3) come from `harness/analyze_long.py` |
+
+Run folders with `r0` are pilot runs. They are kept as evidence but not counted in the medians.
+
+## Arms and scenarios
+
+| Arm | Part | What runs the check |
+|---|---|---|
+| A | 1 | the raw `make build && make unit && make component` in the main session |
+| B | 1 | Lattice's runner script in the main session, which then reads `summary.json` |
+| C | 1 | a general-purpose subagent runs the raw command and reports back |
+| D | 1 | Lattice's `verifier` subagent |
+| H | 1 | D, plus one `failureHint` line in `verification.yaml` |
+| T | 2 | Opus orchestrator → Haiku verifier → on red, a Sonnet diagnose-and-fix agent (no shell) → Haiku verifier again |
+| S | 2 | Opus alone: run, diagnose, fix, re-run |
+| O | 2b | T with every role on Opus |
+| T2 | 2b | T with tightened agent instructions |
+| V | 3 | in a long session, the Opus orchestrator verifies with the Haiku verifier and the hint, then diagnoses and fixes it itself |
+| FB | 3 | the same, but on red it hands the summary and a brief (what changed, and whether a behaviour change was intended) to a Sonnet fixer |
+| F0 | 3 | as FB, but it hands over only the summary, as in Part 2 |
+| FV | 3b | as FB, but the fixer confirms its own fix by spawning the verifier itself, and the orchestrator does not run it again |
+| P1, P2 | probes | what Claude Code shows the model for 127 KB of output, from a command that exits 0 (P1) and one that exits 1 (P2) |
+
+| Scenario | State of the code |
+|---|---|
+| G | unchanged; every check passes |
+| R1 | one-line regression in `DeltaFormatter`; 1 unit test fails on both target frameworks |
+| R3 | two-line regression in `SemanticMatcher`; 39 unit tests fail on both target frameworks |
+
+Config `normal` sets the test logger to one line per test. Config `quiet` is the Makefile as committed (`verbosity=minimal`). In Part 1 the arms only diagnose and must not change files. In Part 2 they must make the checks pass by fixing production code, never the tests. In Part 3 each run plays two turns in a session forked from one long base session:
+1. R3 arrives as "my teammates' changes", and the tests are the spec.
+2. R1 arrives as the user's own product decision, which the fix must keep.
+
+Part 3b adds one arm, FV, on the same base session. The fixer confirms its own fix by spawning the verifier, and the orchestrator does not run the verifier again.
+
+## How the numbers are produced
+
+1. **`harness/run-one.sh`** runs one session:
+   1. reset a disposable copy of the repository (exported with `git archive`) and apply the scenario patches;
+   2. warm the build;
+   3. run one headless `claude -p` session in a sanitized environment;
+   4. copy out the transcript, any subagent transcripts and the verification runs;
+   5. for fix runs, save the net code change and re-check the result independently;
+   6. reset the copy.
+2. **`harness/analyze.py`** turns the transcripts into `data/runs/*/metrics.json`. That includes token usage per model call, tool calls, spilled or cut output, and verifier fidelity.
+3. **`harness/report.py`** turns `metrics.json` into everything under `results/`.
+4. **`harness/export_png.py`** (macOS) renders the figures to PNG, for documents that need a bitmap.
+5. **Part 3** has its own pair of scripts:
+   - **`harness/run-long.sh`** builds the base session once (`run-long.sh base`), then runs each fork with its two turns (`run-long.sh <arm> <n>`). It uses the same sanitized environment and checks.
+   - **`harness/analyze_long.py`** turns each run into `metrics.json`, and then into `results/long-session.md`.
+
+Definitions:
+- **Context of one model call:** input tokens plus cache writes plus cache reads.
+- **Footprint:** the context of the session's last main-session call minus its first.
+- **Cost:** Claude Code's own `total_cost_usd` for the session, an API-equivalent estimate that includes subagents. A resumed or forked session reports it cumulatively, so a Part 3 turn's cost is the difference between two totals.
+
+**What is not in this folder.** The raw session transcripts and stream output are not here. They contain Claude Code's system prompt and account identifiers. `harness/redact.py` built this copy: it replaced home paths with `~` and removed account details. So `analyze.py` cannot be re-run from this folder, but `report.py` can. It rebuilds `results/` from `data/runs/*/metrics.json`. In the same way, `analyze_long.py` rebuilds the Part 3 results from `data/long/runs/*/metrics.json`.
+
+Other scripts:
+- `workspace.py`: the disposable copy (export, content-based reset, apply patches, net diff).
+- `calibrate.sh` and `report_calibration.py`: runner-only output sizes and ground truth.
+- `flake-check.sh`: the port-race test.
+- `run-matrix.sh`: named batches of sessions.
+- `redact.py`: builds a shareable copy of the experiment folder, with personal paths and account details removed.
+
+## Reading the data
+
+`results/runs.csv` has one row per measured session in Parts 1 and 2:
+
+| Column | Meaning |
+|---|---|
+| `runId`, `arm`, `scenario`, `config`, `repeat` | the run folder under `data/runs/`, and what it ran |
+| `footprint` | tokens the main session's context grew by, from its first model call to its last |
+| `mainCalls` | the main session's model calls |
+| `mainProcessed`, `subagentProcessed`, `totalProcessed` | tokens processed (context plus output, summed over calls) by the main session, by its subagents, and by both |
+| `costUsd`, `wallSeconds` | Claude Code's `total_cost_usd` (API-equivalent, subagents included) and wall time |
+| `correct`, `verdict` | whether the answer or fix passed the checks in `results/answers.md`, and the session's own pass or fail call |
+| `reruns` | times the main session ran the suite or a stage itself, not counting the first run in arms A and B |
+| `wholeLogReads` | whole-file reads of a log by the main session; reads Claude Code refused are not counted |
+| `spills`, `cuts` | tool outputs that Claude Code saved to a file, or truncated, instead of showing in full |
+| `verbatim` | whether the verifier returned `summary.json` exactly as written (empty without a verifier) |
+| `flaky` | any known flaky test that fired during the run |
+
+`results/long-session.csv` has one row per run and turn in Parts 3 and 3b:
+
+| Column | Meaning |
+|---|---|
+| `runId`, `arm`, `repeat`, `turn` | the run folder under `data/long/runs/`, and turn 1 (`t1`) or turn 2 (`t2`) |
+| `correct`, `exact` | t1: green with no test changed, and the regression undone exactly. t2: green, the new wording kept, and the test updated |
+| `calls`, `start`, `footprint` | the orchestrator's model calls, its context at the turn's first call, and how much the turn added |
+| `cost`, `warmCost`, `projected` | the turn's share of the session's cumulative cost; the same with any re-written cached prefix priced as cache reads; and the warm cost plus the footprint re-read by 100 later calls at $0.20 per million tokens |
+| `opusCost`, `haikuCost`, `sonnetCost` | the turn's cost by model |
+| `firstCallCacheWrite` | tokens the turn's first call wrote to the prompt cache |
+| `logReads`, `codeReads`, `edits` | the orchestrator's own log reads, source reads and edits |
+| `agents`, `fixerVerifies` | the subagents the orchestrator spawned, by type, and the verifier runs the fixer started itself (FV) |
+| `briefCarriesIntent` | whether the brief to the fixer stated the intent (empty when no fixer was used) |
+| `seconds` | the turn's duration |
+
+Each run folder's `metrics.json` holds more, including the per-call token usage these columns come from.
+
+## Reproducing
+
+Requirements:
+- macOS or Linux, with the .NET 9 and .NET 10 runtimes and Python 3;
+- Claude Code (2.1.306 was used), signed in;
+- Lattice 2.1.0 installed as a Claude Code plugin. It provides the runner script and the verifier agent.
+
+The 72 measured sessions cost about $9.60 API-equivalent, and $11.13 including pilots and probes. Part 3 cost $7.39: $1.17 for the base session, $0.65 for the pilot and $5.58 for the nine runs. Part 3b cost $2.82: $0.30 for the probe and $2.52 for the three runs.
+
+From this folder, inside a checkout of this repository that contains commit `a4f219e`:
+
+```bash
+bash harness/calibrate.sh                 # no agent: output sizes and ground truth
+bash harness/flake-check.sh 15            # no agent: the port-race test
+bash harness/run-matrix.sh probe          # what the host shows the model for large output
+bash harness/run-matrix.sh pilot
+bash harness/run-matrix.sh core           # Part 1: A, B, C, D on G, R1, R3, three runs each
+bash harness/run-matrix.sh control        # Part 1: A, D at quiet verbosity
+bash harness/run-matrix.sh hint           # Part 1: H
+bash harness/run-matrix.sh tiered         # Part 2: T and S
+bash harness/run-matrix.sh tiered2        # Part 2b: O and T2
+python3 harness/analyze.py .              # needs the transcripts from your own runs
+python3 harness/report.py .
+python3 harness/export_png.py .           # optional, macOS: PNG copies of the figures
+bash harness/run-long.sh base             # Part 3: build the long base session once
+bash data/long/batch.sh                   # Part 3: V, FB and F0, three runs each, interleaved
+bash data/long/batch-fv.sh                # Part 3b: FV, three runs
+python3 harness/analyze_long.py .         # Part 3 and 3b results
+```
+
+Batches are resumable: a run whose folder already holds a `meta.json` is skipped. To reproduce from scratch, move `data/runs/` aside first. Each session prints one line.
+
+Settings, as environment variables:
+
+| Variable | Default | Notes |
+|---|---|---|
+| `CONFIT_SRC` | the repository that contains this folder | the checkout to export the pinned commit from |
+| `COMMIT` | `a4f219e` | the commit under test |
+| `WS` | `~/confit-verifier-exp` | the disposable workspace. It must sit outside any git repository |
+| `RUNNER`, `LATTICE_PLUGIN` | Lattice 2.1.0 in the Claude Code plugin cache | the runner script and the plugin directory |
+| `MODEL`, `EFFORT`, `BUDGET_USD` | `claude-sonnet-5-5`, `medium`, `5` | Part 1 sessions. Part 2 sessions use Opus 5.5 as the main session, with a $10 budget. Part 3 uses Opus 5.5 with a $6 budget per turn |
+| `CLAUDE_BIN` | `~/.local/share/claude/versions/2.1.306` | Part 3 only: the Claude Code build to run, pinned so it matches Parts 1 and 2 |
+
+## Things that will differ on another machine
+
+- **Claude Code's handling of large output changes between versions.** Run the probe batch first and compare with RESULTS.md.
+- **The build's NuGet vulnerability warnings** depend on advisory data at restore time, so output sizes can change with no code change.
+- **This repository has a flaky port race** (`TestPort.GetFree()` releases a port before a test binds it). The readiness-probe tests that use it fail in about 5% of unit runs, and `report.py` flags any run where one fired.
+- **The models change.** The runs used Opus 5.5, Sonnet 5.5 and Haiku 5.5 as served in October 2026. Later versions may read, fix and cost differently.
+- **API latency varies.** A session can stall on a slow request. Wall-time medians exclude any run with a single wait over 120 seconds.
+
+## Scope
+
+The experiment covers one repository, two synthetic regressions, single-task sessions plus two-turn long-session runs (Parts 3 and 3b), and 2 or 3 runs per cell. It measures what the orchestrator carries, not how well it reasons. RESULTS.md lists every limit.

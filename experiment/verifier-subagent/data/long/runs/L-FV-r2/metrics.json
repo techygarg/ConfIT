@@ -1,0 +1,82 @@
+{
+  "runId": "L-FV-r2",
+  "t1": {
+    "calls": 5,
+    "start": 107641,
+    "footprint": 8297,
+    "firstCallCacheWrite": 0,
+    "cost": 0.36883684000000017,
+    "warmCost": 0.36883684000000017,
+    "projected": 0.5347768400000001,
+    "opusCost": 0.24443760000000014,
+    "haikuCost": 0.0029958400000000005,
+    "sonnetCost": 0.1214034,
+    "agents": {
+      "verifier-haiku": 1,
+      "fixer-sonnet": 1
+    },
+    "actions": [
+      "code read"
+    ],
+    "briefs": [
+      "Repository: $WS/confit (ConfIT, a .NET declarative API testing library; follow its CLAUDE.md conventions).\n\nVerifier summary.json (run dir is relative to the repo root):\n{summary.json}\n\nBrief:\n- What changed: the user just pulled their teammates' latest changes. The repo is not a git repository, so there's no diff to look at; I don't know which files they touched. Before the pull, I had read the matching code (src/ConfIT/Matching/ResultMatcher.cs, DeltaFormatter.cs, SemanticMatcher.cs, BaseTest.Verify) and its tests (test/ConfIT.UnitTest/Util/ResultMatcherTests.cs, DeltaFormatterTests.cs, SemanticMatcherTests.cs), so the change may be in that area, but confirm from the log.\n- Intended behaviour change: the user says to treat the tests as the spec. Whatever the failing tests assert is the intended behaviour. Fix production code under src/ConfIT so it satisfies them. Do not edit, weaken, skip or delete tests to make them pass. If a test looks self-contradictory or impossible to satisfy without breaking another test, stop and report that instead of guessing.\n- Keep the fix minimal and consistent with surrounding code; must compile on net9.0 and net10.0.\n\nReport back: which tests failed (names), the root cause, and exactly which files/lines you changed. If you can confirm the fix via the verifier-haiku agent, do so and include its summary.json; if your tools don't allow that, say so plainly rather than claiming it passes."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 1,
+    "edits": [],
+    "durationSeconds": 102,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 1,
+    "nestedVerdicts": [
+      "All 3 stage(s) passed"
+    ],
+    "correct": true,
+    "exact": false,
+    "noise": [],
+    "recheckFlaked": false,
+    "change": "29 changed lines in SemanticMatcher.cs"
+  },
+  "t2": {
+    "calls": 4,
+    "start": 117475,
+    "footprint": 5431,
+    "firstCallCacheWrite": 1537,
+    "cost": 0.28702946500000004,
+    "warmCost": 0.28702946500000004,
+    "projected": 0.39564946500000003,
+    "opusCost": 0.2003562000000001,
+    "haikuCost": 0.002990664999999999,
+    "sonnetCost": 0.0836826,
+    "agents": {
+      "verifier-haiku": 1,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "Repository: $WS/confit (ConfIT, a .NET declarative API testing library; follow its CLAUDE.md conventions).\n\nVerifier summary.json (run dir relative to repo root):\n{summary.json}\n\nBrief:\n- What changed: the user deliberately changed src/ConfIT/Matching/DeltaFormatter.cs so that when a field is present in the actual response but missing on the expected side, the mismatch output says `<not present>` instead of `<absent>` (the 3-element delta case `[actualVal, 0, 0]`).\n- Intended behaviour change: YES. This is a product decision. Keep the new `<not present>` wording in DeltaFormatter \u2014 do not revert it. Tests that assert the old `<absent>` wording are out of date and should be updated to expect `<not present>` (e.g. likely `Format_FieldInActualNotInExpected_ShowsAbsentSentinel` in test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs \u2014 rename it to reflect the new sentinel if its name references \"Absent\", following the Method_Condition_ExpectedOutcome convention). Also check for other assertions/docs/comments referencing `<absent>` for this case (tests, example suites, doc/) and update them consistently. Do not touch the `<missing>` sentinel (expected-present, actual-missing) \u2014 that is unchanged.\n- If a failing test is unrelated to this wording change, don't paper over it: fix production code only if the cause is clear, otherwise stop and report it.\n\nReport back: which tests failed (names), root cause, and exactly which files/lines you changed. Confirm the fix via the verifier-haiku agent if your tools allow and include its summary.json run id/status; if they don't, say so plainly rather than claiming it passes."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 85,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 1,
+    "nestedVerdicts": [
+      "All 3 stage(s) passed"
+    ],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false
+  }
+}

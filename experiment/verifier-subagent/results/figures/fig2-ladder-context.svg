@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="410" viewBox="0 0 800 410" font-family='system-ui, -apple-system, "Segoe UI", sans-serif' role="img" aria-label="Verifier, then hint, then fixer: what the orchestrator carries on a failing run">
+<rect width="800" height="410" fill="#fcfcfb"/>
+<title>Verifier, then hint, then fixer: what the orchestrator carries on a failing run</title>
+<desc>Tokens added to the orchestrator's context: bar = median, dots = runs. Blue darkens with each step. Grey: for comparison. The lower group also fixes the code and re-verifies, so compare within a group.</desc>
+<text x="16" y="26" font-size="15" font-weight="600" fill="#0b0b0b">Verifier, then hint, then fixer: what the orchestrator carries on a failing run</text>
+<text x="16" y="46" font-size="12" fill="#52514e">Tokens added to the orchestrator's context: bar = median, dots = runs. Blue darkens with each step.</text>
+<text x="16" y="62" font-size="12" fill="#52514e">Grey: for comparison. The lower group also fixes the code and re-verifies, so compare within a group.</text>
+<text x="16" y="122" font-size="11" font-weight="600" fill="#52514e">Diagnose only · Sonnet 5.5</text>
+<text x="26" y="147" font-size="12" fill="#52514e">Raw test command</text>
+<text x="26" y="177" font-size="12" fill="#52514e">Verifier</text>
+<text x="26" y="207" font-size="12" fill="#52514e">Verifier + hint</text>
+<line x1="16" y1="224" x2="776" y2="224" stroke="#e1e0d9" stroke-width="1"/>
+<text x="16" y="240" font-size="11" font-weight="600" fill="#52514e">Diagnose, fix, re-verify · Opus 5.5</text>
+<text x="26" y="265" font-size="12" fill="#52514e">Opus alone</text>
+<text x="26" y="295" font-size="12" fill="#52514e">Same split, all on Opus</text>
+<text x="26" y="325" font-size="12" fill="#52514e">Verifier + hint + fixer</text>
+<text x="26" y="355" font-size="12" fill="#52514e">… with tightened instructions</text>
+<text x="252" y="94" font-size="12" font-weight="600" fill="#0b0b0b">1 failing test</text>
+<line x1="252.0" y1="100" x2="252.0" y2="370" stroke="#c3c2b7" stroke-width="1"/>
+<text x="252.0" y="385" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">0</text>
+<line x1="311.0" y1="100" x2="311.0" y2="370" stroke="#e1e0d9" stroke-width="1"/>
+<text x="311.0" y="385" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">10K</text>
+<line x1="370.0" y1="100" x2="370.0" y2="370" stroke="#e1e0d9" stroke-width="1"/>
+<text x="370.0" y="385" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">20K</text>
+<line x1="429.0" y1="100" x2="429.0" y2="370" stroke="#e1e0d9" stroke-width="1"/>
+<text x="429.0" y="385" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">30K</text>
+<line x1="488.0" y1="100" x2="488.0" y2="370" stroke="#e1e0d9" stroke-width="1"/>
+<text x="488.0" y="385" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">40K</text>
+<path d="M252.0,136.0 H290.5 Q294.5,136.0 294.5,140.0 V148.0 Q294.5,152.0 290.5,152.0 H252.0 Z" fill="#c3c2b7"><title>Raw test command, R1: median 7.2K</title></path>
+<circle cx="294.5" cy="144" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-A-r1: 7.2K</title></circle>
+<circle cx="294.1" cy="144" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-A-r2: 7.1K</title></circle>
+<circle cx="296.3" cy="144" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-A-r3: 7.5K</title></circle>
+<text x="304.3" y="148" font-size="11" fill="#52514e">7.2K</text>
+<path d="M252.0,166.0 H306.4 Q310.4,166.0 310.4,170.0 V178.0 Q310.4,182.0 306.4,182.0 H252.0 Z" fill="#86b6ef"><title>Verifier, R1: median 9.9K</title></path>
+<circle cx="310.4" cy="174" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-D-r1: 9.9K</title></circle>
+<circle cx="290.0" cy="174" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-D-r2: 6.4K</title></circle>
+<circle cx="392.1" cy="174" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-D-r3: 23.7K</title></circle>
+<text x="318.4" y="178" font-size="11" fill="#52514e">9.9K</text>
+<path d="M252.0,196.0 H269.6 Q273.6,196.0 273.6,200.0 V208.0 Q273.6,212.0 269.6,212.0 H252.0 Z" fill="#3987e5"><title>Verifier + hint, R1: median 3.7K</title></path>
+<circle cx="276.3" cy="204" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-H-r1: 4.1K</title></circle>
+<circle cx="273.6" cy="204" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-H-r2: 3.7K</title></circle>
+<circle cx="272.7" cy="204" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-H-r3: 3.5K</title></circle>
+<text x="284.3" y="208" font-size="11" fill="#52514e">3.7K</text>
+<path d="M252.0,254.0 H346.1 Q350.1,254.0 350.1,258.0 V266.0 Q350.1,270.0 346.1,270.0 H252.0 Z" fill="#c3c2b7"><title>Opus alone, R1: median 16.6K</title></path>
+<circle cx="369.5" cy="262" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-S-r1: 19.9K</title></circle>
+<circle cx="330.8" cy="262" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-S-r2: 13.3K</title></circle>
+<text x="377.5" y="266" font-size="11" fill="#52514e">16.6K</text>
+<path d="M252.0,284.0 H269.9 Q273.9,284.0 273.9,288.0 V296.0 Q273.9,300.0 269.9,300.0 H252.0 Z" fill="#c3c2b7"><title>Same split, all on Opus, R1: median 3.7K</title></path>
+<circle cx="274.0" cy="292" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-O-r1: 3.7K</title></circle>
+<circle cx="273.8" cy="292" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-O-r2: 3.7K</title></circle>
+<text x="282.0" y="296" font-size="11" fill="#52514e">3.7K</text>
+<path d="M252.0,314.0 H270.8 Q274.8,314.0 274.8,318.0 V326.0 Q274.8,330.0 270.8,330.0 H252.0 Z" fill="#1c5cab"><title>Verifier + hint + fixer, R1: median 3.9K</title></path>
+<circle cx="273.5" cy="322" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T-r1: 3.6K</title></circle>
+<circle cx="274.8" cy="322" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T-r2: 3.9K</title></circle>
+<circle cx="275.3" cy="322" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T-r3: 4.0K</title></circle>
+<text x="283.3" y="326" font-size="11" fill="#52514e">3.9K</text>
+<path d="M252.0,344.0 H271.0 Q275.0,344.0 275.0,348.0 V356.0 Q275.0,360.0 271.0,360.0 H252.0 Z" fill="#1c5cab"><title>… with tightened instructions, R1: median 3.9K</title></path>
+<circle cx="273.5" cy="352" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T2-r1: 3.6K</title></circle>
+<circle cx="275.0" cy="352" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T2-r2: 3.9K</title></circle>
+<circle cx="277.9" cy="352" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-T2-r3: 4.4K</title></circle>
+<text x="285.9" y="356" font-size="11" fill="#52514e">3.9K</text>
+<text x="524" y="94" font-size="12" font-weight="600" fill="#0b0b0b">39 failing tests</text>
+<line x1="524.0" y1="100" x2="524.0" y2="370" stroke="#c3c2b7" stroke-width="1"/>
+<text x="524.0" y="385" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">0</text>
+<line x1="583.0" y1="100" x2="583.0" y2="370" stroke="#e1e0d9" stroke-width="1"/>
+<text x="583.0" y="385" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">10K</text>
+<line x1="642.0" y1="100" x2="642.0" y2="370" stroke="#e1e0d9" stroke-width="1"/>
+<text x="642.0" y="385" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">20K</text>
+<line x1="701.0" y1="100" x2="701.0" y2="370" stroke="#e1e0d9" stroke-width="1"/>
+<text x="701.0" y="385" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">30K</text>
+<line x1="760.0" y1="100" x2="760.0" y2="370" stroke="#e1e0d9" stroke-width="1"/>
+<text x="760.0" y="385" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">40K</text>
+<path d="M524.0,136.0 H589.4 Q593.4,136.0 593.4,140.0 V148.0 Q593.4,152.0 589.4,152.0 H524.0 Z" fill="#c3c2b7"><title>Raw test command, R3: median 11.8K</title></path>
+<circle cx="597.7" cy="144" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-A-r1: 12.5K</title></circle>
+<circle cx="588.8" cy="144" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-A-r2: 11.0K</title></circle>
+<circle cx="593.4" cy="144" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-A-r3: 11.8K</title></circle>
+<text x="605.7" y="148" font-size="11" fill="#52514e">11.8K</text>
+<path d="M524.0,166.0 H595.8 Q599.8,166.0 599.8,170.0 V178.0 Q599.8,182.0 595.8,182.0 H524.0 Z" fill="#86b6ef"><title>Verifier, R3: median 12.9K</title></path>
+<circle cx="601.4" cy="174" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-D-r1: 13.1K</title></circle>
+<circle cx="599.8" cy="174" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-D-r2: 12.9K</title></circle>
+<circle cx="586.0" cy="174" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-D-r3: 10.5K</title></circle>
+<text x="609.4" y="178" font-size="11" fill="#52514e">12.9K</text>
+<path d="M524.0,196.0 H558.4 Q562.4,196.0 562.4,200.0 V208.0 Q562.4,212.0 558.4,212.0 H524.0 Z" fill="#3987e5"><title>Verifier + hint, R3: median 6.5K</title></path>
+<circle cx="563.6" cy="204" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-H-r1: 6.7K</title></circle>
+<circle cx="558.3" cy="204" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-H-r2: 5.8K</title></circle>
+<circle cx="562.4" cy="204" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-H-r3: 6.5K</title></circle>
+<text x="571.6" y="208" font-size="11" fill="#52514e">6.5K</text>
+<path d="M524.0,254.0 H656.9 Q660.9,254.0 660.9,258.0 V266.0 Q660.9,270.0 656.9,270.0 H524.0 Z" fill="#c3c2b7"><title>Opus alone, R3: median 23.2K</title></path>
+<circle cx="645.4" cy="262" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-S-r1: 20.6K</title></circle>
+<circle cx="676.4" cy="262" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-S-r2: 25.8K</title></circle>
+<text x="684.4" y="266" font-size="11" fill="#52514e">23.2K</text>
+<path d="M524.0,284.0 H546.2 Q550.2,284.0 550.2,288.0 V296.0 Q550.2,300.0 546.2,300.0 H524.0 Z" fill="#c3c2b7"><title>Same split, all on Opus, R3: median 4.4K</title></path>
+<circle cx="550.9" cy="292" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-O-r1: 4.6K</title></circle>
+<circle cx="549.5" cy="292" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-O-r2: 4.3K</title></circle>
+<text x="558.9" y="296" font-size="11" fill="#52514e">4.4K</text>
+<path d="M524.0,314.0 H545.3 Q549.3,314.0 549.3,318.0 V326.0 Q549.3,330.0 545.3,330.0 H524.0 Z" fill="#1c5cab"><title>Verifier + hint + fixer, R3: median 4.3K</title></path>
+<circle cx="551.7" cy="322" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T-r1: 4.7K</title></circle>
+<circle cx="549.1" cy="322" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T-r2: 4.3K</title></circle>
+<circle cx="549.3" cy="322" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T-r3: 4.3K</title></circle>
+<text x="559.7" y="326" font-size="11" fill="#52514e">4.3K</text>
+<path d="M524.0,344.0 H546.2 Q550.2,344.0 550.2,348.0 V356.0 Q550.2,360.0 546.2,360.0 H524.0 Z" fill="#1c5cab"><title>… with tightened instructions, R3: median 4.4K</title></path>
+<circle cx="550.2" cy="352" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T2-r1: 4.4K</title></circle>
+<circle cx="549.9" cy="352" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T2-r2: 4.4K</title></circle>
+<circle cx="551.1" cy="352" r="4" fill="#0d366b" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-T2-r3: 4.6K</title></circle>
+<text x="559.1" y="356" font-size="11" fill="#52514e">4.4K</text>
+</svg>

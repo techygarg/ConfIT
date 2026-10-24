@@ -1,0 +1,11 @@
+--- a/src/ConfIT/Matching/SemanticMatcher.cs
++++ b/src/ConfIT/Matching/SemanticMatcher.cs
+@@ -88,7 +88,7 @@
+             throw new ArgumentException(
+                 $"Malformed matcher spec '{spec}' for field '{fieldPath}': missing closing parenthesis");
+ 
+-        return (spec[..parenIdx], spec[(parenIdx + 1)..^1]);
++        return (spec[..parenIdx],spec[(parenIdx + 1)..^1]);
+     }
+ 
+     private static string? CheckIsUuid(JToken value)

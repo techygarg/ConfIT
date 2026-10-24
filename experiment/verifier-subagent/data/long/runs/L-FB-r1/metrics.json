@@ -1,0 +1,80 @@
+{
+  "runId": "L-FB-r1",
+  "t1": {
+    "calls": 4,
+    "start": 107601,
+    "footprint": 5046,
+    "firstCallCacheWrite": 0,
+    "cost": 0.3011922549999999,
+    "warmCost": 0.3011922549999999,
+    "projected": 0.4021122549999999,
+    "opusCost": 0.1848139999999998,
+    "haikuCost": 0.004046155,
+    "sonnetCost": 0.11233210000000002,
+    "agents": {
+      "verifier-haiku": 2,
+      "fixer-sonnet": 1
+    },
+    "actions": [],
+    "briefs": [
+      "Repository: $WS/confit (ConfIT .NET library; see CLAUDE.md for conventions).\n\nVerifier summary.json (verbatim):\n{summary.json}\n\nBrief:\n- What changed: the user just pulled teammates' latest changes. I don't know exactly which files changed (the directory is not a git repo, so there's no diff). The area most likely involved is response matching / mismatch output: src/ConfIT/Matching/ (ResultMatcher.cs, DeltaFormatter.cs, SemanticMatcher.cs) and BaseTest.Verify, but don't assume that, go by the log.\n- Intended behaviour change: the tests are the spec. Whatever the failing unit tests assert is the intended behaviour. Fix the production code under src/ConfIT to satisfy them. Do not edit, weaken, skip or delete tests to make them pass. If a test looks genuinely self-contradictory or wrong, don't change it; stop and report that instead.\n- Keep fixes minimal and in the style of the surrounding code; code must work on net9.0 and net10.0.\n\nReport back: which tests failed, the root cause, and exactly which files/lines you changed (and anything you were unsure about or left unfixed)."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 105,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": false,
+    "noise": [],
+    "recheckFlaked": false,
+    "change": "29 changed lines in SemanticMatcher.cs"
+  },
+  "t2": {
+    "calls": 6,
+    "start": 113889,
+    "footprint": 7943,
+    "firstCallCacheWrite": 1242,
+    "cost": 0.4438161700000003,
+    "warmCost": 0.4438161700000003,
+    "projected": 0.6026761700000003,
+    "opusCost": 0.2913080000000001,
+    "haikuCost": 0.00444447,
+    "sonnetCost": 0.14806369999999994,
+    "agents": {
+      "verifier-haiku": 3,
+      "fixer-sonnet": 2
+    },
+    "actions": [],
+    "briefs": [
+      "Repository: $WS/confit (ConfIT .NET library; see CLAUDE.md for conventions).\n\nVerifier summary.json (verbatim):\n{summary.json}\n\nBrief:\n- What changed: an intentional product decision. In src/ConfIT/Matching/DeltaFormatter.cs, the sentinel shown when a field is present in the actual response but missing on the expected side was changed from `<absent>` to `<not present>`. The user made this edit themselves.\n- Intended behaviour change: YES. The new `<not present>` wording is now the spec. Do NOT revert or alter that wording in DeltaFormatter. Fix the failure by updating test assertions (and test names/comments that mention \"Absent\" for this sentinel, e.g. `Format_FieldInActualNotInExpected_ShowsAbsentSentinel` in test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs) to expect `<not present>`. Also check example/ suites and doc/ for text that asserts or documents `<absent>` and update it to match.\n- Leave the `<missing>` sentinel (field in expected, missing from actual) unchanged.\n- If a failing test is unrelated to this wording change, go by the log and fix it to the tests' spec, but report it separately. Don't weaken or delete tests beyond the wording update.\n- Test naming convention: Method_Condition_ExpectedOutcome, no Should/When/Given prefixes.\n\nReport back: which tests failed, the root cause, and exactly which files/lines you changed.",
+      "Repository: $WS/confit (ConfIT .NET library; see CLAUDE.md for conventions).\n\nVerifier summary.json (verbatim, latest run):\n{summary.json}\n\nBrief:\n- What changed: an intentional product decision. In src/ConfIT/Matching/DeltaFormatter.cs the sentinel shown when a field is in the actual response but missing on the expected side changed from `<absent>` to `<not present>` (the user's own edit). Do NOT revert or alter that wording.\n- A previous fix round already did this: renamed DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel to ..._ShowsNotPresentSentinel and changed its assertion to Contain(\"<not present>\"); and updated `<absent>` to `<not present>` in doc/failure-output.md and both skills/*/references/writing-tests.md. Despite that, unit still fails. Read the NEW log (path above) to find what is failing now; don't assume it's the same test. Possibilities include: other tests asserting the old sentinel or exact output strings, a stale build/test artifact, or something in that previous edit that is wrong (check the edited test file compiles and asserts what DeltaFormatter really emits, e.g. exact spelling/spacing/colour wrapping).\n- Intended behaviour change: YES, `<not present>` is the spec. Fix tests to match it; if the failure is unrelated to the wording, fix production code to satisfy the tests and report it separately. Don't weaken or delete tests beyond the wording update. Leave `<missing>` unchanged.\n\nReport back: which tests failed, the root cause, and exactly which files/lines you changed."
+    ],
+    "briefCarriesIntent": true,
+    "ranChecksItself": false,
+    "logReads": 0,
+    "codeReads": 0,
+    "edits": [],
+    "durationSeconds": 199,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [
+      "flaky test"
+    ],
+    "recheckFlaked": false
+  }
+}

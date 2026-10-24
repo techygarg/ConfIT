@@ -1,0 +1,1 @@
+Check whether this repository's build and tests pass by running `make build && make unit && make component` from the repository root. Report whether all checks pass. If anything fails, list the failing tests (if there are many, give the count and group them by cause) and quote the assertion or error message for each cause. Do not modify any files.

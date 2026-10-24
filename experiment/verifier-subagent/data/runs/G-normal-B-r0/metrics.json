@@ -1,0 +1,107 @@
+{
+  "runId": "G-normal-B-r0",
+  "arm": "B",
+  "scenario": "G",
+  "config": "normal",
+  "repeat": 0,
+  "sessionId": "2ea27b6b-6c83-4152-bb6f-8873b5a0d098",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch"
+  ],
+  "startEpoch": 1792565137,
+  "endEpoch": 1792565154,
+  "wallSeconds": 17,
+  "prewarmSeconds": 7,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 8,
+  "main": {
+    "calls": 3,
+    "contextFirst": 29407,
+    "contextLast": 30841,
+    "contextPeak": 30841,
+    "processed": 90815,
+    "output": 439,
+    "cacheRead": 71734,
+    "cacheWrite1h": 18636,
+    "cacheWrite5m": 0,
+    "uncachedInput": 6,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 1434,
+  "contextSeries": [
+    29407,
+    30128,
+    30841
+  ],
+  "mainTools": [
+    "Bash",
+    "Read"
+  ],
+  "agentsSpawned": [],
+  "verificationCommands": 1,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 1132,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Bash",
+      "callIndex": 0,
+      "seenChars": 980,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "bash .lattice/scripts/run-verification.sh .lattice/verification.yaml"
+      }
+    },
+    {
+      "tool": "Read",
+      "callIndex": 1,
+      "seenChars": 1132,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "file_path": "$WS/confit/tmp/verification/20261021T064542Z-829062/summary.json"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [],
+  "subagentProcessed": 0,
+  "totalProcessed": 90815,
+  "verificationRuns": [
+    {
+      "runId": "20261021T064542Z-829062",
+      "overallStatus": "passed",
+      "headline": "All 3 stage(s) passed"
+    }
+  ],
+  "observedFailingTests": [],
+  "verifierFidelity": [],
+  "answer": "All checks pass. `summary.json` reports `overallStatus: \"passed\"` with the headline \"All 3 stage(s) passed\".\n\n| Stage | Command | Result | Duration |\n|---|---|---|---|\n| build | `make build` | passed (exit 0) | 2s |\n| unit | `make unit` | passed (exit 0) | 2s |\n| component | `make component` | passed (exit 0) | 3s |\n\nNo stages failed and the run didn't halt early. I didn't open any stage logs, since nothing failed. I didn't modify any files. The run directory is `tmp/verification/20261021T064542Z-829062`.\n\nThe configuration doesn't include an integration stage, so integration tests weren't part of this check.",
+  "signals": {
+    "mentionsFailure": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.0861194,
+    "num_turns": 3,
+    "duration_ms": 15324,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

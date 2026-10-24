@@ -1,0 +1,28 @@
+{
+  "scenario": "R1",
+  "failingTests": [
+    "ConfIT.UnitTest.Util.DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel"
+  ],
+  "assemblies": [
+    {
+      "result": "Failed",
+      "failed": 1,
+      "passed": 271,
+      "skipped": 0,
+      "total": 272,
+      "dll": "ConfIT.UnitTest.dll",
+      "tfm": "net9.0"
+    },
+    {
+      "result": "Failed",
+      "failed": 1,
+      "passed": 271,
+      "skipped": 0,
+      "total": 272,
+      "dll": "ConfIT.UnitTest.dll",
+      "tfm": "net10.0"
+    }
+  ],
+  "headline": "Failed at unit: exit code 2; skipped: component",
+  "sameFailingTestsAtEveryVerbosity": false
+}

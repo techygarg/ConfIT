@@ -1,0 +1,237 @@
+{
+  "runId": "R1-normal-T2-r2",
+  "arm": "T2",
+  "scenario": "R1",
+  "config": "normal",
+  "repeat": 2,
+  "sessionId": "0a417927-ae84-481e-806c-4622e1d9d19a",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "budgetUsd": 10.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R1-few.patch",
+    "inputs/config/failure-hint.patch"
+  ],
+  "startEpoch": 1792592154,
+  "endEpoch": 1792592238,
+  "wallSeconds": 84,
+  "prewarmSeconds": 7,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "fixArm": true,
+  "finalStatus": "passed",
+  "netChangeFiles": [],
+  "netChangeLines": 0,
+  "testsEdited": false,
+  "longestGapSeconds": 31,
+  "main": {
+    "calls": 4,
+    "contextFirst": 29804,
+    "contextLast": 33707,
+    "contextPeak": 33707,
+    "processed": 128688,
+    "output": 1753,
+    "cacheRead": 114320,
+    "cacheWrite1h": 12607,
+    "cacheWrite5m": 0,
+    "uncachedInput": 8,
+    "models": [
+      "claude-opus-5-5"
+    ]
+  },
+  "footprint": 3903,
+  "contextSeries": [
+    29804,
+    30877,
+    32547,
+    33707
+  ],
+  "mainTools": [
+    "Agent",
+    "Agent",
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "verifier-haiku",
+    "fixer-sonnet",
+    "verifier-haiku"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 2009,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1886,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 1,
+      "seenChars": 1937,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "fixer-sonnet"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 2,
+      "seenChars": 2009,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "verifier-haiku",
+      "calls": 4,
+      "contextFirst": 12573,
+      "contextLast": 14775,
+      "contextPeak": 14775,
+      "processed": 55535,
+      "output": 1186,
+      "cacheRead": 39568,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 14773,
+      "uncachedInput": 8,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    },
+    {
+      "agentType": "fixer-sonnet",
+      "calls": 5,
+      "contextFirst": 13135,
+      "contextLast": 17593,
+      "contextPeak": 17593,
+      "processed": 79733,
+      "output": 1630,
+      "cacheRead": 60502,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 17591,
+      "uncachedInput": 10,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Grep",
+        "Grep",
+        "Read",
+        "Grep",
+        "Read",
+        "Grep",
+        "Edit"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": true
+    },
+    {
+      "agentType": "verifier-haiku",
+      "calls": 4,
+      "contextFirst": 12573,
+      "contextLast": 14815,
+      "contextPeak": 14815,
+      "processed": 55653,
+      "output": 1392,
+      "cacheRead": 52011,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 2242,
+      "uncachedInput": 8,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 190921,
+  "totalProcessed": 319609,
+  "verificationRuns": [
+    {
+      "runId": "20261021T141603Z-d4e1ae",
+      "overallStatus": "failed",
+      "headline": "Failed at unit: exit code 2; skipped: component"
+    },
+    {
+      "runId": "20261021T141700Z-0f60dc",
+      "overallStatus": "passed",
+      "headline": "All 3 stage(s) passed"
+    }
+  ],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel"
+  ],
+  "verifierFidelity": [
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    },
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    }
+  ],
+  "answer": "**Final status: passing.** In the second verification run, all three configured stages passed: build, unit and component (run `20261021T141700Z-0f60dc`). It took one fix.\n\n**What failed:** On the first run, the unit stage failed with exit code 2 and the component stage was skipped. The failing test was `DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel`, which failed once for each target framework.\n\n**Root cause:** When the actual response has a field that the expected response doesn't, the diff output is meant to show `<absent>` in the \"expected\" slot. `DeltaFormatter` was printing `<not present>` instead, so the test's check for `<absent>` failed. The fixer judged the test to be right and the production code wrong, because `SemanticMatcher.cs` already uses the word \"absent\" for the same idea.\n\n**What changed:** One line in `src/ConfIT/Matching/DeltaFormatter.cs:69`:\n```diff\n- expected = TestColor.Subtle(\"<not present>\");\n+ expected = TestColor.Subtle(\"<absent>\");\n```\n\nNothing was committed. The stages that ran are only the ones configured in `.lattice/verification.yaml`: build, unit and component. The integration tests and the skills checks were not run.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesTest": true,
+    "quotesAssertion": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.22957546500000003,
+    "num_turns": 4,
+    "duration_ms": 83234,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

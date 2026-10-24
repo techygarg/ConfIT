@@ -1,0 +1,177 @@
+{
+  "runId": "R1-normal-D-r1",
+  "arm": "D",
+  "scenario": "R1",
+  "config": "normal",
+  "repeat": 1,
+  "sessionId": "8355a86c-9c91-424f-bb70-d6f4760acfc8",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R1-few.patch"
+  ],
+  "startEpoch": 1792566279,
+  "endEpoch": 1792566324,
+  "wallSeconds": 45,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 24,
+  "main": {
+    "calls": 5,
+    "contextFirst": 29370,
+    "contextLast": 39271,
+    "contextPeak": 39271,
+    "processed": 171483,
+    "output": 1043,
+    "cacheRead": 160529,
+    "cacheWrite1h": 9901,
+    "cacheWrite5m": 0,
+    "uncachedInput": 10,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 9901,
+  "contextSeries": [
+    29370,
+    30328,
+    33908,
+    37563,
+    39271
+  ],
+  "mainTools": [
+    "Agent",
+    "Bash",
+    "Grep",
+    "Read"
+  ],
+  "agentsSpawned": [
+    "lattice:verifier"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 3,
+  "biggestToolResultSeen": 6161,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1658,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "lattice:verifier"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 1,
+      "seenChars": 5948,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "tail -n 60 $WS/confit/tmp/verification/20261021T070451Z-4fe603/unit.log"
+      }
+    },
+    {
+      "tool": "Grep",
+      "callIndex": 2,
+      "seenChars": 6161,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "pattern": "Failed |Assert|Expected|Error Message",
+        "path": "$WS/confit/tmp/verification/20261021T070451Z-4fe603/unit.log"
+      }
+    },
+    {
+      "tool": "Read",
+      "callIndex": 3,
+      "seenChars": 2853,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "file_path": "$WS/confit/tmp/verification/20261021T070451Z-4fe603/unit.log",
+        "offset": 208,
+        "limit": 30
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "lattice:verifier",
+      "calls": 4,
+      "contextFirst": 12456,
+      "contextLast": 13991,
+      "contextPeak": 13991,
+      "processed": 53354,
+      "output": 846,
+      "cacheRead": 50965,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 1535,
+      "uncachedInput": 8,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Bash"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 53354,
+  "totalProcessed": 224837,
+  "verificationRuns": [
+    {
+      "runId": "20261021T070451Z-4fe603",
+      "overallStatus": "failed",
+      "headline": "Failed at unit: exit code 2; skipped: component"
+    }
+  ],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel"
+  ],
+  "verifierFidelity": [
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    }
+  ],
+  "answer": "Not all checks pass. The build passed, but the unit stage failed, so the component stage was skipped. The run halted early, and the integration stage wasn't part of it.\n\n**Failing unit test:** 1 of 272 failed (271 passed). The test is `ConfIT.UnitTest.Util.DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel`, at `test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs:53`.\n\n**Error message:**\n```\nExpected result \"Response body mismatch:\n\ndebug\n  expected: <not present>\n  actual:   \"trace\"\" to contain \"<absent>\".\n```\nThe formatter's output has `<not present>` where the test expects `<absent>`. This could be a stale test assertion or a formatter change that didn't update the test. I didn't open the source to tell which.\n\nLogs are in `tmp/verification/20261021T070451Z-4fe603/`, and the unit log is `unit.log`. I didn't modify any files.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesTest": true,
+    "quotesAssertion": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.08351689999999999,
+    "num_turns": 5,
+    "duration_ms": 43366,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

@@ -1,0 +1,296 @@
+{
+  "runId": "R3-normal-D-r1",
+  "arm": "D",
+  "scenario": "R3",
+  "config": "normal",
+  "repeat": 1,
+  "sessionId": "dbf711c9-22d6-4d52-8f11-0f165b1a621d",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R3-many.patch"
+  ],
+  "startEpoch": 1792566484,
+  "endEpoch": 1792566530,
+  "wallSeconds": 46,
+  "prewarmSeconds": 7,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 15,
+  "main": {
+    "calls": 7,
+    "contextFirst": 29370,
+    "contextLast": 42490,
+    "contextPeak": 42490,
+    "processed": 248076,
+    "output": 2933,
+    "cacheRead": 232009,
+    "cacheWrite1h": 13120,
+    "cacheWrite5m": 0,
+    "uncachedInput": 14,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 13120,
+  "contextSeries": [
+    29370,
+    30266,
+    30533,
+    35058,
+    38398,
+    39028,
+    42490
+  ],
+  "mainTools": [
+    "Agent",
+    "Read",
+    "Grep",
+    "Read",
+    "Grep",
+    "Grep",
+    "Grep",
+    "Grep",
+    "Read",
+    "Grep"
+  ],
+  "agentsSpawned": [
+    "lattice:verifier"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 9,
+  "biggestToolResultSeen": 7886,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1658,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "lattice:verifier"
+      }
+    },
+    {
+      "tool": "Read",
+      "callIndex": 1,
+      "seenChars": 371,
+      "isError": true,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "file_path": "$WS/confit/tmp/verification/20261021T070813Z-5228db/unit.log"
+      }
+    },
+    {
+      "tool": "Grep",
+      "callIndex": 2,
+      "seenChars": 7886,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "pattern": "error|Failed|Assert|Expected|Passed!|Total tests|make:",
+        "path": "$WS/confit/tmp/verification/20261021T070813Z-5228db/unit.log"
+      }
+    },
+    {
+      "tool": "Read",
+      "callIndex": 3,
+      "seenChars": 2565,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "file_path": "$WS/confit/tmp/verification/20261021T070813Z-5228db/unit.log",
+        "offset": 68,
+        "limit": 20
+      }
+    },
+    {
+      "tool": "Grep",
+      "callIndex": 3,
+      "seenChars": 2255,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "pattern": "^(Failed!|Passed!)|Total tests|^\\s+(Failed|Passed|Total):? |make: \\*\\*\\*",
+        "path": "$WS/confit/tmp/verification/20261021T070813Z-5228db/unit.log"
+      }
+    },
+    {
+      "tool": "Grep",
+      "callIndex": 3,
+      "seenChars": 95,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "pattern": "^  Failed ",
+        "path": "$WS/confit/tmp/verification/20261021T070813Z-5228db/unit.log"
+      }
+    },
+    {
+      "tool": "Grep",
+      "callIndex": 4,
+      "seenChars": 97,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "pattern": "Failed!|Passed!|Unknown semantic matcher|^\\s+(System\\.\\w+Exception|Expected) .*",
+        "path": "$WS/confit/tmp/verification/20261021T070813Z-5228db/unit.log"
+      }
+    },
+    {
+      "tool": "Grep",
+      "callIndex": 4,
+      "seenChars": 117,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "pattern": "Failed!|Passed!|Total tests|Test Run Failed|make.*Error",
+        "path": "$WS/confit/tmp/verification/20261021T070813Z-5228db/unit.log"
+      }
+    },
+    {
+      "tool": "Read",
+      "callIndex": 5,
+      "seenChars": 5239,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "file_path": "$WS/confit/tmp/verification/20261021T070813Z-5228db/unit.log",
+        "offset": 1846,
+        "limit": 52
+      }
+    },
+    {
+      "tool": "Grep",
+      "callIndex": 5,
+      "seenChars": 97,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "pattern": "Unknown semantic matcher '(\\w+)'",
+        "path": "$WS/confit/tmp/verification/20261021T070813Z-5228db/unit.log"
+      }
+    }
+  ],
+  "truncationHintInMain": true,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "lattice:verifier",
+      "calls": 4,
+      "contextFirst": 12402,
+      "contextLast": 13957,
+      "contextPeak": 13957,
+      "processed": 53141,
+      "output": 840,
+      "cacheRead": 41727,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 10566,
+      "uncachedInput": 8,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 53141,
+  "totalProcessed": 301217,
+  "verificationRuns": [
+    {
+      "runId": "20261021T070813Z-5228db",
+      "overallStatus": "failed",
+      "headline": "Failed at unit: exit code 2; skipped: component"
+    }
+  ],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_AllThreeMatcherTypes_EachApplied",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_CustomMatcher_PassesForValidValue",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherFails_ReturnedDescriptionNamesField",
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_SemanticMatcherValid_PassesAndRemovesField",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_CustomMatcherName_DelegatesToCustomFunc",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithNonNumericValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAboveThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthOnArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithExactMatch_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithMismatch_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithinInclusiveRange_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithValidEmail_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyObject_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyString_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithDateOnly_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00+05:30\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00.123Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithDateTime_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithValidDate_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyArray_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyString_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithNonEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithPresentValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNonNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNullValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"A1B2C3D4-E5F6-7890-ABCD-EF1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueBelowThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NestedFieldPath_PassesForValidValue",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NullExpected_DoesNotThrow"
+  ],
+  "verifierFidelity": [
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    }
+  ],
+  "answer": "**Not all checks pass.** The build passed, but the unit stage failed, so the component stage was skipped. I didn't open the component log or run it. I didn't modify any files.\n\n| Stage | Result |\n|---|---|\n| build (`make build`) | passed |\n| unit (`make unit`) | **failed**, exit code 2 |\n| component (`make component`) | skipped |\n\nThe unit log is at `tmp/verification/20261021T070813Z-5228db/unit.log`. The run was halted early and `make` ended with `make: *** [unit] Error 1`.\n\nThe unit run reports 272 tests, 233 passed and 39 failed, and this appears twice in the log, once per target framework. I'm treating that as the same 39 failures on net9.0 and net10.0. The 39 failures fall into two causes, almost all in `SemanticMatcherTests` and `ResultMatcherTests`.\n\n**1. Built-in semantic matchers aren't recognised (most of the 39).** `SemanticMatcher.Apply` throws `ArgumentException` for matcher names that should be built in. The name in the message is lowercase, for example:\n   - `System.ArgumentException : Unknown semantic matcher 'isnull' for field 'deletedAt'`\n   - `System.ArgumentException : Unknown semantic matcher 'isuuid' for field 'id'`\n\n   The exception is thrown at `src/ConfIT/Matching/SemanticMatcher.cs:line 61`. Affected tests include `Apply_IsNullWithNullValue_Passes`, `Apply_IsUuidWithInvalidValue_ReturnsFailure`, `Apply_IsEmailWithValidEmail_Passes`, `Apply_IsIsoDateTimeWithValidDateTime_Passes` (3 cases), `Apply_GreaterThanWithValueAtThreshold_ReturnsFailure`, `Apply_HasLengthWithExactMatch_Passes` and `Apply_CustomMatcherName_DelegatesToCustomFunc`. It looks like the matcher lookup breaks on the lowercased name. I haven't confirmed that in the source.\n\n**2. Wrong exception type, and null-expected handling (a few tests).**\n   - `Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException`: `Expected a <System.InvalidOperationException> to be thrown, but found <System.ArgumentException>`.\n   - `MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow` (`ResultMatcherTests.cs:178-179`) and `Apply_NullExpected_DoesNotThrow` (`SemanticMatcherTests.cs:275`): the code under test throws where the test expects no exception. I didn't read the exact message. Both probably come from the same `ArgumentException` as cause 1. I didn't check that.\n\nI didn't confirm exact per-cause counts. The log shows 39 failures in total, and the \"Unknown semantic matcher\" message accounts for most of them.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesCause": true,
+    "count39or78": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.14404260000000002,
+    "num_turns": 11,
+    "duration_ms": 44945,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

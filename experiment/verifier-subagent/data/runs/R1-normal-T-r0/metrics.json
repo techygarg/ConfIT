@@ -1,0 +1,238 @@
+{
+  "runId": "R1-normal-T-r0",
+  "arm": "T",
+  "scenario": "R1",
+  "config": "normal",
+  "repeat": 0,
+  "sessionId": "e83eef0a-47a1-4e93-9da1-cb0660a3e4a4",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "budgetUsd": 10.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R1-few.patch",
+    "inputs/config/failure-hint.patch"
+  ],
+  "startEpoch": 1792580610,
+  "endEpoch": 1792580694,
+  "wallSeconds": 84,
+  "prewarmSeconds": 9,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "fixArm": true,
+  "finalStatus": "passed",
+  "netChangeFiles": [],
+  "netChangeLines": 0,
+  "testsEdited": false,
+  "longestGapSeconds": 35,
+  "main": {
+    "calls": 4,
+    "contextFirst": 29804,
+    "contextLast": 33749,
+    "contextPeak": 33749,
+    "processed": 128757,
+    "output": 1719,
+    "cacheRead": 93283,
+    "cacheWrite1h": 33747,
+    "cacheWrite5m": 0,
+    "uncachedInput": 8,
+    "models": [
+      "claude-opus-5-5"
+    ]
+  },
+  "footprint": 3945,
+  "contextSeries": [
+    29804,
+    30902,
+    32583,
+    33749
+  ],
+  "mainTools": [
+    "Agent",
+    "Agent",
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "verifier-haiku",
+    "fixer-sonnet",
+    "verifier-haiku"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 2152,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1949,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 1,
+      "seenChars": 2152,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "fixer-sonnet"
+      }
+    },
+    {
+      "tool": "Agent",
+      "callIndex": 2,
+      "seenChars": 2061,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "verifier-haiku"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "verifier-haiku",
+      "calls": 4,
+      "contextFirst": 12466,
+      "contextLast": 14717,
+      "contextPeak": 14717,
+      "processed": 55152,
+      "output": 1424,
+      "cacheRead": 51469,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 2251,
+      "uncachedInput": 8,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    },
+    {
+      "agentType": "fixer-sonnet",
+      "calls": 6,
+      "contextFirst": 12990,
+      "contextLast": 19107,
+      "contextPeak": 19107,
+      "processed": 100224,
+      "output": 1862,
+      "cacheRead": 79245,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 19105,
+      "uncachedInput": 12,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Grep",
+        "Read",
+        "Grep",
+        "Glob",
+        "Grep",
+        "Read",
+        "Grep",
+        "Edit"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    },
+    {
+      "agentType": "verifier-haiku",
+      "calls": 4,
+      "contextFirst": 12466,
+      "contextLast": 14708,
+      "contextPeak": 14708,
+      "processed": 55306,
+      "output": 1368,
+      "cacheRead": 39224,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 14706,
+      "uncachedInput": 8,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "tools": [
+        "Bash",
+        "Bash",
+        "Read"
+      ],
+      "touchedLogs": false,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 210682,
+  "totalProcessed": 339439,
+  "verificationRuns": [
+    {
+      "runId": "20261021T110338Z-71b1ec",
+      "overallStatus": "failed",
+      "headline": "Failed at unit: exit code 2; skipped: component"
+    },
+    {
+      "runId": "20261021T110435Z-58620c",
+      "overallStatus": "passed",
+      "headline": "All 3 stage(s) passed"
+    }
+  ],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel"
+  ],
+  "verifierFidelity": [
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    },
+    {
+      "verbatim": true,
+      "reason": "matches summary.json",
+      "touchedLogs": false
+    }
+  ],
+  "answer": "**Final status: passed.** All three configured stages (build, unit, component) passed on the second run, `20261021T110435Z-58620c`. It took one fix cycle.\n\n**What failed:** The first run, `20261021T110338Z-71b1ec`, built fine but failed at the unit stage. One test failed on both target frameworks: `DeltaFormatterTests.Format_FieldInActualNotInExpected_ShowsAbsentSentinel`. The component stage was skipped because of that. The test expected `<absent>` in the output and got `expected: <not present>`.\n\n**Root cause:** When a field is in the actual response but not in the expected body, `DeltaFormatter` printed `<not present>` instead of `<absent>`. `<absent>` is the wording in the feature spec (`.lattice/context/assert-002-field-level-failure-output.md`) and in `CHANGELOG.md`, so the code was wrong, not the test.\n\n**What changed:** One line, in `src/ConfIT/Matching/DeltaFormatter.cs:69`: `TestColor.Subtle(\"<not present>\")` became `TestColor.Subtle(\"<absent>\")`. No other code uses the old wording, and no tests were changed.\n\nThe verification config only runs build, unit and component. Integration and skills checks (`make integration`, `make skills`) aren't in it, so they weren't run. Nothing has been committed.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesTest": true,
+    "quotesAssertion": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.40179975500000004,
+    "num_turns": 4,
+    "duration_ms": 82695,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

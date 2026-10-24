@@ -1,0 +1,106 @@
+--- a/doc/failure-output.md
++++ b/doc/failure-output.md
+@@ -34,11 +34,11 @@
+ 
+ This usually means the API is not returning a field your test expects. Check the API response schema or look at the full "Actual:" body printed above the failure.
+ 
+-**Unexpected field** — the field is in the actual response but absent from your expected body. The expected line shows `<absent>`:
++**Unexpected field** — the field is in the actual response but absent from your expected body. The expected line shows `<not present>`:
+ 
+ ```
+ internalId
+-  expected: <absent>
++  expected: <not present>
+   actual:   "srv-9182"
+ ```
+ 
+@@ -146,6 +146,6 @@
+ 
+ **`<missing>` usually means the API is not returning a field.** Verify the API response schema. Check the "Actual:" body above the failure to confirm the field is absent.
+ 
+-**`<absent>` usually means the API is returning extra fields.** Add them to `matcher.ignore` to suppress the check, or add them to your expected body to assert their values explicitly.
++**`<not present>` usually means the API is returning extra fields.** Add them to `matcher.ignore` to suppress the check, or add them to your expected body to assert their values explicitly.
+ 
+ **Skipped tests appear in the summary but not in the failure output.** If a test count looks off, check the `⏭` skipped count in the summary footer. See [test-filtering.md](test-filtering.md) for how filters interact with which tests run.
+--- a/skills/confit-component-tests/references/writing-tests.md
++++ b/skills/confit-component-tests/references/writing-tests.md
+@@ -9,7 +9,7 @@
+ 
+ **The expected body must account for every field in the actual response.** Matchers remove the
+ fields they claim, then whatever is left is compared structurally. A response field that is
+-neither listed in `body` nor claimed by a matcher fails as `expected: <absent>`.
++neither listed in `body` nor claimed by a matcher fails as `expected: <not present>`.
+ 
+ Two consequences:
+ 
+@@ -99,7 +99,7 @@
+ |---|---|---|
+ | both values shown | field present on both sides, values differ | fix the expectation, or claim the field with a matcher if it is legitimately dynamic |
+ | `actual: <missing>` | expected field absent from the response | the API does not return it — correct the expected body |
+-| `expected: <absent>` | response carries a field the test does not account for | add it to `body`, or claim it with the right matcher. Blanket-`ignore` last |
++| `expected: <not present>` | response carries a field the test does not account for | add it to `body`, or claim it with the right matcher. Blanket-`ignore` last |
+ 
+ Paths use dots for objects and brackets for arrays: `orders[0].lines[2].sku`.
+ 
+--- a/skills/confit-integration-tests/references/writing-tests.md
++++ b/skills/confit-integration-tests/references/writing-tests.md
+@@ -9,7 +9,7 @@
+ 
+ **The expected body must account for every field in the actual response.** Matchers remove the
+ fields they claim, then whatever is left is compared structurally. A response field that is
+-neither listed in `body` nor claimed by a matcher fails as `expected: <absent>`.
++neither listed in `body` nor claimed by a matcher fails as `expected: <not present>`.
+ 
+ This bites harder in black-box mode than anywhere else: a deployed service often returns fields
+ the spec never mentioned. When the spec and the response disagree, **the response wins** — correct
+@@ -116,7 +116,7 @@
+ |---|---|---|
+ | both values shown | values differ | fix the expectation, or claim the field with a matcher if it is environment-dependent |
+ | `actual: <missing>` | expected field absent from the response | the service does not return it here — correct the expected body |
+-| `expected: <absent>` | response carries a field the test does not account for | add it, or claim it with a matcher |
++| `expected: <not present>` | response carries a field the test does not account for | add it, or claim it with a matcher |
+ 
+ Paths use dots for objects and brackets for arrays: `orders[0].lines[2].sku`.
+ 
+--- a/src/ConfIT/Matching/DeltaFormatter.cs
++++ b/src/ConfIT/Matching/DeltaFormatter.cs
+@@ -66,7 +66,7 @@
+                 break;
+             case 3: // field in actual, not in expected → [actualVal, 0, 0]
+                 actual = FormatValue(arr[0]);
+-                expected = TestColor.Subtle("<absent>");
++                expected = TestColor.Subtle("<not present>");
+                 break;
+             default:
+                 return;
+--- a/src/ConfIT/Matching/SemanticMatcher.cs
++++ b/src/ConfIT/Matching/SemanticMatcher.cs
+@@ -6,7 +6,7 @@
+ public static class SemanticMatcher
+ {
+     private static readonly IReadOnlyDictionary<string, SemanticMatcherFunc> BuiltIns =
+-        new Dictionary<string, SemanticMatcherFunc>
++        new Dictionary<string, SemanticMatcherFunc>(StringComparer.OrdinalIgnoreCase)
+         {
+             ["isUuid"]        = (v, _) => CheckIsUuid(v),
+             ["isIsoDate"]     = (v, _) => CheckIsIsoDate(v),
+--- a/test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs
++++ b/test/ConfIT.UnitTest/Util/DeltaFormatterTests.cs
+@@ -39,7 +39,7 @@
+     }
+ 
+     [Fact]
+-    public void Format_FieldInActualNotInExpected_ShowsAbsentSentinel()
++    public void Format_FieldInActualNotInExpected_ShowsNotPresentSentinel()
+     {
+         // Given — 3-element delta: [actualVal, 0, 0]
+         var delta = JObject.Parse(@"{""debug"": [""trace"", 0, 0]}");
+@@ -50,7 +50,7 @@
+         // Then
+         result.Should().Contain("debug");
+         result.Should().Contain("expected:");
+-        result.Should().Contain("<absent>");
++        result.Should().Contain("<not present>");
+         result.Should().Contain("actual:");
+         result.Should().Contain("\"trace\"");
+     }

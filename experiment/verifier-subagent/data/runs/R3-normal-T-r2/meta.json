@@ -1,0 +1,31 @@
+{
+  "runId": "R3-normal-T-r2",
+  "arm": "T",
+  "scenario": "R3",
+  "config": "normal",
+  "repeat": 2,
+  "sessionId": "9b577b4e-e3a9-4b7e-9e06-bb7c31681e3c",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "budgetUsd": 10.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R3-many.patch",
+    "inputs/config/failure-hint.patch"
+  ],
+  "startEpoch": 1792581327,
+  "endEpoch": 1792581397,
+  "wallSeconds": 70,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "fixArm": true,
+  "finalStatus": "passed",
+  "netChangeFiles": [
+    "src/ConfIT/Matching/SemanticMatcher.cs"
+  ],
+  "netChangeLines": 2,
+  "testsEdited": false
+}

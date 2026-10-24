@@ -1,0 +1,122 @@
+{
+  "runId": "R3-normal-A-r1",
+  "arm": "A",
+  "scenario": "R3",
+  "config": "normal",
+  "repeat": 1,
+  "sessionId": "fa01b7aa-ac1f-478e-a5a3-90f6933a3292",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R3-many.patch"
+  ],
+  "startEpoch": 1792566537,
+  "endEpoch": 1792566570,
+  "wallSeconds": 33,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 8,
+  "main": {
+    "calls": 4,
+    "contextFirst": 29354,
+    "contextLast": 41838,
+    "contextPeak": 41838,
+    "processed": 146531,
+    "output": 2034,
+    "cacheRead": 132005,
+    "cacheWrite1h": 12484,
+    "cacheWrite5m": 0,
+    "uncachedInput": 8,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 12484,
+  "contextSeries": [
+    29354,
+    34730,
+    38575,
+    41838
+  ],
+  "mainTools": [
+    "Bash",
+    "Bash",
+    "Bash"
+  ],
+  "agentsSpawned": [],
+  "verificationCommands": 2,
+  "mainTouchedLogs": 2,
+  "biggestToolResultSeen": 10040,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Bash",
+      "callIndex": 0,
+      "seenChars": 10040,
+      "isError": true,
+      "spilled": false,
+      "cut": true,
+      "input": {
+        "command": "make build && make unit && make component 2>&1 | tail -150"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 1,
+      "seenChars": 5812,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "make unit > /tmp/unit.log 2>&1; echo exit=$?; grep -E \"^\\s+Failed |Passed!|Failed!|Total tests|Passed:|Failed:\" /tmp/unit.log | sort | uniq -c | head -80"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 2,
+      "seenChars": 5658,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "cd /tmp && grep -A6 \"Failed ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes\" unit.log | head -20; echo ----; grep -A6 \"Failed ConfIT."
+      }
+    }
+  ],
+  "truncationHintInMain": true,
+  "seenShorterThanFull": [],
+  "subagents": [],
+  "subagentProcessed": 0,
+  "totalProcessed": 146531,
+  "verificationRuns": [],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_CustomMatcher_PassesForValidValue",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"A1B2C3D4-E5F6-7890-ABCD-EF1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\")"
+  ],
+  "verifierFidelity": [],
+  "answer": "**Not all checks pass.** `make build` succeeded, but `make unit` failed with exit code 2, so `make component` never ran. Its result is unknown.\n\n**Build:** it succeeded for net9.0 and net10.0. The only warnings were NU1902, a known moderate-severity vulnerability in `Scriban.Signed` 7.2.0 (GHSA-6q7j-xr26-3h2c and GHSA-q6rr-fm2g-g5x8).\n\n**Unit tests:** 39 failed and 233 passed on each target framework. The same 39 tests fail on net9.0 and net10.0, so the counts above are per target.\n\n**Cause:** all 39 failures come from one problem in the semantic matcher. `SemanticMatcher.Apply` (`src/ConfIT/Matching/SemanticMatcher.cs:61`) throws on matcher names it should know. The error message shows the matcher name in lowercase, so the lookup of built-in and custom matcher names looks like it is failing, possibly on a case or normalisation mismatch. I didn't open the source to confirm that.\n\nError messages by matcher name, each a `System.ArgumentException`:\n- `Unknown semantic matcher 'isuuid' for field 'id'` (10 occurrences)\n- `Unknown semantic matcher 'isisodatetime' for field 'createdAt'` (8)\n- `Unknown semantic matcher 'isnull' for field 'deletedAt'`\n- `Unknown semantic matcher 'isnotnull' for field 'id'`\n- `Unknown semantic matcher 'isnotempty' for field 'items'`\n- `Unknown semantic matcher 'isisodate' for field 'date'`\n- `Unknown semantic matcher 'isemail' for field 'email'`\n- `Unknown semantic matcher 'haslength' for field 'zip'`\n- `Unknown semantic matcher 'isdomainid' for field 'code'`, which is a custom matcher registered through `CustomMatchers`\n\nThe same `ArgumentException` also appears in the tests that expected a different outcome:\n- **`Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException`:** it failed with `Expected a <System.InvalidOperationException> to be thrown, but found <System.ArgumentException>: Unknown semantic matcher 'isuuid' for field 'id'`.\n- **`Apply_NullExpected_DoesNotThrow`, `MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow`:** these tests expect no exception, but one is thrown.\n\n**Failing tests by area:**\n- **`SemanticMatcherTests`:** the large majority, across these matcher groups:\n  - uuid\n  - email\n  - iso date and datetime\n  - null and not-null\n  - empty and not-empty\n  - length\n  - greater-than and less-than\n  - nested path\n  - custom matcher\n- **`ResultMatcherTests` (5 tests):**\n  - `MatchResponseBody_AllThreeMatcherTypes_EachApplied`\n  - `MatchResponseBody_CustomMatcher_PassesForValidValue`\n  - `MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow`\n  - `MatchResponseBody_SemanticMatcherFails_ReturnedDescriptionNamesField`\n  - `MatchResponseBody_SemanticMatcherValid_PassesAndRemovesField`\n\nThe full log is at `/tmp/unit.log`. I didn't modify any repository files; the build did write its usual artefacts.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesCause": true,
+    "count39or78": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.0834925,
+    "num_turns": 4,
+    "duration_ms": 31303,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

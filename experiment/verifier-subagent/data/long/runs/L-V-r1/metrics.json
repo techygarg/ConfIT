@@ -1,0 +1,89 @@
+{
+  "runId": "L-V-r1",
+  "t1": {
+    "calls": 7,
+    "start": 107583,
+    "footprint": 12390,
+    "firstCallCacheWrite": 2953,
+    "cost": 0.3380233100000001,
+    "warmCost": 0.3380233100000001,
+    "projected": 0.5858233100000001,
+    "opusCost": 0.3337124,
+    "haikuCost": 0.00431091,
+    "sonnetCost": 0,
+    "agents": {
+      "verifier-haiku": 2
+    },
+    "actions": [
+      "log read",
+      "code read",
+      "edit SemanticMatcher.cs",
+      "edit SemanticMatcher.cs"
+    ],
+    "briefs": [],
+    "briefCarriesIntent": null,
+    "ranChecksItself": false,
+    "logReads": 1,
+    "codeReads": 1,
+    "edits": [
+      "SemanticMatcher.cs",
+      "SemanticMatcher.cs"
+    ],
+    "durationSeconds": 76,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [],
+    "recheckFlaked": false,
+    "change": "exact revert"
+  },
+  "t2": {
+    "calls": 8,
+    "start": 120916,
+    "footprint": 13908,
+    "firstCallCacheWrite": 943,
+    "cost": 0.3968629899999998,
+    "warmCost": 0.3968629899999998,
+    "projected": 0.6750229899999998,
+    "opusCost": 0.3939024000000002,
+    "haikuCost": 0.00296059,
+    "sonnetCost": 0,
+    "agents": {
+      "verifier-haiku": 2
+    },
+    "actions": [
+      "log read",
+      "log read",
+      "code read",
+      "edit DeltaFormatterTests.cs",
+      "edit DeltaFormatterTests.cs"
+    ],
+    "briefs": [],
+    "briefCarriesIntent": null,
+    "ranChecksItself": false,
+    "logReads": 2,
+    "codeReads": 1,
+    "edits": [
+      "DeltaFormatterTests.cs",
+      "DeltaFormatterTests.cs"
+    ],
+    "durationSeconds": 103,
+    "verdicts": [
+      "Failed at unit: exit code 2; skipped: component",
+      "All 3 stage(s) passed"
+    ],
+    "fixerVerifies": 0,
+    "nestedVerdicts": [],
+    "correct": true,
+    "exact": true,
+    "noise": [
+      "flaky test"
+    ],
+    "recheckFlaked": false
+  }
+}

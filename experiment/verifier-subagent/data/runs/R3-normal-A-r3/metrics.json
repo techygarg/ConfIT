@@ -1,0 +1,162 @@
+{
+  "runId": "R3-normal-A-r3",
+  "arm": "A",
+  "scenario": "R3",
+  "config": "normal",
+  "repeat": 3,
+  "sessionId": "859e17f4-4396-456d-a8ce-a69c8acab4e7",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch",
+    "inputs/scenarios/R3-many.patch"
+  ],
+  "startEpoch": 1792567409,
+  "endEpoch": 1792567441,
+  "wallSeconds": 32,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 6,
+  "main": {
+    "calls": 5,
+    "contextFirst": 29354,
+    "contextLast": 41125,
+    "contextPeak": 41125,
+    "processed": 186398,
+    "output": 1871,
+    "cacheRead": 172746,
+    "cacheWrite1h": 11771,
+    "cacheWrite5m": 0,
+    "uncachedInput": 10,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 11771,
+  "contextSeries": [
+    29354,
+    34738,
+    39249,
+    40061,
+    41125
+  ],
+  "mainTools": [
+    "Bash",
+    "Bash",
+    "Bash",
+    "Bash"
+  ],
+  "agentsSpawned": [],
+  "verificationCommands": 3,
+  "mainTouchedLogs": 3,
+  "biggestToolResultSeen": 10040,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Bash",
+      "callIndex": 0,
+      "seenChars": 10040,
+      "isError": true,
+      "spilled": false,
+      "cut": true,
+      "input": {
+        "command": "make build && make unit && make component 2>&1 | tail -150"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 1,
+      "seenChars": 6794,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "(make build && make unit && make component) > /tmp/confit-run.log 2>&1; echo \"exit=$?\"; grep -vE 'NU1902' /tmp/confit-run.log | grep -E '^\\s*(Failed|Passed!|Fai"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 2,
+      "seenChars": 1115,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "cd /tmp && grep -vE 'NU1902' confit-run.log > c.log; grep -E '^\\s+Failed ConfIT' c.log | sed -E 's/ \\[.*//; s/\\(.*//' | sort -u | wc -l; grep -E 'Failed!|Passed"
+      }
+    },
+    {
+      "tool": "Bash",
+      "callIndex": 3,
+      "seenChars": 1685,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "command": "cd /tmp && grep -E 'Total tests|Passed: |Failed: |Skipped: ' c.log; grep -E 'Failed ConfIT' c.log | grep -v SemanticMatcherTests | sed -E 's/ \\[.*//' | sort -u;"
+      }
+    }
+  ],
+  "truncationHintInMain": true,
+  "seenShorterThanFull": [],
+  "subagents": [],
+  "subagentProcessed": 0,
+  "totalProcessed": 186398,
+  "verificationRuns": [],
+  "observedFailingTests": [
+    "ConfIT.UnitTest.Util.ResultMatcherTests.MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_CustomMatcherName_DelegatesToCustomFunc",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithNonNumericValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAboveThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_GreaterThanWithValueAtThreshold_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthOnArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithExactMatch_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithMismatch_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_HasLengthWithinInclusiveRange_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmailWithValidEmail_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyArray_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsEmptyWithEmptyObject_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithDateOnly_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00+05:30\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00.123Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateTimeWithValidDateTime_Passes(dateTime: \"2026-05-31T10:30:00Z\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithDateTime_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsIsoDateWithValidDate_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyArray_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotEmptyWithEmptyString_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNotNullWithPresentValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNonNullValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsNullWithNullValue_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithInvalidValue_ReturnsFailure",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"A1B2C3D4-E5F6-7890-ABCD-EF1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_IsUuidWithValidUuid_Passes(uuid: \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\")",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_LessThanWithValueBelowThreshold_Passes",
+    "ConfIT.UnitTest.Util.SemanticMatcherTests.Apply_NullExpected_DoesNotThrow"
+  ],
+  "verifierFidelity": [],
+  "answer": "**Not all checks pass.** `make build` succeeded, but `make unit` failed, so `make component` never ran.\n\n**Unit tests:** 272 total per target framework, 233 passed, 39 failed. The same 39 fail on net9.0 and net10.0. I didn't modify any files.\n\n**Cause (all 39 failures):** every failure is the same error. `SemanticMatcher.Apply` throws before the matcher runs:\n\n```\nSystem.ArgumentException : Unknown semantic matcher 'isuuid' for field 'id'\n   at ConfIT.Matching.SemanticMatcher.Apply(JToken actual, JToken expected, Dictionary`2 semantic, IReadOnlyDictionary`2 customMatchers) in src/ConfIT/Matching/SemanticMatcher.cs:line 61\n```\n\nThe built-in matcher name is lowercased (`isuuid`, `isisodatetime`, `lessthan`, `isnull`, `isnotnull`, `isnotempty`, `isisodate`, `isemail`). It isn't found in the `BuiltIns` lookup at `SemanticMatcher.cs:~58`, and no custom matcher is registered, so the code throws. I haven't read how `BuiltIns` is built, so I can't say whether it's case-sensitive or the name normalisation is wrong. That is where I'd look first.\n\n**Failing tests, grouped by class:**\n- **`SemanticMatcherTests`:** 33 distinct tests, covering every built-in matcher. Examples: `Apply_IsUuidWithValidUuid_Passes`, `Apply_IsEmailWithValidEmail_Passes`, `Apply_HasLengthOnArray_Passes`, `Apply_FieldAbsentFromResponse_ThrowsInvalidOperationException`.\n- **`ResultMatcherTests`:** 5 distinct tests, all going through the semantic matcher:\n  - `MatchResponseBody_SemanticMatcherFails_ReturnedDescriptionNamesField`\n  - `MatchResponseBody_AllThreeMatcherTypes_EachApplied`\n  - `MatchResponseBody_CustomMatcher_PassesForValidValue`\n  - `MatchResponseBody_NullExpectedWithSemanticMatcher_DoesNotThrow`\n  - `MatchResponseBody_SemanticMatcherValid_PassesAndRemovesField`\n\nMy per-test count is a few short of 39 because the parameterised cases (the `IsUuid` and `IsIsoDateTime` theories) each count separately in the total.\n\nI didn't run `make component`, since `make unit` failed first. The full log is at `/tmp/confit-run.log`.",
+  "signals": {
+    "mentionsFailure": true,
+    "namesCause": true,
+    "count39or78": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.08308860000000001,
+    "num_turns": 5,
+    "duration_ms": 29565,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

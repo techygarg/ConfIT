@@ -1,0 +1,99 @@
+{
+  "runId": "G-quiet-P2-r0",
+  "arm": "P2",
+  "scenario": "G",
+  "config": "quiet",
+  "repeat": 0,
+  "sessionId": "b9c3db18-0fdb-4c1e-a70f-7bb2b109d4bd",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [],
+  "startEpoch": 1792565507,
+  "endEpoch": 1792565521,
+  "wallSeconds": 14,
+  "prewarmSeconds": 8,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 6,
+  "main": {
+    "calls": 2,
+    "contextFirst": 29389,
+    "contextLast": 38805,
+    "contextPeak": 38805,
+    "processed": 68766,
+    "output": 572,
+    "cacheRead": 41590,
+    "cacheWrite1h": 26600,
+    "cacheWrite5m": 0,
+    "uncachedInput": 4,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 9416,
+  "contextSeries": [
+    29389,
+    38805
+  ],
+  "mainTools": [
+    "Bash"
+  ],
+  "agentsSpawned": [],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 10040,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Bash",
+      "callIndex": 0,
+      "seenChars": 10040,
+      "isError": true,
+      "spilled": false,
+      "cut": true,
+      "input": {
+        "command": "python3 -c \"import sys; [print(f'MARK-{i:05d} ' + 'x' * 40) for i in range(2500)]; sys.exit(1)\""
+      }
+    }
+  ],
+  "truncationHintInMain": true,
+  "seenShorterThanFull": [],
+  "subagents": [],
+  "subagentProcessed": 0,
+  "totalProcessed": 68766,
+  "verificationRuns": [],
+  "observedFailingTests": [],
+  "verifierFidelity": [],
+  "answer": "The output was truncated, so I can only see part of it.\n\n- **Lowest MARK visible:** `MARK-00000`.\n- **Highest MARK visible:** `MARK-00576`. The last line is cut off partway through its `x` padding. The script printed up to `MARK-02499`, but the tool output ends at 00576.\n- **Missing lines:** yes, in two places.\n  - **Middle gap:** a marker in the output says \"[20012 characters truncated]\". The first block runs from `MARK-00000` to `MARK-00095`, and its last line is cut short. The second block starts at `MARK-00481`. Lines from roughly `MARK-00096` to `MARK-00480` aren't visible.\n  - **Tail gap:** nothing after `MARK-00576` is visible, so `MARK-00577` to `MARK-02499` are missing.\n\nThe lines I can see in each block are consecutive, with no gaps inside them. The script exited with status 1 as intended.",
+  "signals": {
+    "mentionsFailure": false,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.116287,
+    "num_turns": 2,
+    "duration_ms": 12066,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": {
+    "seenChars": 10040,
+    "fullChars": 0,
+    "marksSeen": 192,
+    "firstMark": 0,
+    "lastMark": 576,
+    "gaps": [
+      [
+        95,
+        481
+      ]
+    ],
+    "textAtFirstGap": ".. [20012 characters truncated] ...\n\nxxxxxxxxxxx\n"
+  }
+}

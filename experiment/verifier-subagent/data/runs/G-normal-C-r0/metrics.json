@@ -1,0 +1,116 @@
+{
+  "runId": "G-normal-C-r0",
+  "arm": "C",
+  "scenario": "G",
+  "config": "normal",
+  "repeat": 0,
+  "sessionId": "ec2a4c2f-d996-406a-8fab-a390a09b4248",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "budgetUsd": 5.0,
+  "patches": [
+    "inputs/config/verbosity-normal.patch"
+  ],
+  "startEpoch": 1792565161,
+  "endEpoch": 1792565189,
+  "wallSeconds": 28,
+  "prewarmSeconds": 6,
+  "exitCode": 0,
+  "transcriptFound": true,
+  "filesChangedBySession": [],
+  "memoryWritten": false,
+  "longestGapSeconds": 19,
+  "main": {
+    "calls": 2,
+    "contextFirst": 29379,
+    "contextLast": 30154,
+    "contextPeak": 30154,
+    "processed": 60018,
+    "output": 485,
+    "cacheRead": 41580,
+    "cacheWrite1h": 17949,
+    "cacheWrite5m": 0,
+    "uncachedInput": 4,
+    "models": [
+      "claude-sonnet-5-5"
+    ]
+  },
+  "footprint": 775,
+  "contextSeries": [
+    29379,
+    30154
+  ],
+  "mainTools": [
+    "Agent"
+  ],
+  "agentsSpawned": [
+    "general-purpose"
+  ],
+  "verificationCommands": 0,
+  "mainTouchedLogs": 0,
+  "biggestToolResultSeen": 1159,
+  "mainSpill": {
+    "spilled": [],
+    "readsOfSpilledFiles": []
+  },
+  "mainToolCalls": [
+    {
+      "tool": "Agent",
+      "callIndex": 0,
+      "seenChars": 1159,
+      "isError": false,
+      "spilled": false,
+      "cut": false,
+      "input": {
+        "subagent_type": "general-purpose"
+      }
+    }
+  ],
+  "truncationHintInMain": false,
+  "seenShorterThanFull": [],
+  "subagents": [
+    {
+      "agentType": "general-purpose",
+      "calls": 2,
+      "contextFirst": 25379,
+      "contextLast": 29101,
+      "contextPeak": 29101,
+      "processed": 54936,
+      "output": 456,
+      "cacheRead": 25377,
+      "cacheWrite1h": 0,
+      "cacheWrite5m": 29099,
+      "uncachedInput": 4,
+      "models": [
+        "claude-sonnet-5-5"
+      ],
+      "tools": [
+        "Bash"
+      ],
+      "touchedLogs": true,
+      "spill": {
+        "spilled": [],
+        "readsOfSpilledFiles": []
+      },
+      "replyHasDiff": false
+    }
+  ],
+  "subagentProcessed": 54936,
+  "totalProcessed": 114954,
+  "verificationRuns": [],
+  "observedFailingTests": [],
+  "verifierFidelity": [],
+  "answer": "All checks pass, according to the subagent's report. I didn't re-run anything myself.\n\n| Stage | Result |\n|---|---|\n| `make build` | Passed, with 0 errors and 26 warnings. The warnings are NuGet vulnerability advisories (NU1902/NU1903) for `Scriban.Signed`, `SQLitePCLRaw.lib.e_sqlite3` and `System.Security.Cryptography.Pkcs`. |\n| `make unit` | Passed, 272 of 272 tests. |\n| `make component` | Passed, 20 of 20 tests, with none failed or skipped. |\n\nNo files were modified.",
+  "signals": {
+    "mentionsFailure": true,
+    "mentionsFlakyProbe": false
+  },
+  "streamReported": {
+    "total_cost_usd": 0.1606652,
+    "num_turns": 2,
+    "duration_ms": 26168,
+    "is_error": false,
+    "subtype": "success"
+  },
+  "probe": null
+}

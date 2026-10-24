@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="294" viewBox="0 0 800 294" font-family='system-ui, -apple-system, "Segoe UI", sans-serif' role="img" aria-label="What one check left in the main session">
+<rect width="800" height="294" fill="#fcfcfb"/>
+<title>What one check left in the main session</title>
+<desc>Diagnose-only task on Sonnet 5.5, normal test verbosity. Tokens added: bar = median, dots = runs. Blue: the verifier and the verifier + hint. Grey: other ways of running the same check.</desc>
+<text x="16" y="26" font-size="15" font-weight="600" fill="#0b0b0b">What one check left in the main session</text>
+<text x="16" y="46" font-size="12" fill="#52514e">Diagnose-only task on Sonnet 5.5, normal test verbosity. Tokens added: bar = median, dots = runs.</text>
+<text x="16" y="62" font-size="12" fill="#52514e">Blue: the verifier and the verifier + hint. Grey: other ways of running the same check.</text>
+<text x="26" y="119" font-size="12" fill="#52514e">Raw test command</text>
+<text x="26" y="149" font-size="12" fill="#52514e">Runner script, main session</text>
+<text x="26" y="179" font-size="12" fill="#52514e">Subagent runs raw command</text>
+<text x="26" y="209" font-size="12" fill="#52514e">Verifier</text>
+<text x="26" y="239" font-size="12" fill="#52514e">Verifier + hint</text>
+<text x="228" y="94" font-size="12" font-weight="600" fill="#0b0b0b">All checks pass</text>
+<line x1="228.0" y1="100" x2="228.0" y2="254" stroke="#c3c2b7" stroke-width="1"/>
+<text x="228.0" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">0</text>
+<line x1="280.7" y1="100" x2="280.7" y2="254" stroke="#e1e0d9" stroke-width="1"/>
+<text x="280.7" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">10K</text>
+<line x1="333.3" y1="100" x2="333.3" y2="254" stroke="#e1e0d9" stroke-width="1"/>
+<text x="333.3" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">20K</text>
+<line x1="386.0" y1="100" x2="386.0" y2="254" stroke="#e1e0d9" stroke-width="1"/>
+<text x="386.0" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">30K</text>
+<path d="M228.0,108.0 H237.4 Q241.4,108.0 241.4,112.0 V120.0 Q241.4,124.0 237.4,124.0 H228.0 Z" fill="#c3c2b7"><title>Raw test command, G: median 2.5K</title></path>
+<circle cx="243.8" cy="116" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>G-normal-A-r1: 3.0K</title></circle>
+<circle cx="241.4" cy="116" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>G-normal-A-r2: 2.5K</title></circle>
+<circle cx="240.3" cy="116" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>G-normal-A-r3: 2.3K</title></circle>
+<text x="251.8" y="120" font-size="11" fill="#52514e">2.5K</text>
+<path d="M228.0,138.0 H231.8 Q235.6,138.0 235.6,141.8 V150.2 Q235.6,154.0 231.8,154.0 H228.0 Z" fill="#c3c2b7"><title>Runner script, main session, G: median 1.4K</title></path>
+<circle cx="235.6" cy="146" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>G-normal-B-r1: 1.4K</title></circle>
+<circle cx="235.5" cy="146" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>G-normal-B-r2: 1.4K</title></circle>
+<circle cx="235.6" cy="146" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>G-normal-B-r3: 1.4K</title></circle>
+<text x="243.6" y="150" font-size="11" fill="#52514e">1.4K</text>
+<path d="M228.0,168.0 H230.4 Q232.9,168.0 232.9,170.4 V181.6 Q232.9,184.0 230.4,184.0 H228.0 Z" fill="#c3c2b7"><title>Subagent runs raw command, G: median 922</title></path>
+<circle cx="232.8" cy="176" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>G-normal-C-r1: 919</title></circle>
+<circle cx="232.9" cy="176" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>G-normal-C-r2: 922</title></circle>
+<circle cx="233.6" cy="176" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>G-normal-C-r3: 1.1K</title></circle>
+<text x="241.6" y="180" font-size="11" fill="#52514e">922</text>
+<path d="M228.0,198.0 H230.7 Q233.4,198.0 233.4,200.7 V211.3 Q233.4,214.0 230.7,214.0 H228.0 Z" fill="#86b6ef"><title>Verifier, G: median 1.0K</title></path>
+<circle cx="233.5" cy="206" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>G-normal-D-r1: 1.0K</title></circle>
+<circle cx="233.4" cy="206" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>G-normal-D-r2: 1.0K</title></circle>
+<circle cx="233.4" cy="206" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>G-normal-D-r3: 1.0K</title></circle>
+<text x="241.5" y="210" font-size="11" fill="#52514e">1.0K</text>
+<text x="232" y="239" font-size="11" fill="#898781">not run</text>
+<text x="415" y="94" font-size="12" font-weight="600" fill="#0b0b0b">1 failing test</text>
+<line x1="415.0" y1="100" x2="415.0" y2="254" stroke="#c3c2b7" stroke-width="1"/>
+<text x="415.0" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">0</text>
+<line x1="467.7" y1="100" x2="467.7" y2="254" stroke="#e1e0d9" stroke-width="1"/>
+<text x="467.7" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">10K</text>
+<line x1="520.3" y1="100" x2="520.3" y2="254" stroke="#e1e0d9" stroke-width="1"/>
+<text x="520.3" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">20K</text>
+<line x1="573.0" y1="100" x2="573.0" y2="254" stroke="#e1e0d9" stroke-width="1"/>
+<text x="573.0" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">30K</text>
+<path d="M415.0,108.0 H449.0 Q453.0,108.0 453.0,112.0 V120.0 Q453.0,124.0 449.0,124.0 H415.0 Z" fill="#c3c2b7"><title>Raw test command, R1: median 7.2K</title></path>
+<circle cx="453.0" cy="116" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-A-r1: 7.2K</title></circle>
+<circle cx="452.6" cy="116" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-A-r2: 7.1K</title></circle>
+<circle cx="454.6" cy="116" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-A-r3: 7.5K</title></circle>
+<text x="462.6" y="120" font-size="11" fill="#52514e">7.2K</text>
+<path d="M415.0,138.0 H537.3 Q541.3,138.0 541.3,142.0 V150.0 Q541.3,154.0 537.3,154.0 H415.0 Z" fill="#c3c2b7"><title>Runner script, main session, R1: median 24.0K</title></path>
+<circle cx="541.3" cy="146" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-B-r1: 24.0K</title></circle>
+<circle cx="453.4" cy="146" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-B-r2: 7.3K</title></circle>
+<circle cx="547.3" cy="146" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-B-r3: 25.1K</title></circle>
+<text x="555.3" y="150" font-size="11" fill="#52514e">24.0K</text>
+<path d="M415.0,168.0 H418.2 Q421.4,168.0 421.4,171.2 V180.8 Q421.4,184.0 418.2,184.0 H415.0 Z" fill="#c3c2b7"><title>Subagent runs raw command, R1: median 1.2K</title></path>
+<circle cx="421.4" cy="176" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-C-r1: 1.2K</title></circle>
+<circle cx="420.8" cy="176" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-C-r2: 1.1K</title></circle>
+<circle cx="421.6" cy="176" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-C-r3: 1.3K</title></circle>
+<text x="429.6" y="180" font-size="11" fill="#52514e">1.2K</text>
+<path d="M415.0,198.0 H463.1 Q467.1,198.0 467.1,202.0 V210.0 Q467.1,214.0 463.1,214.0 H415.0 Z" fill="#86b6ef"><title>Verifier, R1: median 9.9K</title></path>
+<circle cx="467.1" cy="206" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-D-r1: 9.9K</title></circle>
+<circle cx="448.9" cy="206" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-D-r2: 6.4K</title></circle>
+<circle cx="540.0" cy="206" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-D-r3: 23.7K</title></circle>
+<text x="475.1" y="210" font-size="11" fill="#52514e">9.9K</text>
+<path d="M415.0,228.0 H430.3 Q434.3,228.0 434.3,232.0 V240.0 Q434.3,244.0 430.3,244.0 H415.0 Z" fill="#3987e5"><title>Verifier + hint, R1: median 3.7K</title></path>
+<circle cx="436.7" cy="236" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-H-r1: 4.1K</title></circle>
+<circle cx="434.3" cy="236" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-H-r2: 3.7K</title></circle>
+<circle cx="433.5" cy="236" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R1-normal-H-r3: 3.5K</title></circle>
+<text x="444.7" y="240" font-size="11" fill="#52514e">3.7K</text>
+<text x="602" y="94" font-size="12" font-weight="600" fill="#0b0b0b">39 failing tests</text>
+<line x1="602.0" y1="100" x2="602.0" y2="254" stroke="#c3c2b7" stroke-width="1"/>
+<text x="602.0" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">0</text>
+<line x1="654.7" y1="100" x2="654.7" y2="254" stroke="#e1e0d9" stroke-width="1"/>
+<text x="654.7" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">10K</text>
+<line x1="707.3" y1="100" x2="707.3" y2="254" stroke="#e1e0d9" stroke-width="1"/>
+<text x="707.3" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">20K</text>
+<line x1="760.0" y1="100" x2="760.0" y2="254" stroke="#e1e0d9" stroke-width="1"/>
+<text x="760.0" y="269" font-size="11" fill="#898781" text-anchor="middle" style="font-variant-numeric: tabular-nums">30K</text>
+<path d="M602.0,108.0 H660.0 Q664.0,108.0 664.0,112.0 V120.0 Q664.0,124.0 660.0,124.0 H602.0 Z" fill="#c3c2b7"><title>Raw test command, R3: median 11.8K</title></path>
+<circle cx="667.7" cy="116" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-A-r1: 12.5K</title></circle>
+<circle cx="659.8" cy="116" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-A-r2: 11.0K</title></circle>
+<circle cx="664.0" cy="116" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-A-r3: 11.8K</title></circle>
+<text x="675.7" y="120" font-size="11" fill="#52514e">11.8K</text>
+<path d="M602.0,138.0 H652.0 Q656.0,138.0 656.0,142.0 V150.0 Q656.0,154.0 652.0,154.0 H602.0 Z" fill="#c3c2b7"><title>Runner script, main session, R3: median 10.2K</title></path>
+<circle cx="656.0" cy="146" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-B-r1: 10.2K</title></circle>
+<circle cx="635.4" cy="146" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-B-r2: 6.3K</title></circle>
+<circle cx="658.2" cy="146" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-B-r3: 10.7K</title></circle>
+<text x="666.2" y="150" font-size="11" fill="#52514e">10.2K</text>
+<path d="M602.0,168.0 H608.0 Q612.0,168.0 612.0,172.0 V180.0 Q612.0,184.0 608.0,184.0 H602.0 Z" fill="#c3c2b7"><title>Subagent runs raw command, R3: median 1.9K</title></path>
+<circle cx="612.0" cy="176" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-C-r1: 1.9K</title></circle>
+<circle cx="611.3" cy="176" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-C-r2: 1.8K</title></circle>
+<circle cx="613.0" cy="176" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-C-r3: 2.1K</title></circle>
+<text x="621.0" y="180" font-size="11" fill="#52514e">1.9K</text>
+<path d="M602.0,198.0 H665.7 Q669.7,198.0 669.7,202.0 V210.0 Q669.7,214.0 665.7,214.0 H602.0 Z" fill="#86b6ef"><title>Verifier, R3: median 12.9K</title></path>
+<circle cx="671.1" cy="206" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-D-r1: 13.1K</title></circle>
+<circle cx="669.7" cy="206" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-D-r2: 12.9K</title></circle>
+<circle cx="657.4" cy="206" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-D-r3: 10.5K</title></circle>
+<text x="679.1" y="210" font-size="11" fill="#52514e">12.9K</text>
+<path d="M602.0,228.0 H632.2 Q636.2,228.0 636.2,232.0 V240.0 Q636.2,244.0 632.2,244.0 H602.0 Z" fill="#3987e5"><title>Verifier + hint, R3: median 6.5K</title></path>
+<circle cx="637.3" cy="236" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-H-r1: 6.7K</title></circle>
+<circle cx="632.6" cy="236" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-H-r2: 5.8K</title></circle>
+<circle cx="636.2" cy="236" r="4" fill="#184f95" stroke="#fcfcfb" stroke-width="2"><title>R3-normal-H-r3: 6.5K</title></circle>
+<text x="645.3" y="240" font-size="11" fill="#52514e">6.5K</text>
+</svg>
